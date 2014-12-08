@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6250" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6244"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="EPCalendarCollectionViewController">
+            <connections>
+                <outlet property="collectionViewContainer" destination="NlL-vT-XU7" id="vo8-hM-PiY"/>
+                <outlet property="tableViewContainer" destination="0fe-Hy-7Jz" id="1as-De-Stj"/>
+                <outlet property="toolBar" destination="mzc-1i-H7b" id="OBu-5D-WNP"/>
+                <outlet property="view" destination="iN0-l3-epB" id="oIf-U2-e7x"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NlL-vT-XU7">
+                    <rect key="frame" x="0.0" y="64" width="320" height="460"/>
+                    <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0fe-Hy-7Jz">
+                    <rect key="frame" x="0.0" y="524" width="320" height="460"/>
+                    <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                </view>
+                <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mzc-1i-H7b">
+                    <rect key="frame" x="0.0" y="20" width="320" height="44"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <items>
+                        <barButtonItem title="Item" id="jM9-UK-Wqz"/>
+                    </items>
+                </toolbar>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="0fe-Hy-7Jz" secondAttribute="trailing" id="3ly-sh-lsd"/>
+                <constraint firstItem="NlL-vT-XU7" firstAttribute="top" secondItem="mzc-1i-H7b" secondAttribute="bottom" id="5qD-FH-hVh"/>
+                <constraint firstItem="NlL-vT-XU7" firstAttribute="height" secondItem="0fe-Hy-7Jz" secondAttribute="height" id="O6V-qm-eON"/>
+                <constraint firstItem="mzc-1i-H7b" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="POM-EU-xTd"/>
+                <constraint firstItem="mzc-1i-H7b" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="20" id="XJq-c9-4fb"/>
+                <constraint firstAttribute="trailing" secondItem="NlL-vT-XU7" secondAttribute="trailing" id="Zb2-7e-Yh8"/>
+                <constraint firstAttribute="trailing" secondItem="mzc-1i-H7b" secondAttribute="trailing" id="ahs-sz-OCQ"/>
+                <constraint firstItem="0fe-Hy-7Jz" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="bnZ-ki-fYW"/>
+                <constraint firstAttribute="bottom" secondItem="NlL-vT-XU7" secondAttribute="bottom" constant="44" id="mKh-6E-DPU"/>
+                <constraint firstItem="NlL-vT-XU7" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="vaE-2x-XN4"/>
+                <constraint firstItem="NlL-vT-XU7" firstAttribute="top" secondItem="mzc-1i-H7b" secondAttribute="bottom" id="y20-yB-n3y"/>
+                <constraint firstItem="0fe-Hy-7Jz" firstAttribute="top" secondItem="NlL-vT-XU7" secondAttribute="bottom" id="zUg-vl-C5g"/>
+            </constraints>
+            <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
+            <point key="canvasLocation" x="683" y="342"/>
+        </view>
+    </objects>
+    <simulatedMetricsContainer key="defaultSimulatedMetrics">
+        <simulatedStatusBarMetrics key="statusBar"/>
+        <simulatedOrientationMetrics key="orientation"/>
+        <simulatedScreenMetrics key="destination" type="retina4"/>
+    </simulatedMetricsContainer>
+</document>
