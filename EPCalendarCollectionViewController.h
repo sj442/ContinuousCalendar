@@ -7,11 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "EPCalendarView.h"
 #import "EPCalendarTableViewController.h"
+#import "EPCalendarView.h"
 
-
-@interface EPCalendarCollectionViewController : UIViewController <CalendarTableViewDelegate>
+@interface EPCalendarCollectionViewController : UIViewController <CalendarTableViewDelegate ,CalendarViewDelegate>
 
 @property (strong, nonatomic) EPCalendarView *calendarView;
 

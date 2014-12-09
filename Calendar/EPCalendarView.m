@@ -9,8 +9,8 @@
 #import "EPCalendarView.h"
 #import  <QuartzCore/QuartzCore.h>
 #import "EPCalendarCollectionView.h"
-#import "EPCalendarCell.h"
 #import "EPCalendarMonthHeader.h"
+#import "EPCalendarCell.h"
 #import "DateHelper.h"
 #import "NSCalendar+dates.h"
 #import "NSDate+calendar.h"
@@ -266,7 +266,7 @@ CGPoint toSectionOrigin = [self convertPoint:toAttrs.frame.origin fromView:cv];
 - (EPCalendarCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     EPCalendarCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:EPCalendarCellIDentifier forIndexPath:indexPath];
-    
+    cell.selected = NO;
     NSDate *firstDayInMonth = [self dateForFirstDayInSection:indexPath.section];
     EPCalendarDate firstDayPickerDate = [self calendarDateFromDate:firstDayInMonth];
     NSUInteger weekday = [self.calendar components:NSCalendarUnitWeekday fromDate:firstDayInMonth].weekday;
@@ -277,6 +277,7 @@ CGPoint toSectionOrigin = [self convertPoint:toAttrs.frame.origin fromView:cv];
         return dateComponents;
     })()) toDate:firstDayInMonth options:0];
     cell.cellDate = cellDate;
+    cell.hasEvents = NO;
     EPCalendarDate cellPickerDate = [self calendarDateFromDate:cellDate];
     cell.date = cellPickerDate;
     cell.enabled = ((firstDayPickerDate.year == cellPickerDate.year) && (firstDayPickerDate.month == cellPickerDate.month));
@@ -320,6 +321,9 @@ CGPoint toSectionOrigin = [self convertPoint:toAttrs.frame.origin fromView:cv];
 {
     EPCalendarCell *cell = ((EPCalendarCell *)[collectionView cellForItemAtIndexPath:indexPath]);
     [self willChangeValueForKey:@"selectedDate"];
+    NSArray *events = [[[self class] eventsCache] objectForKey:cell.cellDate];
+    self.selectedIndexPath = indexPath;
+    [self.delegate dataItems:events];
     _selectedDate = cell
     ? [self.calendar dateFromComponents:[self dateComponentsFromPickerDate:cell.date]]
     : nil;
@@ -329,6 +333,7 @@ CGPoint toSectionOrigin = [self convertPoint:toAttrs.frame.origin fromView:cv];
 - (void) setSelectedDate:(NSDate *)selectedDate
 {
     _selectedDate = selectedDate;
+   
     [self.collectionView reloadData];
 }
 
@@ -395,16 +400,11 @@ CGPoint toSectionOrigin = [self convertPoint:toAttrs.frame.origin fromView:cv];
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-    if (scrollView.decelerationRate == UIScrollViewDecelerationRateNormal) {
-    NSLog(@"scrollview did end decelerating");
     UICollectionView *cv = (UICollectionView *)scrollView;
     NSArray *visibleCells = [cv visibleCells];
     for (EPCalendarCell *cell in visibleCells) {
-        cell.hasEvents = [self calendarEventsForDate:cell.cellDate];
-        NSArray *events = [[[self class] eventsCache] objectForKey:cell.cellDate];
-        NSLog(@"1 events count %d", events.count);
-    }
-    [self.collectionView reloadData];
+        cell.hasEvents = [self calendarEventsForDate:cell.cellDate] && cell.enabled;
+        [cell layoutSubviews];
     }
 }
 

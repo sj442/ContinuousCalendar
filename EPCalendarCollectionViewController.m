@@ -51,6 +51,7 @@
         cv.frame = self.collectionViewContainer.bounds;
         cv.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
         _calendarView = cv;
+        _calendarView.delegate = self;
     }
     return _calendarView;
 }
@@ -73,11 +74,7 @@
         frame.origin.y = frame.origin.y-self.collectionViewContainer.frame.size.height*0.7;
         self.tableViewContainer.frame = frame;
     } completion:^(BOOL finished) {
-        NSLog(@"collection View Moved Up");
-        NSInteger item = self.calendarView.collectionView.numberOfSections/4;
-        NSInteger section = self.calendarView.collectionView.numberOfSections/2;
-        NSIndexPath *cellIndexPath = [NSIndexPath indexPathForItem:item inSection:section];
-        [self.calendarView.collectionView scrollToItemAtIndexPath:cellIndexPath atScrollPosition:UICollectionViewScrollPositionBottom animated:YES];
+        [self.calendarView.collectionView scrollToItemAtIndexPath:self.calendarView.selectedIndexPath atScrollPosition:UICollectionViewScrollPositionBottom animated:YES];
         self.calendarView.collectionView.scrollEnabled = NO;
         self.didMoveUp = YES;
     }];
@@ -93,7 +90,6 @@
         frame.origin.y = frame.origin.y+self.collectionViewContainer.frame.size.height*0.7;
         self.tableViewContainer.frame = frame;
     } completion:^(BOOL finished) {
-        NSLog(@"collection View Moved down");
         self.calendarView.collectionView.scrollEnabled = YES;
         self.didMoveUp = NO;
     }];
@@ -106,6 +102,12 @@
     } else {
         [self moveDownTableView];
     }
+}
+
+- (void)dataItems:(NSArray *)items
+{
+    self.tableViewController.dataItems = items;
+    [self.tableViewController.tableView reloadData];
 }
 
 @end

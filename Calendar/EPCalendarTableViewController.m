@@ -7,6 +7,7 @@
 //
 
 #import "EPCalendarTableViewController.h"
+#import <EventKit/EventKit.h>
 
 @interface EPCalendarTableViewController ()
 
@@ -38,7 +39,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 10;
+    return self.dataItems.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -46,7 +47,8 @@
     if (!cell) {
         cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
     }
-    cell.textLabel.text = @"Events";
+    EKEvent *event = self.dataItems[indexPath.row];
+    cell.textLabel.text = event.title;
     cell.textLabel.font = [UIFont fontWithName:@"Helvetica-Bold" size:15];
     // Configure the cell...
     return cell;

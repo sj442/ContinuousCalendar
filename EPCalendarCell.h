@@ -15,6 +15,7 @@
 @property (nonatomic, getter=isEnabled) BOOL enabled;
 @property (nonatomic) BOOL hasEvents;
 @property (strong, nonatomic) NSDate *cellDate;
-@property (strong, nonatomic) UIImageView *dotImageView;
+@property (nonatomic, readonly, strong) UIView *overlayView;
+
 
 @end

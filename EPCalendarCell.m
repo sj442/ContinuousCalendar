@@ -16,13 +16,14 @@
 
 
 @property (nonatomic, readonly, strong) UIImageView *imageView;
-@property (nonatomic, readonly, strong) UIView *overlayView;
+@property (nonatomic, readonly, strong) UIView *dotview;
 
 @end
 
 @implementation EPCalendarCell
 @synthesize imageView = _imageView;
 @synthesize overlayView = _overlayView;
+@synthesize dotview = _dotview;
 
 - (id) initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
@@ -44,12 +45,10 @@
 
 - (void) setHighlighted:(BOOL)highlighted {
     [super setHighlighted:highlighted];
-    [self layoutSubviews];
     [self setNeedsLayout];
 }
 - (void) setSelected:(BOOL)selected {
     [super setSelected:selected];
-    [self layoutSubviews];
     [self setNeedsLayout];
 }
 
@@ -73,7 +72,6 @@
     //	that’s mostly okay.
     
     self.imageView.alpha = self.enabled ? 1.0f : 0.25f;
-    
     self.imageView.image = [[self class] fetchObjectForKey:[[self class] cacheKeyForCalendarDate:self.date] withCreator:^{
         
         UIGraphicsBeginImageContextWithOptions(self.bounds.size, YES, self.window.screen.scale);
@@ -99,7 +97,12 @@
         CGRect textBounds = (CGRect){ 0.0f, 10.0f, 44.0f, 24.0f };
         
        // if (self.enabled) {
+        
+        if (!self.isSelected) {
             CGContextSetFillColorWithColor(context, [UIColor blackColor].CGColor);
+        } else {
+            CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
+        }
        // [[NSString stringWithFormat:@"%lu", (unsigned long)self.date.day] drawInRect:textBounds withFont:font lineBreakMode:NSLineBreakByCharWrapping alignment:NSTextAlignmentCenter];
         
         NSMutableParagraphStyle *textStyle = [[NSMutableParagraphStyle defaultParagraphStyle] mutableCopy];
@@ -119,6 +122,7 @@
         return image;
     }];
     self.overlayView.hidden = !(self.selected || self.highlighted);
+    self.dotview.hidden = !self.hasEvents;
     
 //    if (self.hasEvents) {
 //    UIImageView *dot = [[UIImageView alloc]initWithFrame:CGRectMake(17, 36, 10, 10)];
@@ -128,9 +132,21 @@
 //    }
 }
 
+- (UIView *)dotview
+{
+    if (!_dotview) {
+        _dotview =  [[UIView alloc]initWithFrame:CGRectMake(17, 36, 10, 10)];
+        _dotview.layer.cornerRadius = 5;
+        _dotview.clipsToBounds = YES;
+        _dotview.backgroundColor = [UIColor blueColor];
+        [self.contentView addSubview:_dotview];
+    }
+    return _dotview;
+}
+
 - (UIView *) overlayView {
     if (!_overlayView) {
-        _overlayView = [[UIView alloc] initWithFrame:CGRectMake(6, 6, 32, 32)];
+        _overlayView = [[UIView alloc] initWithFrame:CGRectMake(8, 8, 28, 28)];
         _overlayView.layer.cornerRadius = _overlayView.bounds.size.width/2;
         _overlayView.clipsToBounds = YES;
         _overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
