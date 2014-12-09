@@ -22,7 +22,7 @@
     [self setupToolBar];
     [self.collectionViewContainer addSubview:self.calendarView];
     
-    EPCalendarTableViewController *tableVC = [[EPCalendarTableViewController alloc]init];
+    EPCalendarTableViewController *tableVC = [[EPCalendarTableViewController alloc]initWithNibName:@"EPCalendarTableViewController" bundle:nil];
     self.tableViewController = tableVC;
     
     [self addChildViewController:tableVC];
@@ -67,6 +67,7 @@
     [UIView animateWithDuration:0.5f animations:^{
         CGRect frame = self.collectionViewContainer.frame;
         frame.origin.y = frame.origin.y-self.collectionViewContainer.frame.size.height*0.7;
+        frame.size.height = frame.size.height;
         self.collectionViewContainer.frame = frame;
         frame = self.tableViewContainer.frame;
         frame.origin.y = frame.origin.y-self.collectionViewContainer.frame.size.height*0.7;
@@ -77,8 +78,8 @@
         NSInteger section = self.calendarView.collectionView.numberOfSections/2;
         NSIndexPath *cellIndexPath = [NSIndexPath indexPathForItem:item inSection:section];
         [self.calendarView.collectionView scrollToItemAtIndexPath:cellIndexPath atScrollPosition:UICollectionViewScrollPositionBottom animated:YES];
-//        self.calendarView.collectionView.scrollEnabled = NO;
-        self.tableViewController.didMoveUp = YES;
+        self.calendarView.collectionView.scrollEnabled = NO;
+        self.didMoveUp = YES;
     }];
 }
 
@@ -94,8 +95,17 @@
     } completion:^(BOOL finished) {
         NSLog(@"collection View Moved down");
         self.calendarView.collectionView.scrollEnabled = YES;
-        self.tableViewController.didMoveUp = NO;
+        self.didMoveUp = NO;
     }];
+}
+
+- (void)eventsButtonPressed
+{
+    if (!self.didMoveUp) {
+        [self moveUpTableView];
+    } else {
+        [self moveDownTableView];
+    }
 }
 
 @end

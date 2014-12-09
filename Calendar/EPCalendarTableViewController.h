@@ -10,14 +10,17 @@
 
 @protocol CalendarTableViewDelegate <NSObject>
 
-- (void)moveUpTableView;
-- (void)moveDownTableView;
+- (void)eventsButtonPressed;
+
 @end
 
-@interface EPCalendarTableViewController : UITableViewController
+@interface EPCalendarTableViewController : UIViewController
 
 @property (weak, nonatomic) id <CalendarTableViewDelegate> delegate;
 
-@property BOOL didMoveUp;
+@property (weak, nonatomic) IBOutlet UIToolbar *toolBar;
+
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
+
 
 @end

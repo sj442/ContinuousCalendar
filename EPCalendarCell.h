@@ -13,5 +13,8 @@
 
 @property (nonatomic, readwrite, assign) EPCalendarDate date;
 @property (nonatomic, getter=isEnabled) BOOL enabled;
+@property (nonatomic) BOOL hasEvents;
+@property (strong, nonatomic) NSDate *cellDate;
+@property (strong, nonatomic) UIImageView *dotImageView;
 
 @end

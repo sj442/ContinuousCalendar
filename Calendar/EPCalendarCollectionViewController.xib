@@ -48,8 +48,8 @@
                 <constraint firstItem="NlL-vT-XU7" firstAttribute="top" secondItem="mzc-1i-H7b" secondAttribute="bottom" id="y20-yB-n3y"/>
                 <constraint firstItem="0fe-Hy-7Jz" firstAttribute="top" secondItem="NlL-vT-XU7" secondAttribute="bottom" id="zUg-vl-C5g"/>
             </constraints>
-            <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
-            <point key="canvasLocation" x="683" y="342"/>
+            <nil key="simulatedStatusBarMetrics"/>
+            <point key="canvasLocation" x="562" y="250"/>
         </view>
     </objects>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

@@ -13,8 +13,11 @@
 + (NSCache *) imageCache;
 + (id) cacheKeyForCalendarDate:(EPCalendarDate)date;
 + (id) fetchObjectForKey:(id)key withCreator:(id(^)(void))block;
+
+
 @property (nonatomic, readonly, strong) UIImageView *imageView;
 @property (nonatomic, readonly, strong) UIView *overlayView;
+
 @end
 
 @implementation EPCalendarCell
@@ -41,10 +44,12 @@
 
 - (void) setHighlighted:(BOOL)highlighted {
     [super setHighlighted:highlighted];
+    [self layoutSubviews];
     [self setNeedsLayout];
 }
 - (void) setSelected:(BOOL)selected {
     [super setSelected:selected];
+    [self layoutSubviews];
     [self setNeedsLayout];
 }
 
@@ -73,7 +78,6 @@
         
         UIGraphicsBeginImageContextWithOptions(self.bounds.size, YES, self.window.screen.scale);
         CGContextRef context = UIGraphicsGetCurrentContext();
-        
 #if 0
         
         //	Generate a random color
@@ -82,44 +86,53 @@
         CGFloat saturation = ( arc4random() % 128 / 256.0 ) + 0.5;  //  0.5 to 1.0, away from white
         CGFloat brightness = ( arc4random() % 128 / 256.0 ) + 0.5;  //  0.5 to 1.0, away from black
         CGContextSetFillColorWithColor(context, [UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0f].CGColor);
-        
 #else
         
       //  CGContextSetFillColorWithColor(context, [UIColor colorWithRed:53.0f/256.0f green:145.0f/256.0f blue:195.0f/256.0f alpha:1.0f].CGColor);
         CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
-
         
 #endif
         
         CGContextFillRect(context, self.bounds);
         
-        UIFont *font = [UIFont boldSystemFontOfSize:20.0f];
+        UIFont *font = [UIFont boldSystemFontOfSize:18.0f];
         CGRect textBounds = (CGRect){ 0.0f, 10.0f, 44.0f, 24.0f };
         
        // if (self.enabled) {
+            CGContextSetFillColorWithColor(context, [UIColor blackColor].CGColor);
+       // [[NSString stringWithFormat:@"%lu", (unsigned long)self.date.day] drawInRect:textBounds withFont:font lineBreakMode:NSLineBreakByCharWrapping alignment:NSTextAlignmentCenter];
         
-        CGContextSetFillColorWithColor(context, [UIColor blackColor].CGColor);
-        [[NSString stringWithFormat:@"%lu", (unsigned long)self.date.day] drawInRect:textBounds withFont:font lineBreakMode:NSLineBreakByCharWrapping alignment:NSTextAlignmentCenter];
+        NSMutableParagraphStyle *textStyle = [[NSMutableParagraphStyle defaultParagraphStyle] mutableCopy];
+        textStyle.lineBreakMode = NSLineBreakByCharWrapping;
+        textStyle.alignment = NSTextAlignmentCenter;
+        
+        [[NSString stringWithFormat:@"%lu", (unsigned long) self.date.day] drawInRect:textBounds withAttributes:@{NSFontAttributeName:font, NSParagraphStyleAttributeName:textStyle}];
+        
       //  } else {
      //       CGContextSetFillColorWithColor(context, [UIColor lightGrayColor].CGColor);
      //       [[NSString stringWithFormat:@"%lu", (unsigned long)self.date.day] drawInRect:textBounds withFont:font lineBreakMode:NSLineBreakByCharWrapping alignment:NSTextAlignmentCenter];
  
    //     }
-        
         UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
         
         return image;
-        
     }];
-    
     self.overlayView.hidden = !(self.selected || self.highlighted);
     
+//    if (self.hasEvents) {
+//    UIImageView *dot = [[UIImageView alloc]initWithFrame:CGRectMake(17, 36, 10, 10)];
+//    dot.image = [UIImage imageNamed:@"BlueDot"];
+//    [self.contentView addSubview:dot];
+//    self.dotImageView = dot;
+//    }
 }
 
 - (UIView *) overlayView {
     if (!_overlayView) {
-        _overlayView = [[UIView alloc] initWithFrame:self.contentView.bounds];
+        _overlayView = [[UIView alloc] initWithFrame:CGRectMake(6, 6, 32, 32)];
+        _overlayView.layer.cornerRadius = _overlayView.bounds.size.width/2;
+        _overlayView.clipsToBounds = YES;
         _overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
         _overlayView.backgroundColor = [UIColor blackColor];
         _overlayView.alpha = 0.25f;

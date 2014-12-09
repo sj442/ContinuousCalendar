@@ -21,4 +21,6 @@
 
 @property (weak, nonatomic) IBOutlet UIView *tableViewContainer;
 
+@property BOOL didMoveUp;
+
 @end

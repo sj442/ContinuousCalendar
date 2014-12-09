@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import "EPCalendarCollectionViewController.h"
+#import "EventStore.h"
 
 @interface AppDelegate ()
 
@@ -24,6 +25,14 @@
     EPCalendarCollectionViewController *vc = [[EPCalendarCollectionViewController alloc]init];
     self.window.rootViewController = vc;
     [self.window makeKeyAndVisible];
+    
+    EKEventStore *store = [[EventStore sharedInstance] eventStore];
+    [store requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
+        // handle access here
+        if (granted) {
+            
+        }
+    }];
     return YES;
 }
 

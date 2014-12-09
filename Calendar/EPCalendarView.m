@@ -13,6 +13,8 @@
 #import "EPCalendarMonthHeader.h"
 #import "DateHelper.h"
 #import "NSCalendar+dates.h"
+#import "NSDate+calendar.h"
+#import "EventStore.h"
 
 static NSString * const EPCalendarCellIDentifier = @"CalendarCell";
 static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
@@ -24,8 +26,9 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 @property (assign, nonatomic) EPCalendarDate toDate;
 @property (strong, nonatomic) UICollectionViewFlowLayout *flowLayout;
 
-@end
++ (NSCache *) eventsCache;
 
+@end
 
 @implementation EPCalendarView
 
@@ -135,7 +138,7 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 }
 
 
-- (void) shiftDatesByComponents:(NSDateComponents *)components
+- (void)shiftDatesByComponents:(NSDateComponents *)components
 {
     UICollectionView *cv = self.collectionView;
     UICollectionViewFlowLayout *cvLayout = (UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout;
@@ -232,7 +235,6 @@ CGPoint toSectionOrigin = [self convertPoint:toAttrs.frame.origin fromView:cv];
         dateComponents.month = section;
         return dateComponents;
     })()) toDate:[self dateFromCalendarDate:self.fromDate] options:0];
-    
 }
 
 - (NSUInteger) numberOfWeeksForMonthOfDate:(NSDate *)date
@@ -274,14 +276,28 @@ CGPoint toSectionOrigin = [self convertPoint:toAttrs.frame.origin fromView:cv];
         dateComponents.day = indexPath.item - (weekday - 1);
         return dateComponents;
     })()) toDate:firstDayInMonth options:0];
+    cell.cellDate = cellDate;
     EPCalendarDate cellPickerDate = [self calendarDateFromDate:cellDate];
-    
-   cell.date = cellPickerDate;
-   cell.enabled = ((firstDayPickerDate.year == cellPickerDate.year) && (firstDayPickerDate.month == cellPickerDate.month));
-   cell.selected = [self.selectedDate isEqualToDate:cellDate];
-   
+    cell.date = cellPickerDate;
+    cell.enabled = ((firstDayPickerDate.year == cellPickerDate.year) && (firstDayPickerDate.month == cellPickerDate.month));
+    EPCalendarDate today = [self calendarDateFromDate:[NSDate date]];
+    cell.selected = ([self.selectedDate isEqualToDate:cellDate] || ((cellPickerDate.year == today.year) && (cellPickerDate.month == today.month) && (cellPickerDate.day == today.day)));
     return cell;
-    
+}
+
+- (BOOL)calendarEventsForDate:(NSDate *)date
+{
+    EKEventStore *eventStore = [[EventStore sharedInstance] eventStore];
+    //get EKEvents
+    NSDate *startDate = [NSDate calendarStartDateFromDate:date ForCalendar:self.calendar]; //starting from 12:01 am
+    NSDate *endDate = [NSDate calendarEndDateFromDate:date ForCalendar:self.calendar]; // ending at 11:59 pm
+    NSPredicate *predicate = [eventStore predicateForEventsWithStartDate:startDate endDate:endDate calendars:nil];
+    NSArray *events = [eventStore eventsMatchingPredicate:predicate];
+    if (events.count>0) {
+        [[[self class] eventsCache] setObject:events forKey:date];
+        return YES;
+    }
+    return NO;
 }
 
 //	We are cheating by piggybacking on view state to avoid recalculation
@@ -359,6 +375,49 @@ CGPoint toSectionOrigin = [self convertPoint:toAttrs.frame.origin fromView:cv];
         components.month,
         components.day
     };
+}
+
+- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
+{
+//    NSLog(@"velocity %f", velocity.y);
+//    if (fabsf(velocity.y)<1.0f) {
+//        UICollectionView *cv = (UICollectionView *)scrollView;
+//        NSArray *visibleCells = [cv visibleCells];
+//        for (EPCalendarCell *cell in visibleCells) {
+//            cell.hasEvents = [self calendarEventsForDate:cell.cellDate];
+//            NSArray *events = [[[self class] eventsCache] objectForKey:cell.cellDate];
+//            NSLog(@"0 events count %d", events.count);
+//        }
+//        [self.collectionView reloadData];
+//    }
+}
+
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    if (scrollView.decelerationRate == UIScrollViewDecelerationRateNormal) {
+    NSLog(@"scrollview did end decelerating");
+    UICollectionView *cv = (UICollectionView *)scrollView;
+    NSArray *visibleCells = [cv visibleCells];
+    for (EPCalendarCell *cell in visibleCells) {
+        cell.hasEvents = [self calendarEventsForDate:cell.cellDate];
+        NSArray *events = [[[self class] eventsCache] objectForKey:cell.cellDate];
+        NSLog(@"1 events count %d", events.count);
+    }
+    [self.collectionView reloadData];
+    }
+}
+
+#pragma  mark - Events cache
+
+
++ (NSCache *) eventsCache {
+    static NSCache *cache;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        cache = [NSCache new];
+    });
+    return cache;
 }
 
 @end
