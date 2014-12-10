@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3F6190921A38C4CB00CBA01B /* ExtendedNavBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6190911A38C4CB00CBA01B /* ExtendedNavBarView.m */; };
+		3F6190951A38E62400CBA01B /* EPCalendarWeekViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6190941A38E62400CBA01B /* EPCalendarWeekViewController.m */; };
 		3FBD970D1A30BFD300BDE8B7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FBD970C1A30BFD300BDE8B7 /* main.m */; };
 		3FBD97101A30BFD300BDE8B7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FBD970F1A30BFD300BDE8B7 /* AppDelegate.m */; };
 		3FBD97181A30BFD300BDE8B7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3FBD97171A30BFD300BDE8B7 /* Images.xcassets */; };
@@ -42,6 +43,8 @@
 /* Begin PBXFileReference section */
 		3F6190901A38C4CB00CBA01B /* ExtendedNavBarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtendedNavBarView.h; sourceTree = "<group>"; };
 		3F6190911A38C4CB00CBA01B /* ExtendedNavBarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExtendedNavBarView.m; sourceTree = "<group>"; };
+		3F6190931A38E62400CBA01B /* EPCalendarWeekViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EPCalendarWeekViewController.h; sourceTree = "<group>"; };
+		3F6190941A38E62400CBA01B /* EPCalendarWeekViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EPCalendarWeekViewController.m; sourceTree = "<group>"; };
 		3FBD97071A30BFD300BDE8B7 /* Calendar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Calendar.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3FBD970B1A30BFD300BDE8B7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3FBD970C1A30BFD300BDE8B7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -134,6 +137,8 @@
 				3FBD973A1A30C0AE00BDE8B7 /* EPCalendarCell.m */,
 				3FBD97301A30C02B00BDE8B7 /* EPCalendarCollectionViewController.h */,
 				3FBD97311A30C02B00BDE8B7 /* EPCalendarCollectionViewController.m */,
+				3F6190931A38E62400CBA01B /* EPCalendarWeekViewController.h */,
+				3F6190941A38E62400CBA01B /* EPCalendarWeekViewController.m */,
 				3F6190901A38C4CB00CBA01B /* ExtendedNavBarView.h */,
 				3F6190911A38C4CB00CBA01B /* ExtendedNavBarView.m */,
 				3FBD975B1A3201DD00BDE8B7 /* EPCalendarView.h */,
@@ -295,6 +300,7 @@
 				3FBD97611A322D4100BDE8B7 /* NSCalendar+dates.m in Sources */,
 				3FBD97351A30C05400BDE8B7 /* EPCalendarTableViewController.m in Sources */,
 				3FBD97381A30C07E00BDE8B7 /* EPCalendarCollectionView.m in Sources */,
+				3F6190951A38E62400CBA01B /* EPCalendarWeekViewController.m in Sources */,
 				3FD383D51A376C63003470B9 /* NSDate+calendar.m in Sources */,
 				3FD383D21A376BAF003470B9 /* EventStore.m in Sources */,
 				3FBD973E1A30C0D600BDE8B7 /* EPCalendarMonthHeader.m in Sources */,

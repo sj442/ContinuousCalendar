@@ -13,11 +13,13 @@
 
 -(void)calendarCollectionViewWillLayoutSubviews: (EPCalendarCollectionView *)collectionView;
 
+- (void)collectionViewTappedAtPoint:(CGPoint)point;
+
 @end
 
 @interface EPCalendarCollectionView : UICollectionView
 
-@property (weak, nonatomic) id <EPCalendarCollectionViewDelegate> delegate;
+@property (weak, nonatomic) id <EPCalendarCollectionViewDelegate> myDelegate;
 
 
 @end

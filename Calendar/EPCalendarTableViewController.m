@@ -17,6 +17,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self setupToolBar];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -24,11 +25,11 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (IBAction)eventsButtonPressed:(id)sender {
-    
-    NSLog(@"events button pressed");
-    
-    [self.delegate eventsButtonPressed];
+- (void)setupToolBar
+{
+    UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+    UIBarButtonItem *events = [[UIBarButtonItem alloc]initWithTitle:@"Events" style:UIBarButtonItemStylePlain target:self action:nil];
+    self.toolBar.items = @[flexibleSpace, events, flexibleSpace];
 }
 
 

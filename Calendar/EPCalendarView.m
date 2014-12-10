@@ -89,14 +89,25 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
         _collectionView.backgroundColor = [UIColor whiteColor];
         _collectionView.dataSource = self;
         _collectionView.delegate = self;
+        _collectionView.myDelegate = self;
         _collectionView.showsHorizontalScrollIndicator = NO;
         _collectionView.showsVerticalScrollIndicator = NO;
         _collectionView.scrollEnabled = YES;
         [_collectionView registerClass:[EPCalendarCell class] forCellWithReuseIdentifier:EPCalendarCellIDentifier];
         [_collectionView registerClass:[EPCalendarMonthHeader class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:EPCalendarMonthHeaderIDentifier];
         [_collectionView reloadData];
+        UIPanGestureRecognizer *pan = _collectionView.panGestureRecognizer;
+        [pan addTarget:self action:@selector(collectionViewPanned:)];
+      
     }
     return _collectionView;
+}
+
+- (void)collectionViewPanned:(UIPanGestureRecognizer *)pan
+{
+    if (pan.state == UIGestureRecognizerStateEnded) {
+        [self populateCells];
+    }
 }
 
 - (UICollectionViewFlowLayout *)initializeFlowLayout
@@ -332,6 +343,7 @@ CGPoint toSectionOrigin = [self convertPoint:toAttrs.frame.origin fromView:cv];
 
 - (void) collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
+    NSLog(@"did select");
     EPCalendarCell *cell = ((EPCalendarCell *)[collectionView cellForItemAtIndexPath:indexPath]);
     [self willChangeValueForKey:@"selectedDate"];
     NSArray *events = [[[self class] eventsCache] objectForKey:cell.cellDate];
@@ -442,6 +454,25 @@ CGPoint toSectionOrigin = [self convertPoint:toAttrs.frame.origin fromView:cv];
         cache = [NSCache new];
     });
     return cache;
+}
+
+
+- (void)collectionViewTappedAtPoint:(CGPoint)point
+{
+    NSIndexPath *ip = [self.collectionView indexPathForItemAtPoint:point];
+    EPCalendarCell *cell = ((EPCalendarCell *)[self.collectionView cellForItemAtIndexPath:ip]);
+    [self willChangeValueForKey:@"selectedDate"];
+    NSArray *events = [[[self class] eventsCache] objectForKey:cell.cellDate];
+    self.selectedIndexPath = ip;
+    [self.delegate dataItems:events];
+    _selectedDate = cell
+    ? [self.calendar dateFromComponents:[self dateComponentsFromPickerDate:cell.date]]
+    : nil;
+    [self didChangeValueForKey:@"selectedDate"];
+
+    [self.collectionView scrollToItemAtIndexPath:ip atScrollPosition:UICollectionViewScrollPositionTop animated:YES];
+    [self.delegate moveupTableView];
+
 }
 
 @end

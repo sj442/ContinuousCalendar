@@ -45,19 +45,14 @@
     calendarView.delegate = self;
     [self.view addSubview:calendarView];
     self.calendarView = calendarView;
+    
+    EPCalendarTableViewController *tableVC = [[EPCalendarTableViewController alloc]initWithNibName:@"EPCalendarTableViewController" bundle:nil];
+    self.tableViewController = tableVC;
+    [self addChildViewController:tableVC];
+    tableVC.view.frame = self.calendarView.frame;
+    [self.view insertSubview:tableVC.view belowSubview:self.calendarView];
+    [tableVC didMoveToParentViewController:self];
 }
-
-
-//- (EPCalendarView *) calendarView {
-//    if (!_calendarView) {
-//        EPCalendarView *cv = [EPCalendarView new];
-//        cv.frame = self.view.bounds;
-//        cv.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-//        _calendarView = cv;
-//        _calendarView.delegate = self;
-//    }
-//    return _calendarView;
-//}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -98,7 +93,7 @@
     }];
 }
 
-- (void)eventsButtonPressed
+- (void)didSelectEventAtPoint:(CGPoint)point
 {
     if (!self.didMoveUp) {
         [self moveUpTableView];
@@ -117,6 +112,30 @@
 - (void)setNavigationTitle:(NSString *)title
 {
     self.title = title;
+}
+
+- (void)moveupTableView
+{
+    [UIView animateWithDuration:0.1f animations:^{
+        CGRect frame = self.tableViewController.view.frame;
+        frame.origin.y = 150;
+        frame.size.height = self.view.frame.size.height -150;
+        self.tableViewController.view.frame = frame;
+        [self.view insertSubview:self.tableViewController.view aboveSubview:self.calendarView];
+        self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(goBackToMonthView:)];
+    }];
+    }
+
+- (void)goBackToMonthView: (id)sender
+{
+    [UIView animateWithDuration:0.1f animations:^{
+        CGRect frame = self.tableViewController.view.frame;
+        frame.origin.y = self.calendarView.frame.origin.y;
+        frame.size.height = self.calendarView.frame.size.height;
+        self.tableViewController.view.frame = frame;
+        [self.view insertSubview:self.tableViewController.view belowSubview:self.calendarView];
+        self.navigationItem.leftBarButtonItem = nil;
+    }];
 }
 
 @end

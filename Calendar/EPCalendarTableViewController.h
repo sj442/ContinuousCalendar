@@ -10,7 +10,6 @@
 
 @protocol CalendarTableViewDelegate <NSObject>
 
-- (void)eventsButtonPressed;
 
 @end
 

@@ -12,6 +12,7 @@
 
 - (void)dataItems:(NSArray *)items;
 - (void)setNavigationTitle:(NSString *)title;
+- (void)moveupTableView;
 
 @end
 
