@@ -32,6 +32,15 @@
     tableVC.delegate = self;
 }
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    [self.calendarView centerCollectionViewToCurrentDateWithCompletion:^{
+        [self.calendarView populateCells];
+    }];
+}
+
 - (void)setupToolBar
 {
     UIBarButtonItem *sunday = [[UIBarButtonItem alloc] initWithTitle:@"S" style:UIBarButtonItemStylePlain target:self action:nil];

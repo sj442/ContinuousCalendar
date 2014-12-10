@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "EPCalendarCollectionView.h"
 @protocol CalendarViewDelegate <NSObject>
 
 - (void)dataItems:(NSArray *)items;
@@ -19,8 +19,11 @@
 - (instancetype)initWithCalendar:(NSCalendar *)calendar;
 
 @property (strong, nonatomic) NSDate *selectedDate;
-@property (strong, nonatomic) UICollectionView *collectionView;
+@property (strong, nonatomic) EPCalendarCollectionView *collectionView;
 @property (strong, nonatomic) NSIndexPath *selectedIndexPath;
 @property (weak, nonatomic) id <CalendarViewDelegate> delegate;
+
+- (void)centerCollectionViewToCurrentDateWithCompletion: (void (^)(void))completion;
+- (void)populateCells;
 
 @end

@@ -81,7 +81,7 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     [self.collectionView scrollToItemAtIndexPath:cellIndexPath atScrollPosition:UICollectionViewScrollPositionBottom animated:NO];
 }
 
-- (UICollectionView *)initializeCollectionView
+- (EPCalendarCollectionView *)initializeCollectionView
 {
     if (!_collectionView) {
         _collectionView = [[EPCalendarCollectionView alloc]initWithFrame:self.bounds collectionViewLayout:self.flowLayout];
@@ -109,6 +109,24 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
         self.flowLayout = layout;
     }
     return self.flowLayout;
+}
+
+- (void)centerCollectionViewToCurrentDateWithCompletion: (void (^)(void))completion;
+{
+    NSInteger item = 0;
+    NSInteger section = self.collectionView.numberOfSections/2;
+    NSIndexPath *cellIndexPath = [NSIndexPath indexPathForItem:item inSection:section];
+    [self.collectionView scrollToItemAtIndexPath:cellIndexPath atScrollPosition:UICollectionViewScrollPositionCenteredVertically animated:NO];
+    completion ();
+}
+
+- (void)populateCells
+{
+    NSArray *visibleCells = [self.collectionView visibleCells];
+    for (EPCalendarCell *cell in visibleCells) {
+        cell.hasEvents = [self calendarEventsForDate:cell.cellDate] && cell.enabled;
+        [cell layoutSubviews];
+    }
 }
 
 - (void)calendarCollectionViewWillLayoutSubviews:(EPCalendarCollectionView *)collectionView
@@ -301,12 +319,6 @@ CGPoint toSectionOrigin = [self convertPoint:toAttrs.frame.origin fromView:cv];
     return NO;
 }
 
-//	We are cheating by piggybacking on view state to avoid recalculation
-//	in -collectionView:shouldHighlightItemAtIndexPath:
-//	and -collectionView:shouldSelectItemAtIndexPath:.
-
-//	A naïve refactoring process might introduce duplicate state which is bad too.
-
 - (BOOL) collectionView:(UICollectionView *)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath *)indexPath
 {
     return ((EPCalendarCell *)[collectionView cellForItemAtIndexPath:indexPath]).enabled;
@@ -333,7 +345,6 @@ CGPoint toSectionOrigin = [self convertPoint:toAttrs.frame.origin fromView:cv];
 - (void) setSelectedDate:(NSDate *)selectedDate
 {
     _selectedDate = selectedDate;
-   
     [self.collectionView reloadData];
 }
 
@@ -397,19 +408,17 @@ CGPoint toSectionOrigin = [self convertPoint:toAttrs.frame.origin fromView:cv];
 //    }
 }
 
-
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-    UICollectionView *cv = (UICollectionView *)scrollView;
-    NSArray *visibleCells = [cv visibleCells];
-    for (EPCalendarCell *cell in visibleCells) {
-        cell.hasEvents = [self calendarEventsForDate:cell.cellDate] && cell.enabled;
-        [cell layoutSubviews];
-    }
+    [self populateCells];
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    
 }
 
 #pragma  mark - Events cache
-
 
 + (NSCache *) eventsCache {
     static NSCache *cache;
