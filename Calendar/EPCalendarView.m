@@ -105,7 +105,13 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 
 - (void)collectionViewPanned:(UIPanGestureRecognizer *)pan
 {
-    if (pan.state == UIGestureRecognizerStateEnded) {
+    NSLog(@"velocity %f", (fabsf([pan velocityInView:self].y)));
+    
+    if (fabsf([pan velocityInView:self].y)>500.0f) {
+        return;
+    }
+    
+    if (pan.state == UIGestureRecognizerStateEnded && fabsf([pan velocityInView:self].y)<500.0f) {
         [self populateCells];
     }
 }
@@ -187,12 +193,7 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     self.toDate= [self calendarDateFromDate:[self.calendar dateByAddingComponents:components toDate:[self dateFromCalendarDate:self.toDate] options:0]];
 
 #if 0
-
-//	This solution trips up the collection view a bit
-//	because our reload is reactionary, and happens before a relayout
-//	since we must do it to avoid flickering and to heckle the CA transaction (?)
-//	that could be a small red flag too
-
+    
 [cv performBatchUpdates:^{
     
     if (components.month < 0) {
@@ -418,21 +419,6 @@ CGPoint toSectionOrigin = [self convertPoint:toAttrs.frame.origin fromView:cv];
         components.month,
         components.day
     };
-}
-
-- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
-{
-//    NSLog(@"velocity %f", velocity.y);
-//    if (fabsf(velocity.y)<1.0f) {
-//        UICollectionView *cv = (UICollectionView *)scrollView;
-//        NSArray *visibleCells = [cv visibleCells];
-//        for (EPCalendarCell *cell in visibleCells) {
-//            cell.hasEvents = [self calendarEventsForDate:cell.cellDate];
-//            NSArray *events = [[[self class] eventsCache] objectForKey:cell.cellDate];
-//            NSLog(@"0 events count %d", events.count);
-//        }
-//        [self.collectionView reloadData];
-//    }
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView

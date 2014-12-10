@@ -108,7 +108,6 @@
     [self.tableViewController.tableView reloadData];
 }
 
-
 - (void)setNavigationTitle:(NSString *)title
 {
     self.title = title;
