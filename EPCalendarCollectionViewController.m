@@ -9,9 +9,13 @@
 #import "EPCalendarCollectionViewController.h"
 #import "EPCalendarTableViewController.h"
 
+#import "ExtendedNavBarView.h"
+
 @interface EPCalendarCollectionViewController ()
 
 @property (strong, nonatomic) EPCalendarTableViewController *tableViewController;
+
+@property (weak, nonatomic) ExtendedNavBarView *dayView;
 
 @end
 
@@ -19,51 +23,41 @@
 
 - (void) viewDidLoad {
     [super viewDidLoad];
-    [self setupToolBar];
-    [self.collectionViewContainer addSubview:self.calendarView];
+    self.navigationController.navigationBar.translucent = NO;
+    self.automaticallyAdjustsScrollViewInsets = NO;
     
-    EPCalendarTableViewController *tableVC = [[EPCalendarTableViewController alloc]initWithNibName:@"EPCalendarTableViewController" bundle:nil];
-    self.tableViewController = tableVC;
+    [self.navigationController.navigationBar setShadowImage:[[UIImage alloc] init]];
     
-    [self addChildViewController:tableVC];
-    [self.tableViewContainer addSubview:tableVC.view];
-    [tableVC didMoveToParentViewController:self];
-    tableVC.view.frame = self.tableViewContainer.bounds;
-    tableVC.delegate = self;
+    [self.navigationController.navigationBar setBackgroundImage:[[UIImage alloc]init]
+                                                  forBarMetrics:UIBarMetricsDefault];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    ExtendedNavBarView *dayView = [[ExtendedNavBarView alloc]initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)/25)];
+    [self.view addSubview:dayView];
     
-    [self.calendarView centerCollectionViewToCurrentDateWithCompletion:^{
-        [self.calendarView populateCells];
-    }];
+    self.dayView = dayView;
+    
+    EPCalendarView *calendarView = [EPCalendarView new];
+    calendarView.frame =CGRectMake(0, CGRectGetMaxY(self.dayView.frame), CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds) - CGRectGetHeight(self.dayView.frame));
+    calendarView.delegate = self;
+    [self.view addSubview:calendarView];
+    self.calendarView = calendarView;
 }
 
-- (void)setupToolBar
-{
-    UIBarButtonItem *sunday = [[UIBarButtonItem alloc] initWithTitle:@"S" style:UIBarButtonItemStylePlain target:self action:nil];
-    UIBarButtonItem *monday = [[UIBarButtonItem alloc] initWithTitle:@"M" style:UIBarButtonItemStylePlain target:self action:nil];
-    UIBarButtonItem *tuesday = [[UIBarButtonItem alloc] initWithTitle:@"T" style:UIBarButtonItemStylePlain target:self action:nil];
-    UIBarButtonItem *wednesday = [[UIBarButtonItem alloc] initWithTitle:@"W" style:UIBarButtonItemStylePlain target:self action:nil];
-    UIBarButtonItem *thursday = [[UIBarButtonItem alloc] initWithTitle:@"T" style:UIBarButtonItemStylePlain target:self action:nil];
-    UIBarButtonItem *friday = [[UIBarButtonItem alloc] initWithTitle:@"F" style:UIBarButtonItemStylePlain target:self action:nil];
-    UIBarButtonItem *saturday = [[UIBarButtonItem alloc] initWithTitle:@"S" style:UIBarButtonItemStylePlain target:self action:nil];
-    UIBarButtonItem *space = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
-    self.toolBar.items = @[sunday, space, monday, space, tuesday, space, wednesday, space, thursday, space, friday, space, saturday];
-}
 
-- (EPCalendarView *) calendarView {
-    if (!_calendarView) {
-        EPCalendarView *cv = [EPCalendarView new];
-        cv.frame = self.collectionViewContainer.bounds;
-        cv.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-        _calendarView = cv;
-        _calendarView.delegate = self;
-    }
-    return _calendarView;
-}
+//- (EPCalendarView *) calendarView {
+//    if (!_calendarView) {
+//        EPCalendarView *cv = [EPCalendarView new];
+//        cv.frame = self.view.bounds;
+//        cv.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+//        _calendarView = cv;
+//        _calendarView.delegate = self;
+//    }
+//    return _calendarView;
+//}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -117,6 +111,12 @@
 {
     self.tableViewController.dataItems = items;
     [self.tableViewController.tableView reloadData];
+}
+
+
+- (void)setNavigationTitle:(NSString *)title
+{
+    self.title = title;
 }
 
 @end

@@ -12,8 +12,6 @@
 
 @interface EPCalendarCollectionViewController : UIViewController <CalendarTableViewDelegate ,CalendarViewDelegate>
 
-@property (strong, nonatomic) EPCalendarView *calendarView;
-
 @property (weak, nonatomic) IBOutlet UIToolbar *toolBar;
 
 @property (weak, nonatomic) IBOutlet UIView *collectionViewContainer;
@@ -21,5 +19,7 @@
 @property (weak, nonatomic) IBOutlet UIView *tableViewContainer;
 
 @property BOOL didMoveUp;
+
+@property (weak, nonatomic) IBOutlet EPCalendarView *calendarView;
 
 @end

@@ -55,7 +55,7 @@
 - (void) layoutSubviews {
     
     [super layoutSubviews];
-    
+        
     //	Instead of using labels, use images keyed by day.
     //	This avoids redrawing text within labels, which involve lots of parts of
     //	WebCore and CoreGraphics, and makes sure scrolling is always smooth.
@@ -71,7 +71,7 @@
     //	and draw it, but since that’s only one bitmap instead of 35-odd (7 weeks)
     //	that’s mostly okay.
     
-    self.imageView.alpha = self.enabled ? 1.0f : 0.25f;
+    self.imageView.alpha = self.enabled ? 1.0f : 0.0f;
     self.imageView.image = [[self class] fetchObjectForKey:[[self class] cacheKeyForCalendarDate:self.date] withCreator:^{
         
         UIGraphicsBeginImageContextWithOptions(self.bounds.size, YES, self.window.screen.scale);

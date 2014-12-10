@@ -16,5 +16,4 @@
     [self.delegate calendarCollectionViewWillLayoutSubviews:self];
 }
 
-
 @end

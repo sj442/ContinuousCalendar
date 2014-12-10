@@ -37,6 +37,7 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     self = [super initWithFrame:CGRectZero];
     if (self) {
         self.calendar = calendar;
+        self.backgroundColor = [UIColor whiteColor];
         NSDate *now = [self.calendar dateFromComponents:[self.calendar components:NSCalendarUnitYear|NSCalendarUnitMonth fromDate:[NSDate date]]];
         
         NSDateComponents *components = [NSDateComponents new];
@@ -45,9 +46,6 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
         
         components.month = 6;
         self.toDate = [self calendarDateFromDate:[self.calendar dateByAddingComponents:components toDate:now options:0]];
-                
-        [self initializeFlowLayout];
-        [self initializeCollectionView];
     }
     return self;
 }
@@ -64,6 +62,9 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 - (void)layoutSubviews
 {
     [super layoutSubviews];
+    
+    [self initializeFlowLayout];
+    [self initializeCollectionView];
     
     self.collectionView.frame = self.bounds;
     if (!self.collectionView.superview) {
@@ -102,8 +103,8 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 {
     if (!self.flowLayout) {
         UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
-        layout.headerReferenceSize = CGSizeMake(self.bounds.size.width, 64);
-        layout.itemSize = CGSizeMake(44, 44);
+        layout.headerReferenceSize = CGSizeMake(self.bounds.size.width, 44);
+        layout.itemSize = CGSizeMake(CGRectGetWidth(self.bounds)/8, CGRectGetHeight(self.bounds)/8);
         layout.minimumLineSpacing = 2.0f;
         layout.minimumInteritemSpacing = 2.0f;
         self.flowLayout = layout;
@@ -357,13 +358,26 @@ CGPoint toSectionOrigin = [self convertPoint:toAttrs.frame.origin fromView:cv];
         NSDateFormatter *dateFormatter = [self.calendar df_dateFormatterNamed:@"calendarMonthHeader" withConstructor:^{
             NSDateFormatter *dateFormatter = [NSDateFormatter new];
             dateFormatter.calendar = self.calendar;
-            dateFormatter.dateFormat = [dateFormatter.class dateFormatFromTemplate:@"yyyyLLLL" options:0 locale:[NSLocale currentLocale]];
+            dateFormatter.dateFormat = [dateFormatter.class dateFormatFromTemplate:@"LLL" options:0 locale:[NSLocale currentLocale]];
             return dateFormatter;
         }];
         
         NSDate *formattedDate = [self dateForFirstDayInSection:indexPath.section];
-        monthHeader.textLabel.text = [dateFormatter stringFromDate:formattedDate];
+        NSDateComponents *formattedDateComponents = [self.calendar components:NSCalendarUnitWeekday fromDate:formattedDate];
+        NSUInteger weekday = [formattedDateComponents weekday];
+        NSDateFormatter *abbreviatedDateFormatter = [[NSDateFormatter alloc]init];
+        abbreviatedDateFormatter.calendar = self.calendar;
+        abbreviatedDateFormatter.dateFormat = [dateFormatter.class dateFormatFromTemplate:@"yyyyLLLL" options:0 locale:[NSLocale currentLocale]];
+        NSString *navtitle =[abbreviatedDateFormatter stringFromDate:formattedDate];
+        [self.delegate setNavigationTitle:navtitle];
         
+        NSString *monthHeaderString = [dateFormatter stringFromDate:formattedDate];
+        monthHeader.textLabel.text = [monthHeaderString uppercaseString];
+        CGRect frame = monthHeader.textLabel.frame;
+        frame.origin.x = CGRectGetWidth(self.bounds)/8*(weekday-1);
+        frame.size.width = 100;
+        monthHeader.textLabel.frame = frame;
+        monthHeader.textLabel.textColor = [UIColor blueColor];
         return monthHeader;
     }
     return nil;

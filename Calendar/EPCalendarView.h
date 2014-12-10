@@ -11,6 +11,7 @@
 @protocol CalendarViewDelegate <NSObject>
 
 - (void)dataItems:(NSArray *)items;
+- (void)setNavigationTitle:(NSString *)title;
 
 @end
 

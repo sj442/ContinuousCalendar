@@ -23,7 +23,8 @@
     self.window = [[UIWindow alloc]initWithFrame:[UIScreen mainScreen].bounds];
     self.window.backgroundColor = [UIColor whiteColor];
     EPCalendarCollectionViewController *vc = [[EPCalendarCollectionViewController alloc]init];
-    self.window.rootViewController = vc;
+    UINavigationController *navC = [[UINavigationController alloc]initWithRootViewController:vc];
+    self.window.rootViewController = navC;
     [self.window makeKeyAndVisible];
     
     EKEventStore *store = [[EventStore sharedInstance] eventStore];
