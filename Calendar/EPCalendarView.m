@@ -374,10 +374,11 @@ CGPoint toSectionOrigin = [self convertPoint:toAttrs.frame.origin fromView:cv];
         NSString *monthHeaderString = [dateFormatter stringFromDate:formattedDate];
         monthHeader.textLabel.text = [monthHeaderString uppercaseString];
         CGRect frame = monthHeader.textLabel.frame;
-        frame.origin.x = CGRectGetWidth(self.bounds)/8*(weekday-1);
-        frame.size.width = 100;
+        frame.origin.x = 5+CGRectGetWidth(self.bounds)/7*(weekday-1);
+        frame.size.width = 50;
         monthHeader.textLabel.frame = frame;
         monthHeader.textLabel.textColor = [UIColor blueColor];
+        monthHeader.textLabel.textAlignment = NSTextAlignmentLeft;
         return monthHeader;
     }
     return nil;
