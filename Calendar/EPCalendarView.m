@@ -24,7 +24,6 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 @property (strong, nonatomic) NSCalendar *calendar;
 @property (assign, nonatomic) EPCalendarDate fromDate;
 @property (assign, nonatomic) EPCalendarDate toDate;
-@property (strong, nonatomic) UICollectionViewFlowLayout *flowLayout;
 
 + (NSCache *) eventsCache;
 
@@ -64,6 +63,7 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     [super layoutSubviews];
     
     [self initializeFlowLayout];
+    [self initializeWeekFlowLayout];
     [self initializeCollectionView];
     
     self.collectionView.frame = self.bounds;
@@ -75,11 +75,6 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 - (void)willMoveToSuperview:(UIView *)newSuperview
 {
     [super willMoveToSuperview:newSuperview];
-    UICollectionView *cv = self.collectionView;
-    NSInteger item = cv.numberOfSections/4;
-    NSInteger section = cv.numberOfSections/2;
-    NSIndexPath *cellIndexPath = [NSIndexPath indexPathForItem:item inSection:section];
-    [self.collectionView scrollToItemAtIndexPath:cellIndexPath atScrollPosition:UICollectionViewScrollPositionBottom animated:NO];
 }
 
 - (EPCalendarCollectionView *)initializeCollectionView
@@ -96,6 +91,7 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
         [_collectionView registerClass:[EPCalendarCell class] forCellWithReuseIdentifier:EPCalendarCellIDentifier];
         [_collectionView registerClass:[EPCalendarMonthHeader class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:EPCalendarMonthHeaderIDentifier];
         [_collectionView reloadData];
+        
         UIPanGestureRecognizer *pan = _collectionView.panGestureRecognizer;
         [pan addTarget:self action:@selector(collectionViewPanned:)];
       
@@ -105,8 +101,6 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 
 - (void)collectionViewPanned:(UIPanGestureRecognizer *)pan
 {
-    NSLog(@"velocity %f", (fabsf([pan velocityInView:self].y)));
-    
     if (fabsf([pan velocityInView:self].y)>500.0f) {
         return;
     }
@@ -116,12 +110,25 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     }
 }
 
+- (UICollectionViewFlowLayout *)initializeWeekFlowLayout
+{
+    if (!self.weekFlowLayout) {
+        UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
+        layout.headerReferenceSize = CGSizeZero;
+        layout.itemSize = CGSizeMake(CGRectGetWidth(self.bounds)/8, CGRectGetHeight(self.bounds)/7);
+        layout.minimumLineSpacing = 2.0f;
+        layout.minimumInteritemSpacing = 2.0f;
+        self.weekFlowLayout = layout;
+    }
+    return self.weekFlowLayout;
+}
+
 - (UICollectionViewFlowLayout *)initializeFlowLayout
 {
     if (!self.flowLayout) {
         UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
         layout.headerReferenceSize = CGSizeMake(self.bounds.size.width, 44);
-        layout.itemSize = CGSizeMake(CGRectGetWidth(self.bounds)/8, CGRectGetHeight(self.bounds)/8);
+        layout.itemSize = CGSizeMake(CGRectGetWidth(self.bounds)/8, CGRectGetHeight(self.bounds)/7);
         layout.minimumLineSpacing = 2.0f;
         layout.minimumInteritemSpacing = 2.0f;
         self.flowLayout = layout;
@@ -129,23 +136,6 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     return self.flowLayout;
 }
 
-- (void)centerCollectionViewToCurrentDateWithCompletion: (void (^)(void))completion;
-{
-    NSInteger item = 0;
-    NSInteger section = self.collectionView.numberOfSections/2;
-    NSIndexPath *cellIndexPath = [NSIndexPath indexPathForItem:item inSection:section];
-    [self.collectionView scrollToItemAtIndexPath:cellIndexPath atScrollPosition:UICollectionViewScrollPositionCenteredVertically animated:NO];
-    completion ();
-}
-
-- (void)populateCells
-{
-    NSArray *visibleCells = [self.collectionView visibleCells];
-    for (EPCalendarCell *cell in visibleCells) {
-        cell.hasEvents = [self calendarEventsForDate:cell.cellDate] && cell.enabled;
-        [cell layoutSubviews];
-    }
-}
 
 - (void)calendarCollectionViewWillLayoutSubviews:(EPCalendarCollectionView *)collectionView
 {
@@ -426,11 +416,6 @@ CGPoint toSectionOrigin = [self convertPoint:toAttrs.frame.origin fromView:cv];
     [self populateCells];
 }
 
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView
-{
-    
-}
-
 #pragma  mark - Events cache
 
 + (NSCache *) eventsCache {
@@ -447,6 +432,7 @@ CGPoint toSectionOrigin = [self convertPoint:toAttrs.frame.origin fromView:cv];
 {
     NSIndexPath *ip = [self.collectionView indexPathForItemAtPoint:point];
     EPCalendarCell *cell = ((EPCalendarCell *)[self.collectionView cellForItemAtIndexPath:ip]);
+    NSDate *cellDate = cell.cellDate;
     [self willChangeValueForKey:@"selectedDate"];
     NSArray *events = [[[self class] eventsCache] objectForKey:cell.cellDate];
     self.selectedIndexPath = ip;
@@ -455,10 +441,44 @@ CGPoint toSectionOrigin = [self convertPoint:toAttrs.frame.origin fromView:cv];
     ? [self.calendar dateFromComponents:[self dateComponentsFromPickerDate:cell.date]]
     : nil;
     [self didChangeValueForKey:@"selectedDate"];
+    
+    NSDateComponents *weekOfMonth = [self.calendar components:NSCalendarUnitWeekOfMonth fromDate:cellDate];
+    NSInteger numberOfWeeks = [self numberOfWeeksForMonthOfDate:cellDate];
+    
+    if (weekOfMonth.weekOfMonth ==1) {
+        [self appendPreviousMonthAtIndexPath:ip];
+        [self.collectionView setCollectionViewLayout:self.weekFlowLayout];
+    }
+    
+    if (weekOfMonth.weekOfMonth == numberOfWeeks-1) {
+        [self appendNextMonthAtIndexPath:ip];
+    } else
+    
+    if (weekOfMonth.weekOfMonth== numberOfWeeks) {
+        [self appendNextMonthAtIndexPath:ip];
+        [self.collectionView setCollectionViewLayout:self.weekFlowLayout];
+    }
 
-    [self.collectionView scrollToItemAtIndexPath:ip atScrollPosition:UICollectionViewScrollPositionTop animated:YES];
+    [self.collectionView scrollToItemAtIndexPath:ip atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
     [self.delegate moveupTableView];
+}
 
+- (void)appendPreviousMonthAtIndexPath:(NSIndexPath *)indexPath
+{
+    
+}
+
+- (void)appendNextMonthAtIndexPath:(NSIndexPath *)indexPath
+{
+}
+
+- (void)populateCells
+{
+    NSArray *visibleCells = [self.collectionView visibleCells];
+    for (EPCalendarCell *cell in visibleCells) {
+        cell.hasEvents = [self calendarEventsForDate:cell.cellDate] && cell.isEnabled;
+        [cell layoutSubviews];
+    }
 }
 
 @end

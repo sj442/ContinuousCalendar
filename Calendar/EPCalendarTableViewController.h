@@ -23,4 +23,6 @@
 
 @property (strong, nonatomic) NSArray *dataItems;
 
+@property (weak, nonatomic) UIView *labelView;
+
 @end

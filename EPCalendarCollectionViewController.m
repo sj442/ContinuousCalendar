@@ -35,6 +35,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    
     ExtendedNavBarView *dayView = [[ExtendedNavBarView alloc]initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)/25)];
     [self.view addSubview:dayView];
     
@@ -45,7 +46,7 @@
     calendarView.delegate = self;
     [self.view addSubview:calendarView];
     self.calendarView = calendarView;
-    
+        
     EPCalendarTableViewController *tableVC = [[EPCalendarTableViewController alloc]initWithNibName:@"EPCalendarTableViewController" bundle:nil];
     self.tableViewController = tableVC;
     [self addChildViewController:tableVC];
@@ -61,47 +62,6 @@
 
 #pragma mark - CalendarTableView Delegate
 
-- (void)moveUpTableView
-{
-    [UIView animateWithDuration:0.5f animations:^{
-        CGRect frame = self.collectionViewContainer.frame;
-        frame.origin.y = frame.origin.y-self.collectionViewContainer.frame.size.height*0.7;
-        frame.size.height = frame.size.height;
-        self.collectionViewContainer.frame = frame;
-        frame = self.tableViewContainer.frame;
-        frame.origin.y = frame.origin.y-self.collectionViewContainer.frame.size.height*0.7;
-        self.tableViewContainer.frame = frame;
-    } completion:^(BOOL finished) {
-        [self.calendarView.collectionView scrollToItemAtIndexPath:self.calendarView.selectedIndexPath atScrollPosition:UICollectionViewScrollPositionBottom animated:YES];
-        self.calendarView.collectionView.scrollEnabled = NO;
-        self.didMoveUp = YES;
-    }];
-}
-
-- (void)moveDownTableView
-{
-    [UIView animateWithDuration:0.5f animations:^{
-        CGRect frame = self.collectionViewContainer.frame;
-        frame.origin.y = frame.origin.y+self.collectionViewContainer.frame.size.height*0.7;
-        self.collectionViewContainer.frame = frame;
-        frame = self.tableViewContainer.frame;
-        frame.origin.y = frame.origin.y+self.collectionViewContainer.frame.size.height*0.7;
-        self.tableViewContainer.frame = frame;
-    } completion:^(BOOL finished) {
-        self.calendarView.collectionView.scrollEnabled = YES;
-        self.didMoveUp = NO;
-    }];
-}
-
-- (void)didSelectEventAtPoint:(CGPoint)point
-{
-    if (!self.didMoveUp) {
-        [self moveUpTableView];
-    } else {
-        [self moveDownTableView];
-    }
-}
-
 - (void)dataItems:(NSArray *)items
 {
     self.tableViewController.dataItems = items;
@@ -115,25 +75,32 @@
 
 - (void)moveupTableView
 {
-    [UIView animateWithDuration:0.1f animations:^{
+    [UIView animateWithDuration:0.25f animations:^{
         CGRect frame = self.tableViewController.view.frame;
-        frame.origin.y = 150;
-        frame.size.height = self.view.frame.size.height -150;
+        frame.origin.y = (CGRectGetHeight(self.calendarView.frame)/7)*2 +60;
+        frame.size.height = self.view.frame.size.height -CGRectGetHeight(self.calendarView.frame)/7*2 +44;
         self.tableViewController.view.frame = frame;
-        [self.view insertSubview:self.tableViewController.view aboveSubview:self.calendarView];
+        [self.view bringSubviewToFront:self.tableViewController.view];
+        UIView *labelView = [[UIView alloc]initWithFrame:CGRectMake(0, -50, 320, 50)];
+        labelView.backgroundColor = [UIColor redColor];
+        [self.tableViewController.view addSubview:labelView];
+        self.tableViewController.labelView = labelView;
         self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(goBackToMonthView:)];
     }];
     }
 
 - (void)goBackToMonthView: (id)sender
 {
-    [UIView animateWithDuration:0.1f animations:^{
+    [UIView animateWithDuration:0.25f animations:^{
         CGRect frame = self.tableViewController.view.frame;
         frame.origin.y = self.calendarView.frame.origin.y;
         frame.size.height = self.calendarView.frame.size.height;
         self.tableViewController.view.frame = frame;
-        [self.view insertSubview:self.tableViewController.view belowSubview:self.calendarView];
+        [self.tableViewController.labelView removeFromSuperview];
+        [self.view bringSubviewToFront:self.calendarView];
         self.navigationItem.leftBarButtonItem = nil;
+        [self.calendarView populateCells];
+        [self.calendarView.collectionView setCollectionViewLayout:self.calendarView.flowLayout];
     }];
 }
 

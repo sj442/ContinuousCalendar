@@ -15,5 +15,8 @@
 
 + (NSDate*)calendarEndDateFromDate:(NSDate*)date ForCalendar:(NSCalendar*)calendar;
 
+- (BOOL)liesInSecondLastWeekOfMonth;
+
+- (BOOL)liesInLastWeekOfMonth;
 
 @end

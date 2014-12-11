@@ -25,7 +25,10 @@
 @property (strong, nonatomic) NSIndexPath *selectedIndexPath;
 @property (weak, nonatomic) id <CalendarViewDelegate> delegate;
 
-- (void)centerCollectionViewToCurrentDateWithCompletion: (void (^)(void))completion;
+@property (strong, nonatomic) UICollectionViewFlowLayout *flowLayout;
+@property (strong, nonatomic) UICollectionViewFlowLayout *weekFlowLayout;
+
+
 - (void)populateCells;
 
 @end
