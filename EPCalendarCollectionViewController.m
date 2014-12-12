@@ -43,11 +43,11 @@
     
     EPCalendarView *calendarView = [EPCalendarView new];
     calendarView.frame =CGRectMake(0, CGRectGetMaxY(self.dayView.frame), CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds) - CGRectGetHeight(self.dayView.frame));
-    calendarView.delegate = self;
     [self.view addSubview:calendarView];
     self.calendarView = calendarView;
-        
-    EPCalendarTableViewController *tableVC = [[EPCalendarTableViewController alloc]initWithNibName:@"EPCalendarTableViewController" bundle:nil];
+    self.calendarView.delegate = self;
+    
+    EPCalendarTableViewController *tableVC = [[EPCalendarTableViewController alloc]init];
     self.tableViewController = tableVC;
     [self addChildViewController:tableVC];
     tableVC.view.frame = self.calendarView.frame;
@@ -60,13 +60,7 @@
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark - CalendarTableView Delegate
-
-- (void)dataItems:(NSArray *)items
-{
-    self.tableViewController.dataItems = items;
-    [self.tableViewController.tableView reloadData];
-}
+#pragma mark - CalendarView Delegate
 
 - (void)setNavigationTitle:(NSString *)title
 {
@@ -77,18 +71,21 @@
 {
     [UIView animateWithDuration:0.25f animations:^{
         CGRect frame = self.tableViewController.view.frame;
-        frame.origin.y = (CGRectGetHeight(self.calendarView.frame)/7)*2 +60;
-        frame.size.height = self.view.frame.size.height -CGRectGetHeight(self.calendarView.frame)/7*2 +44;
+        frame.origin.y = 20;
+        frame.size.height = self.view.frame.size.height;
         self.tableViewController.view.frame = frame;
+        self.tableViewController.calendarView.selectedDate = self.calendarView.selectedDate;
         [self.view bringSubviewToFront:self.tableViewController.view];
-        UIView *labelView = [[UIView alloc]initWithFrame:CGRectMake(0, -50, 320, 50)];
-        labelView.backgroundColor = [UIColor redColor];
-        [self.tableViewController.view addSubview:labelView];
-        self.tableViewController.labelView = labelView;
         self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(goBackToMonthView:)];
+    } completion:^(BOOL finished) {
+        NSDateFormatter *abbreviatedDateFormatter = [[NSDateFormatter alloc]init];
+        abbreviatedDateFormatter.calendar = self.calendarView.calendar;
+        abbreviatedDateFormatter.dateFormat = [abbreviatedDateFormatter.class dateFormatFromTemplate:@"yyyyLLLL" options:0 locale:[NSLocale currentLocale]];
+        NSString *navtitle =[abbreviatedDateFormatter stringFromDate:self.calendarView.selectedDate];
+        self.title = navtitle;
     }];
-    }
-
+}
+     
 - (void)goBackToMonthView: (id)sender
 {
     [UIView animateWithDuration:0.25f animations:^{
@@ -96,12 +93,15 @@
         frame.origin.y = self.calendarView.frame.origin.y;
         frame.size.height = self.calendarView.frame.size.height;
         self.tableViewController.view.frame = frame;
-        [self.tableViewController.labelView removeFromSuperview];
         [self.view bringSubviewToFront:self.calendarView];
-        self.navigationItem.leftBarButtonItem = nil;
         [self.calendarView populateCells];
         [self.calendarView.collectionView setCollectionViewLayout:self.calendarView.flowLayout];
+        self.navigationItem.leftBarButtonItem = nil;
+    } completion:^(BOOL finished) {
+        self.calendarView.weekMode = NO;
+        [self.calendarView populateCells];
     }];
 }
+
 
 @end

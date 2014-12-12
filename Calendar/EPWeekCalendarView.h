@@ -1,31 +1,30 @@
 //
-//  EPCalendarView.h
+//  EPWeekCalendarView.h
 //  Calendar
 //
-//  Created by Sunayna Jain on 12/5/14.
+//  Created by Sunayna Jain on 12/11/14.
 //  Copyright (c) 2014 Enhatch. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
-#import "EPCalendarCollectionView.h"
 
-@protocol CalendarViewDelegate <NSObject>
 
-- (void)moveupTableView;
+@protocol CalendarWeekViewDelegate <NSObject>
+
+- (void)dataItems:(NSArray *)items;
 - (void)setNavigationTitle:(NSString *)title;
 
 @end
 
-@interface EPCalendarView : UIView
+@interface EPWeekCalendarView : UIView
 
 - (instancetype)initWithCalendar:(NSCalendar *)calendar;
 
 @property (strong, nonatomic) NSDate *selectedDate;
-@property (strong, nonatomic) EPCalendarCollectionView *collectionView;
+@property (strong, nonatomic) UICollectionView *collectionView;
 @property (strong, nonatomic) NSIndexPath *selectedIndexPath;
-@property (weak, nonatomic) id<CalendarViewDelegate> delegate;
+@property (weak, nonatomic) id <CalendarWeekViewDelegate> delegate;
 
-@property (strong, nonatomic) UICollectionViewFlowLayout *flowLayout;
 @property (strong, nonatomic) UICollectionViewFlowLayout *weekFlowLayout;
 
 @property (strong, nonatomic) NSCalendar *calendar;

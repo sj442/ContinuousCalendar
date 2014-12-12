@@ -10,7 +10,7 @@
 #import "EPCalendarTableViewController.h"
 #import "EPCalendarView.h"
 
-@interface EPCalendarCollectionViewController : UIViewController <CalendarTableViewDelegate ,CalendarViewDelegate, UICollectionViewDelegate>
+@interface EPCalendarCollectionViewController : UIViewController <CalendarViewDelegate, UICollectionViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UIToolbar *toolBar;
 

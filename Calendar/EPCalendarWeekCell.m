@@ -1,4 +1,12 @@
 //
+//  EPCalendarWeekCell.m
+//  Calendar
+//
+//  Created by Sunayna Jain on 12/11/14.
+//  Copyright (c) 2014 Enhatch. All rights reserved.
+//
+
+//
 //  EPCalendarCell.m
 //  Calendar
 //
@@ -6,9 +14,9 @@
 //  Copyright (c) 2014 Enhatch. All rights reserved.
 //
 
-#import "EPCalendarCell.h"
+#import "EPCalendarWeekCell.h"
 
-@interface EPCalendarCell ()
+@interface EPCalendarWeekCell ()
 
 + (NSCache *) imageCache;
 + (id) cacheKeyForCalendarDate:(EPCalendarDate)date;
@@ -20,7 +28,7 @@
 
 @end
 
-@implementation EPCalendarCell
+@implementation EPCalendarWeekCell
 @synthesize imageView = _imageView;
 @synthesize overlayView = _overlayView;
 @synthesize dotview = _dotview;
@@ -38,11 +46,6 @@
     [self setNeedsLayout];
 }
 
-- (void) setEnabled:(BOOL)enabled {
-    _enabled = enabled;
-    [self setNeedsLayout];
-}
-
 - (void) setHighlighted:(BOOL)highlighted {
     [super setHighlighted:highlighted];
     [self setNeedsLayout];
@@ -55,7 +58,7 @@
 - (void) layoutSubviews {
     
     [super layoutSubviews];
-        
+    
     //	Instead of using labels, use images keyed by day.
     //	This avoids redrawing text within labels, which involve lots of parts of
     //	WebCore and CoreGraphics, and makes sure scrolling is always smooth.
@@ -71,7 +74,6 @@
     //	and draw it, but since that’s only one bitmap instead of 35-odd (7 weeks)
     //	that’s mostly okay.
     
-    self.imageView.alpha = self.enabled ? 1.0f : 0.0f;
     self.imageView.image = [[self class] fetchObjectForKey:[[self class] cacheKeyForCalendarDate:self.date] withCreator:^{
         
         UIGraphicsBeginImageContextWithOptions(self.bounds.size, YES, self.window.screen.scale);
@@ -86,7 +88,7 @@
         CGContextSetFillColorWithColor(context, [UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0f].CGColor);
 #else
         
-      //  CGContextSetFillColorWithColor(context, [UIColor colorWithRed:53.0f/256.0f green:145.0f/256.0f blue:195.0f/256.0f alpha:1.0f].CGColor);
+        //  CGContextSetFillColorWithColor(context, [UIColor colorWithRed:53.0f/256.0f green:145.0f/256.0f blue:195.0f/256.0f alpha:1.0f].CGColor);
         CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
         
 #endif
@@ -96,14 +98,14 @@
         UIFont *font = [UIFont boldSystemFontOfSize:18.0f];
         CGRect textBounds = (CGRect){ 0.0f, 10.0f, 44.0f, 24.0f };
         
-       // if (self.enabled) {
+        // if (self.enabled) {
         
         if (!self.isSelected) {
             CGContextSetFillColorWithColor(context, [UIColor blackColor].CGColor);
         } else {
             CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
         }
-       // [[NSString stringWithFormat:@"%lu", (unsigned long)self.date.day] drawInRect:textBounds withFont:font lineBreakMode:NSLineBreakByCharWrapping alignment:NSTextAlignmentCenter];
+        // [[NSString stringWithFormat:@"%lu", (unsigned long)self.date.day] drawInRect:textBounds withFont:font lineBreakMode:NSLineBreakByCharWrapping alignment:NSTextAlignmentCenter];
         
         NSMutableParagraphStyle *textStyle = [[NSMutableParagraphStyle defaultParagraphStyle] mutableCopy];
         textStyle.lineBreakMode = NSLineBreakByCharWrapping;
@@ -111,17 +113,17 @@
         
         [[NSString stringWithFormat:@"%lu", (unsigned long) self.date.day] drawInRect:textBounds withAttributes:@{NSFontAttributeName:font, NSParagraphStyleAttributeName:textStyle}];
         
-      //  } else {
-     //       CGContextSetFillColorWithColor(context, [UIColor lightGrayColor].CGColor);
-     //       [[NSString stringWithFormat:@"%lu", (unsigned long)self.date.day] drawInRect:textBounds withFont:font lineBreakMode:NSLineBreakByCharWrapping alignment:NSTextAlignmentCenter];
- 
-   //     }
+        //  } else {
+        //       CGContextSetFillColorWithColor(context, [UIColor lightGrayColor].CGColor);
+        //       [[NSString stringWithFormat:@"%lu", (unsigned long)self.date.day] drawInRect:textBounds withFont:font lineBreakMode:NSLineBreakByCharWrapping alignment:NSTextAlignmentCenter];
+        
+        //     }
         UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
         
         return image;
     }];
-    self.overlayView.hidden = !((self.selected || self.highlighted) && self.enabled) ;
+    self.overlayView.hidden = !(self.selected || self.highlighted) ;
     self.dotview.hidden = !self.hasEvents;
 }
 
@@ -183,3 +185,4 @@
 
 
 @end
+

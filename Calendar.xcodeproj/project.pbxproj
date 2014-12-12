@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		3F6190921A38C4CB00CBA01B /* ExtendedNavBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6190911A38C4CB00CBA01B /* ExtendedNavBarView.m */; };
 		3F6190951A38E62400CBA01B /* EPCalendarWeekViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6190941A38E62400CBA01B /* EPCalendarWeekViewController.m */; };
+		3F6190981A3A408800CBA01B /* EPWeekCalendarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F6190971A3A408800CBA01B /* EPWeekCalendarView.m */; };
+		3F61909B1A3A4F3E00CBA01B /* EPCalendarWeekCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F61909A1A3A4F3E00CBA01B /* EPCalendarWeekCell.m */; };
 		3FBD970D1A30BFD300BDE8B7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FBD970C1A30BFD300BDE8B7 /* main.m */; };
 		3FBD97101A30BFD300BDE8B7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FBD970F1A30BFD300BDE8B7 /* AppDelegate.m */; };
 		3FBD97181A30BFD300BDE8B7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3FBD97171A30BFD300BDE8B7 /* Images.xcassets */; };
@@ -21,7 +23,6 @@
 		3FBD973E1A30C0D600BDE8B7 /* EPCalendarMonthHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FBD973D1A30C0D600BDE8B7 /* EPCalendarMonthHeader.m */; };
 		3FBD975D1A3201DD00BDE8B7 /* EPCalendarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FBD975C1A3201DD00BDE8B7 /* EPCalendarView.m */; };
 		3FBD97611A322D4100BDE8B7 /* NSCalendar+dates.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FBD97601A322D4100BDE8B7 /* NSCalendar+dates.m */; };
-		3FD383CC1A374AA1003470B9 /* EPCalendarTableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3FD383CB1A374AA1003470B9 /* EPCalendarTableViewController.xib */; };
 		3FD383CF1A37683B003470B9 /* BlueDot@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FD383CE1A37683B003470B9 /* BlueDot@2x.png */; };
 		3FD383D21A376BAF003470B9 /* EventStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD383D11A376BAF003470B9 /* EventStore.m */; };
 		3FD383D51A376C63003470B9 /* NSDate+calendar.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD383D41A376C63003470B9 /* NSDate+calendar.m */; };
@@ -45,6 +46,10 @@
 		3F6190911A38C4CB00CBA01B /* ExtendedNavBarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExtendedNavBarView.m; sourceTree = "<group>"; };
 		3F6190931A38E62400CBA01B /* EPCalendarWeekViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EPCalendarWeekViewController.h; sourceTree = "<group>"; };
 		3F6190941A38E62400CBA01B /* EPCalendarWeekViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EPCalendarWeekViewController.m; sourceTree = "<group>"; };
+		3F6190961A3A408800CBA01B /* EPWeekCalendarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EPWeekCalendarView.h; sourceTree = "<group>"; };
+		3F6190971A3A408800CBA01B /* EPWeekCalendarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EPWeekCalendarView.m; sourceTree = "<group>"; };
+		3F6190991A3A4F3E00CBA01B /* EPCalendarWeekCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EPCalendarWeekCell.h; sourceTree = "<group>"; };
+		3F61909A1A3A4F3E00CBA01B /* EPCalendarWeekCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EPCalendarWeekCell.m; sourceTree = "<group>"; };
 		3FBD97071A30BFD300BDE8B7 /* Calendar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Calendar.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3FBD970B1A30BFD300BDE8B7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3FBD970C1A30BFD300BDE8B7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -70,7 +75,6 @@
 		3FBD975E1A320EFA00BDE8B7 /* DateHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DateHelper.h; sourceTree = "<group>"; };
 		3FBD975F1A322D4100BDE8B7 /* NSCalendar+dates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSCalendar+dates.h"; sourceTree = "<group>"; };
 		3FBD97601A322D4100BDE8B7 /* NSCalendar+dates.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSCalendar+dates.m"; sourceTree = "<group>"; };
-		3FD383CB1A374AA1003470B9 /* EPCalendarTableViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EPCalendarTableViewController.xib; sourceTree = "<group>"; };
 		3FD383CE1A37683B003470B9 /* BlueDot@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "BlueDot@2x.png"; sourceTree = "<group>"; };
 		3FD383D01A376BAF003470B9 /* EventStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventStore.h; sourceTree = "<group>"; };
 		3FD383D11A376BAF003470B9 /* EventStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventStore.m; sourceTree = "<group>"; };
@@ -135,6 +139,8 @@
 				3FBD973D1A30C0D600BDE8B7 /* EPCalendarMonthHeader.m */,
 				3FBD97391A30C0AE00BDE8B7 /* EPCalendarCell.h */,
 				3FBD973A1A30C0AE00BDE8B7 /* EPCalendarCell.m */,
+				3F6190991A3A4F3E00CBA01B /* EPCalendarWeekCell.h */,
+				3F61909A1A3A4F3E00CBA01B /* EPCalendarWeekCell.m */,
 				3FBD97301A30C02B00BDE8B7 /* EPCalendarCollectionViewController.h */,
 				3FBD97311A30C02B00BDE8B7 /* EPCalendarCollectionViewController.m */,
 				3F6190931A38E62400CBA01B /* EPCalendarWeekViewController.h */,
@@ -143,9 +149,10 @@
 				3F6190911A38C4CB00CBA01B /* ExtendedNavBarView.m */,
 				3FBD975B1A3201DD00BDE8B7 /* EPCalendarView.h */,
 				3FBD975C1A3201DD00BDE8B7 /* EPCalendarView.m */,
+				3F6190961A3A408800CBA01B /* EPWeekCalendarView.h */,
+				3F6190971A3A408800CBA01B /* EPWeekCalendarView.m */,
 				3FBD97331A30C05400BDE8B7 /* EPCalendarTableViewController.h */,
 				3FBD97341A30C05400BDE8B7 /* EPCalendarTableViewController.m */,
-				3FD383CB1A374AA1003470B9 /* EPCalendarTableViewController.xib */,
 				3FBD97361A30C07E00BDE8B7 /* EPCalendarCollectionView.h */,
 				3FBD97371A30C07E00BDE8B7 /* EPCalendarCollectionView.m */,
 				3FBD975F1A322D4100BDE8B7 /* NSCalendar+dates.h */,
@@ -274,7 +281,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3FD383CC1A374AA1003470B9 /* EPCalendarTableViewController.xib in Resources */,
 				3FBD971B1A30BFD300BDE8B7 /* LaunchScreen.xib in Resources */,
 				3FBD97181A30BFD300BDE8B7 /* Images.xcassets in Resources */,
 				3FD383CF1A37683B003470B9 /* BlueDot@2x.png in Resources */,
@@ -304,7 +310,9 @@
 				3FD383D51A376C63003470B9 /* NSDate+calendar.m in Sources */,
 				3FD383D21A376BAF003470B9 /* EventStore.m in Sources */,
 				3FBD973E1A30C0D600BDE8B7 /* EPCalendarMonthHeader.m in Sources */,
+				3F6190981A3A408800CBA01B /* EPWeekCalendarView.m in Sources */,
 				3FBD97101A30BFD300BDE8B7 /* AppDelegate.m in Sources */,
+				3F61909B1A3A4F3E00CBA01B /* EPCalendarWeekCell.m in Sources */,
 				3FBD975D1A3201DD00BDE8B7 /* EPCalendarView.m in Sources */,
 				3FBD97321A30C02B00BDE8B7 /* EPCalendarCollectionViewController.m in Sources */,
 				3FBD970D1A30BFD300BDE8B7 /* main.m in Sources */,

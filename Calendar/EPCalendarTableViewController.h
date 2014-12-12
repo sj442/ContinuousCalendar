@@ -7,15 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "EPWeekCalendarView.h"
+#import "EPCalendarView.h"
 
-@protocol CalendarTableViewDelegate <NSObject>
 
-
-@end
-
-@interface EPCalendarTableViewController : UIViewController
-
-@property (weak, nonatomic) id <CalendarTableViewDelegate> delegate;
+@interface EPCalendarTableViewController : UIViewController <CalendarWeekViewDelegate, UITableViewDataSource, UITableViewDelegate, CalendarViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UIToolbar *toolBar;
 
@@ -23,6 +19,8 @@
 
 @property (strong, nonatomic) NSArray *dataItems;
 
-@property (weak, nonatomic) UIView *labelView;
+@property (weak, nonatomic) UILabel *dayLabel;
+
+@property (weak, nonatomic) EPWeekCalendarView *calendarView;
 
 @end
