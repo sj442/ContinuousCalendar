@@ -23,15 +23,13 @@
 @property (strong, nonatomic) NSDate *selectedDate;
 @property (strong, nonatomic) EPCalendarCollectionView *collectionView;
 @property (strong, nonatomic) NSIndexPath *selectedIndexPath;
+
 @property (weak, nonatomic) id<CalendarViewDelegate> delegate;
 
 @property (strong, nonatomic) UICollectionViewFlowLayout *flowLayout;
-@property (strong, nonatomic) UICollectionViewFlowLayout *weekFlowLayout;
 
 @property (strong, nonatomic) NSCalendar *calendar;
 
-@property BOOL weekMode;
-
-- (void)populateCells;
+- (void)populateCellsWithEvents;
 
 @end

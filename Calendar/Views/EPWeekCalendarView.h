@@ -11,8 +11,14 @@
 
 @protocol CalendarWeekViewDelegate <NSObject>
 
+- (void)checkNavigationTitle:(NSString *)title;
+
+@end
+
+@protocol CalendarTableViewDelegate <NSObject>
+
 - (void)dataItems:(NSArray *)items;
-- (void)setNavigationTitle:(NSString *)title;
+- (void)setDayLabelText:(NSString *)text;
 
 @end
 
@@ -23,14 +29,12 @@
 @property (strong, nonatomic) NSDate *selectedDate;
 @property (strong, nonatomic) UICollectionView *collectionView;
 @property (strong, nonatomic) NSIndexPath *selectedIndexPath;
-@property (weak, nonatomic) id <CalendarWeekViewDelegate> delegate;
+@property (weak, nonatomic) id <CalendarWeekViewDelegate> weekDelegate;
+@property (weak, nonatomic) id <CalendarTableViewDelegate> tableViewDelegate;
+@property (strong, nonatomic) NSDate *referenceDate;
 
 @property (strong, nonatomic) UICollectionViewFlowLayout *weekFlowLayout;
-
 @property (strong, nonatomic) NSCalendar *calendar;
 
-@property BOOL weekMode;
-
-- (void)populateCells;
 
 @end

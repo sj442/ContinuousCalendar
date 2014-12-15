@@ -11,16 +11,13 @@
 #import "EPCalendarView.h"
 
 
-@interface EPCalendarTableViewController : UIViewController <CalendarWeekViewDelegate, UITableViewDataSource, UITableViewDelegate, CalendarViewDelegate>
+@interface EPCalendarTableViewController : UIViewController <CalendarTableViewDelegate, UITableViewDataSource, UITableViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UIToolbar *toolBar;
-
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) UILabel *dayLabel;
+@property (weak, nonatomic) EPWeekCalendarView *calendarView;
 
 @property (strong, nonatomic) NSArray *dataItems;
-
-@property (weak, nonatomic) UILabel *dayLabel;
-
-@property (weak, nonatomic) EPWeekCalendarView *calendarView;
 
 @end

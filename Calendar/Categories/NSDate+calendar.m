@@ -51,4 +51,19 @@
     return [calendar dateFromComponents:endDateComponents];
 }
 
+
++ (NSString*)getOrdinalSuffixForDate: (NSDate*)date forCalendar:(NSCalendar *)calendar{
+    NSDateComponents *components = [calendar components:NSCalendarUnitYear|NSCalendarUnitDay fromDate:date];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc]init];
+    [dateFormatter setDateFormat:@"MMMM"];
+    NSString *monthName = [dateFormatter stringFromDate:date];
+    NSInteger day= [components day];
+    NSInteger year = [components year];
+    NSArray *suffixLookup = [NSArray arrayWithObjects:@"th",@"st",@"nd",@"rd",@"th",@"th",@"th",@"th",@"th",@"th", nil];
+    if (day % 100 >= 11 && day % 100 <= 13) {
+        return [NSString stringWithFormat:@"%ld%@ %@, %ld", (long)day, @"th", monthName, (long)year];
+    }
+    return [NSString stringWithFormat:@"%ld%@ %@, %ld",(long)day, [suffixLookup objectAtIndex:(day % 10)], monthName, (long)year];
+}
+
 @end

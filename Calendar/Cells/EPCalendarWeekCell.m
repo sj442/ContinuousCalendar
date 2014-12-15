@@ -1,4 +1,12 @@
 //
+//  EPCalendarWeekCell.m
+//  Calendar
+//
+//  Created by Sunayna Jain on 12/11/14.
+//  Copyright (c) 2014 Enhatch. All rights reserved.
+//
+
+//
 //  EPCalendarCell.m
 //  Calendar
 //
@@ -6,9 +14,11 @@
 //  Copyright (c) 2014 Enhatch. All rights reserved.
 //
 
-#import "EPCalendarCell.h"
+#import "EPCalendarWeekCell.h"
+#import "UIColor+EH.h"
 
-@interface EPCalendarCell ()
+
+@interface EPCalendarWeekCell ()
 
 + (NSCache *) imageCache;
 + (id) cacheKeyForCalendarDate:(EPCalendarDate)date;
@@ -20,7 +30,7 @@
 
 @end
 
-@implementation EPCalendarCell
+@implementation EPCalendarWeekCell
 @synthesize imageView = _imageView;
 @synthesize overlayView = _overlayView;
 @synthesize dotview = _dotview;
@@ -38,11 +48,6 @@
     [self setNeedsLayout];
 }
 
-- (void) setEnabled:(BOOL)enabled {
-    _enabled = enabled;
-    [self setNeedsLayout];
-}
-
 - (void) setHighlighted:(BOOL)highlighted {
     [super setHighlighted:highlighted];
     [self setNeedsLayout];
@@ -55,73 +60,37 @@
 - (void) layoutSubviews {
     
     [super layoutSubviews];
-        
-    //	Instead of using labels, use images keyed by day.
-    //	This avoids redrawing text within labels, which involve lots of parts of
-    //	WebCore and CoreGraphics, and makes sure scrolling is always smooth.
     
-    //	Reason: when the view is first shown, all common days are drawn once and cached.
-    //	Memory pressure is also low.
-    
-    //	Note: Assumption! If there is a calendar with unique day names
-    //	we will be in big trouble. If there is one odd month with 1000 days we will
-    //	also be in some sort of trouble. But for most use cases we are probably good.
-    
-    //	We still have DFDatePickerMonthHeader take a NSDateFormatter formatted title
-    //	and draw it, but since that’s only one bitmap instead of 35-odd (7 weeks)
-    //	that’s mostly okay.
-    
-    self.imageView.alpha = self.enabled ? 1.0f : 0.0f;
     self.imageView.image = [[self class] fetchObjectForKey:[[self class] cacheKeyForCalendarDate:self.date] withCreator:^{
         
         UIGraphicsBeginImageContextWithOptions(self.bounds.size, YES, self.window.screen.scale);
         CGContextRef context = UIGraphicsGetCurrentContext();
-#if 0
-        
-        //	Generate a random color
-        //	https://gist.github.com/kylefox/1689973
-        CGFloat hue = ( arc4random() % 256 / 256.0 );  //  0.0 to 1.0
-        CGFloat saturation = ( arc4random() % 128 / 256.0 ) + 0.5;  //  0.5 to 1.0, away from white
-        CGFloat brightness = ( arc4random() % 128 / 256.0 ) + 0.5;  //  0.5 to 1.0, away from black
-        CGContextSetFillColorWithColor(context, [UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:1.0f].CGColor);
-#else
-        
-      //  CGContextSetFillColorWithColor(context, [UIColor colorWithRed:53.0f/256.0f green:145.0f/256.0f blue:195.0f/256.0f alpha:1.0f].CGColor);
+
         CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
-        
-#endif
         
         CGContextFillRect(context, self.bounds);
         
         UIFont *font = [UIFont boldSystemFontOfSize:18.0f];
         CGRect textBounds = (CGRect){ 0.0f, 10.0f, 44.0f, 24.0f };
         
-       // if (self.enabled) {
-        
         if (!self.isSelected) {
             CGContextSetFillColorWithColor(context, [UIColor blackColor].CGColor);
         } else {
             CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
         }
-       // [[NSString stringWithFormat:@"%lu", (unsigned long)self.date.day] drawInRect:textBounds withFont:font lineBreakMode:NSLineBreakByCharWrapping alignment:NSTextAlignmentCenter];
         
         NSMutableParagraphStyle *textStyle = [[NSMutableParagraphStyle defaultParagraphStyle] mutableCopy];
         textStyle.lineBreakMode = NSLineBreakByCharWrapping;
         textStyle.alignment = NSTextAlignmentCenter;
         
         [[NSString stringWithFormat:@"%lu", (unsigned long) self.date.day] drawInRect:textBounds withAttributes:@{NSFontAttributeName:font, NSParagraphStyleAttributeName:textStyle}];
-        
-      //  } else {
-     //       CGContextSetFillColorWithColor(context, [UIColor lightGrayColor].CGColor);
-     //       [[NSString stringWithFormat:@"%lu", (unsigned long)self.date.day] drawInRect:textBounds withFont:font lineBreakMode:NSLineBreakByCharWrapping alignment:NSTextAlignmentCenter];
- 
-   //     }
+    
         UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
         
         return image;
     }];
-    self.overlayView.hidden = !((self.selected || self.highlighted) && self.enabled) ;
+    self.overlayView.hidden = !(self.selected || self.highlighted) ;
     self.dotview.hidden = !self.hasEvents;
 }
 
@@ -131,7 +100,7 @@
         _dotview =  [[UIView alloc]initWithFrame:CGRectMake(17, 40, 10, 10)];
         _dotview.layer.cornerRadius = 5;
         _dotview.clipsToBounds = YES;
-        _dotview.backgroundColor = [UIColor blueColor];
+        _dotview.backgroundColor = [UIColor primaryColor];
         [self.contentView addSubview:_dotview];
     }
     return _dotview;
@@ -183,3 +152,4 @@
 
 
 @end
+

@@ -15,6 +15,8 @@
 #import "NSCalendar+dates.h"
 #import "NSDate+calendar.h"
 #import "EventStore.h"
+#import "UIColor+EH.h"
+
 
 static NSString * const EPCalendarCellIDentifier = @"CalendarCell";
 static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
@@ -35,6 +37,7 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     self = [super initWithFrame:CGRectZero];
     if (self) {
         self.calendar = calendar;
+        self.selectedDate = [NSDate date];
         self.backgroundColor = [UIColor whiteColor];
         NSDate *now = [self.calendar dateFromComponents:[self.calendar components:NSCalendarUnitYear|NSCalendarUnitMonth fromDate:[NSDate date]]];
         
@@ -62,7 +65,6 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     [super layoutSubviews];
     
     [self initializeFlowLayout];
-    [self initializeWeekFlowLayout];
     [self initializeCollectionView];
     
     self.collectionView.frame = self.bounds;
@@ -93,7 +95,6 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
         
         UIPanGestureRecognizer *pan = _collectionView.panGestureRecognizer;
         [pan addTarget:self action:@selector(collectionViewPanned:)];
-      
     }
     return _collectionView;
 }
@@ -107,19 +108,6 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     if (pan.state == UIGestureRecognizerStateEnded && fabsf([pan velocityInView:self].y)<500.0f) {
         [self populateCells];
     }
-}
-
-- (UICollectionViewFlowLayout *)initializeWeekFlowLayout
-{
-    if (!self.weekFlowLayout) {
-        UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
-        layout.headerReferenceSize = CGSizeZero;
-        layout.itemSize = CGSizeMake(CGRectGetWidth(self.bounds)/8, CGRectGetHeight(self.bounds)/8);
-        layout.minimumLineSpacing = 2.0f;
-        layout.minimumInteritemSpacing = 2.0f;
-        self.weekFlowLayout = layout;
-    }
-    return self.weekFlowLayout;
 }
 
 - (UICollectionViewFlowLayout *)initializeFlowLayout
@@ -138,6 +126,10 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 
 - (void)calendarCollectionViewWillLayoutSubviews:(EPCalendarCollectionView *)collectionView
 {
+    if (self.collectionView.contentOffset.y == 0.0f) {
+        [self populateCellsWithEvents];
+    }
+    
     if (collectionView.contentOffset.y < 0.0f) { //swiping down
         [self appendPastDates];
     }
@@ -180,62 +172,20 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 
     self.fromDate= [self calendarDateFromDate:[self.calendar dateByAddingComponents:components toDate:[self dateFromCalendarDate:self.fromDate] options:0]];
     self.toDate= [self calendarDateFromDate:[self.calendar dateByAddingComponents:components toDate:[self dateFromCalendarDate:self.toDate] options:0]];
-
-#if 0
     
-[cv performBatchUpdates:^{
+    [cv reloadData];
+    [cvLayout invalidateLayout];
+    [cvLayout prepareLayout];
     
-    if (components.month < 0) {
-        
-        [cv deleteSections:[NSIndexSet indexSetWithIndexesInRange:(NSRange){
-            cv.numberOfSections - abs(components.month),
-            abs(components.month)
-        }]];
-        
-        [cv insertSections:[NSIndexSet indexSetWithIndexesInRange:(NSRange){
-            0,
-            abs(components.month)
-        }]];
-        
-    } else {
-        
-        [cv insertSections:[NSIndexSet indexSetWithIndexesInRange:(NSRange){
-            cv.numberOfSections,
-            abs(components.month)
-        }]];
-        
-        [cv deleteSections:[NSIndexSet indexSetWithIndexesInRange:(NSRange){
-            0,
-            abs(components.month)
-        }]];
-    }
+    NSInteger toSection = [self.calendar components:NSCalendarUnitMonth fromDate:[self dateForFirstDayInSection:0] toDate:fromSectionOfDate options:0].month;
     
-} completion:^(BOOL finished) {
+    UICollectionViewLayoutAttributes *toAttrs = [cvLayout layoutAttributesForItemAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:toSection]];
+    CGPoint toSectionOrigin = [self convertPoint:toAttrs.frame.origin fromView:cv];
     
-    NSLog(@"%s %x", __PRETTY_FUNCTION__, finished);
-    
-}];
-
-for (UIView *view in cv.subviews)
-[view.layer removeAllAnimations];
-
-#else
-
-[cv reloadData];
-[cvLayout invalidateLayout];
-[cvLayout prepareLayout];
-
-#endif
-
-NSInteger toSection = [self.calendar components:NSCalendarUnitMonth fromDate:[self dateForFirstDayInSection:0] toDate:fromSectionOfDate options:0].month;
-UICollectionViewLayoutAttributes *toAttrs = [cvLayout layoutAttributesForItemAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:toSection]];
-CGPoint toSectionOrigin = [self convertPoint:toAttrs.frame.origin fromView:cv];
-
-[cv setContentOffset:(CGPoint) {
+    [cv setContentOffset:(CGPoint) {
     cv.contentOffset.x,
     cv.contentOffset.y + (toSectionOrigin.y - fromSectionOrigin.y)
-}];
-
+    }];
 }
 
 - (NSInteger) numberOfSectionsInCollectionView:(UICollectionView *)collectionView
@@ -383,7 +333,7 @@ CGPoint toSectionOrigin = [self convertPoint:toAttrs.frame.origin fromView:cv];
         frame.origin.x = 5+CGRectGetWidth(self.bounds)/7*(weekday-1);
         frame.size.width = 50;
         monthHeader.textLabel.frame = frame;
-        monthHeader.textLabel.textColor = [UIColor blueColor];
+        monthHeader.textLabel.textColor = [UIColor primaryColor];
         monthHeader.textLabel.textAlignment = NSTextAlignmentLeft;
         return monthHeader;
     }
@@ -430,7 +380,6 @@ CGPoint toSectionOrigin = [self convertPoint:toAttrs.frame.origin fromView:cv];
     return cache;
 }
 
-
 - (void)collectionViewTappedAtPoint:(CGPoint)point
 {
     NSIndexPath *ip = [self.collectionView indexPathForItemAtPoint:point];
@@ -438,6 +387,15 @@ CGPoint toSectionOrigin = [self convertPoint:toAttrs.frame.origin fromView:cv];
 }
 
 - (void)populateCells
+{
+    NSArray *visibleCells = [self.collectionView visibleCells];
+    for (EPCalendarCell *cell in visibleCells) {
+        cell.hasEvents = [self calendarEventsForDate:cell.cellDate] && cell.isEnabled;
+        [cell layoutSubviews];
+    }
+}
+
+- (void)populateCellsWithEvents
 {
     NSArray *visibleCells = [self.collectionView visibleCells];
     for (EPCalendarCell *cell in visibleCells) {

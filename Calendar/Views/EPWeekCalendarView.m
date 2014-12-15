@@ -8,8 +8,6 @@
 
 #import "EPWeekCalendarView.h"
 #import  <QuartzCore/QuartzCore.h>
-#import "EPCalendarCollectionView.h"
-#import "EPCalendarMonthHeader.h"
 #import "EPCalendarWeekCell.h"
 #import "DateHelper.h"
 #import "NSCalendar+dates.h"
@@ -17,7 +15,6 @@
 #import "EventStore.h"
 
 static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
-static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 
 @interface EPWeekCalendarView () <UICollectionViewDelegate, UICollectionViewDataSource>
 
@@ -38,6 +35,7 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     if (self) {
         self.calendar = calendar;
         self.selectedDate = [NSDate date];
+        self.referenceDate = [NSDate date];
         self.backgroundColor = [UIColor whiteColor];
         NSDate *now = [self.calendar dateFromComponents:[self.calendar components:NSCalendarUnitYear|NSCalendarUnitMonth fromDate:[NSDate date]]];
         
@@ -89,7 +87,6 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
         _collectionView.showsVerticalScrollIndicator = NO;
         _collectionView.scrollEnabled = NO;
         [_collectionView registerClass:[EPCalendarWeekCell class] forCellWithReuseIdentifier:EPCalendarWeekCellIdentifier];
-        [_collectionView registerClass:[EPCalendarMonthHeader class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:EPCalendarMonthHeaderIDentifier];
         [_collectionView reloadData];
     }
     return _collectionView;
@@ -106,108 +103,6 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
         self.weekFlowLayout = layout;
     }
     return self.weekFlowLayout;
-}
-
-- (void)calendarCollectionViewWillLayoutSubviews:(EPCalendarCollectionView *)collectionView
-{
-    if (collectionView.contentOffset.y < 0.0f) { //swiping down
-        [self appendPastDates];
-    }
-    
-    if (collectionView.contentOffset.y > (collectionView.contentSize.height - CGRectGetHeight(collectionView.bounds))) {
-        [self appendFutureDates];
-    }
-}
-
-- (void)appendPastDates
-{
-    NSDateComponents *components = [[NSDateComponents alloc]init];
-    components.month = -6;
-    [self shiftDatesByComponents:components];
-}
-
-
-- (void)appendFutureDates
-{
-    NSDateComponents *components = [[NSDateComponents alloc]init];
-    components.month = 6;
-    [self shiftDatesByComponents:components];
-}
-
-
-- (void)shiftDatesByComponents:(NSDateComponents *)components
-{
-    UICollectionView *cv = self.collectionView;
-    UICollectionViewFlowLayout *cvLayout = (UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout;
-    
-    NSArray *visibleCells = [self.collectionView visibleCells];
-    if (![visibleCells count]) {
-        return;
-    }
-    NSIndexPath *fromIndexPath = [cv indexPathForCell:((UICollectionViewCell *)visibleCells[0]) ];
-    NSInteger fromSection = fromIndexPath.section;
-    NSDate *fromSectionOfDate = [self dateForFirstDayInSection:fromSection];
-    UICollectionViewLayoutAttributes *fromAttrs = [cvLayout layoutAttributesForItemAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:fromSection]];
-    CGPoint fromSectionOrigin = [self convertPoint:fromAttrs.frame.origin fromView:cv];
-    
-    self.fromDate= [self calendarDateFromDate:[self.calendar dateByAddingComponents:components toDate:[self dateFromCalendarDate:self.fromDate] options:0]];
-    self.toDate= [self calendarDateFromDate:[self.calendar dateByAddingComponents:components toDate:[self dateFromCalendarDate:self.toDate] options:0]];
-    
-#if 0
-    
-    [cv performBatchUpdates:^{
-        
-        if (components.month < 0) {
-            
-            [cv deleteSections:[NSIndexSet indexSetWithIndexesInRange:(NSRange){
-                cv.numberOfSections - abs(components.month),
-                abs(components.month)
-            }]];
-            
-            [cv insertSections:[NSIndexSet indexSetWithIndexesInRange:(NSRange){
-                0,
-                abs(components.month)
-            }]];
-            
-        } else {
-            
-            [cv insertSections:[NSIndexSet indexSetWithIndexesInRange:(NSRange){
-                cv.numberOfSections,
-                abs(components.month)
-            }]];
-            
-            [cv deleteSections:[NSIndexSet indexSetWithIndexesInRange:(NSRange){
-                0,
-                abs(components.month)
-            }]];
-        }
-        
-    } completion:^(BOOL finished) {
-        
-        NSLog(@"%s %x", __PRETTY_FUNCTION__, finished);
-        
-    }];
-    
-    for (UIView *view in cv.subviews)
-        [view.layer removeAllAnimations];
-    
-#else
-    
-    [cv reloadData];
-    [cvLayout invalidateLayout];
-    [cvLayout prepareLayout];
-    
-#endif
-    
-    NSInteger toSection = [self.calendar components:NSCalendarUnitMonth fromDate:[self dateForFirstDayInSection:0] toDate:fromSectionOfDate options:0].month;
-    UICollectionViewLayoutAttributes *toAttrs = [cvLayout layoutAttributesForItemAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:toSection]];
-    CGPoint toSectionOrigin = [self convertPoint:toAttrs.frame.origin fromView:cv];
-    
-    [cv setContentOffset:(CGPoint) {
-        cv.contentOffset.x,
-        cv.contentOffset.y + (toSectionOrigin.y - fromSectionOrigin.y)
-    }];
-    
 }
 
 - (NSInteger) numberOfSectionsInCollectionView:(UICollectionView *)collectionView
@@ -259,7 +154,7 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 {
     EPCalendarWeekCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:EPCalendarWeekCellIdentifier forIndexPath:indexPath];
     cell.selected = NO;
-    NSDate *firstDayInWeek = [self dateForFirstDayInWeekForDate:self.selectedDate];
+    NSDate *firstDayInWeek = [self dateForFirstDayInWeekForDate:self.referenceDate];
     NSUInteger weekday = [self.calendar components:NSCalendarUnitWeekday fromDate:firstDayInWeek].weekday;
     NSDate *cellDate = [self.calendar dateByAddingComponents:((^{
         NSDateComponents *dateComponents = [NSDateComponents new];
@@ -297,8 +192,15 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     
     [components setDay:components.day-weekday+1];
     NSDate *firstDay = [self.calendar dateFromComponents:components];
-
    return firstDay;
+}
+
+- (NSDate *)oneWeekBeforeFromDate:(NSDate *)selectedDate
+{
+    NSDateComponents *components = [self.calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:selectedDate];
+    int weekday = [self.calendar component:NSCalendarUnitWeekday fromDate:selectedDate];
+    [components setDay:components.day-weekday];
+    return [self.calendar dateFromComponents:components];
 }
 
 - (void) collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
@@ -311,6 +213,18 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     ? [self.calendar dateFromComponents:[self dateComponentsFromPickerDate:cell.date]]
     : nil;
     [self didChangeValueForKey:@"selectedDate"];
+    
+    NSDateFormatter *abbreviatedDateFormatter = [[NSDateFormatter alloc]init];
+    abbreviatedDateFormatter.calendar = self.calendar;
+    abbreviatedDateFormatter.dateFormat = [abbreviatedDateFormatter.class dateFormatFromTemplate:@"yyyyLLLL" options:0 locale:[NSLocale currentLocale]];
+    NSString *navtitle =[abbreviatedDateFormatter stringFromDate:self.selectedDate];
+    [self.weekDelegate checkNavigationTitle:navtitle];
+    
+    if (indexPath.item>6) {
+        self.referenceDate = [self oneWeekBeforeFromDate:self.selectedDate];
+    } else {
+        self.referenceDate = self.selectedDate;
+    }
     [self.collectionView reloadData];
 }
 
@@ -322,7 +236,8 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
         [self calendarEventsForDate:selectedDate];
     }
     events = [[[self class] eventsCache] objectForKey:selectedDate];
-    [self.delegate dataItems:events];
+    [self.tableViewDelegate dataItems:events];
+    [self.tableViewDelegate setDayLabelText:[NSDate getOrdinalSuffixForDate:self.selectedDate forCalendar:self.calendar]];
     [self.collectionView reloadData];
 }
 
@@ -350,12 +265,6 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     };
 }
 
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
-{
-    [self populateCells];
-}
-
-
 #pragma  mark - Events cache
 
 + (NSCache *) eventsCache {
@@ -365,15 +274,6 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
         cache = [NSCache new];
     });
     return cache;
-}
-
-- (void)populateCells
-{
-    NSArray *visibleCells = [self.collectionView visibleCells];
-    for (EPCalendarWeekCell *cell in visibleCells) {
-        cell.hasEvents = [self calendarEventsForDate:cell.cellDate];
-        [cell layoutSubviews];
-    }
 }
 
 @end

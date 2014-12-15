@@ -8,6 +8,8 @@
 
 #import "EPCalendarCollectionViewController.h"
 #import "EPCalendarTableViewController.h"
+#import "EPCreateEventTableViewController.h"
+#import "UIColor+EH.h"
 
 #import "ExtendedNavBarView.h"
 
@@ -25,11 +27,15 @@
     [super viewDidLoad];
     self.navigationController.navigationBar.translucent = NO;
     self.automaticallyAdjustsScrollViewInsets = NO;
-    
+    [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor primaryColor]}];
+    self.navigationController.navigationBar.tintColor = [UIColor primaryColor];
+
     [self.navigationController.navigationBar setShadowImage:[[UIImage alloc] init]];
     
     [self.navigationController.navigationBar setBackgroundImage:[[UIImage alloc]init]
                                                   forBarMetrics:UIBarMetricsDefault];
+    
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"B22_taskbar__add-icon-outline"] style:UIBarButtonItemStylePlain target:self action:@selector(addEvent:)];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -53,11 +59,25 @@
     tableVC.view.frame = self.calendarView.frame;
     [self.view insertSubview:tableVC.view belowSubview:self.calendarView];
     [tableVC didMoveToParentViewController:self];
+    
+    NSIndexPath *ip = [NSIndexPath indexPathForItem:0 inSection:calendarView.collectionView.numberOfSections/2];
+    [self.calendarView.collectionView scrollToItemAtIndexPath:ip atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
+
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)addEvent:(id)sender
+{
+    EPCreateEventTableViewController *createEventVC;
+    createEventVC = [[EPCreateEventTableViewController alloc] initWithDate:self.calendarView.selectedDate];
+    createEventVC.editMode = YES;
+    UINavigationController *navC = [[UINavigationController alloc] initWithRootViewController:createEventVC];
+    createEventVC.title = @"New Event";
+    [self presentViewController:navC animated:YES completion:nil];
 }
 
 #pragma mark - CalendarView Delegate
@@ -74,7 +94,9 @@
         frame.origin.y = 20;
         frame.size.height = self.view.frame.size.height;
         self.tableViewController.view.frame = frame;
+        self.tableViewController.calendarView.weekDelegate = self;
         self.tableViewController.calendarView.selectedDate = self.calendarView.selectedDate;
+        self.tableViewController.calendarView.referenceDate = self.calendarView.selectedDate;
         [self.view bringSubviewToFront:self.tableViewController.view];
         self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(goBackToMonthView:)];
     } completion:^(BOOL finished) {
@@ -94,13 +116,19 @@
         frame.size.height = self.calendarView.frame.size.height;
         self.tableViewController.view.frame = frame;
         [self.view bringSubviewToFront:self.calendarView];
-        [self.calendarView populateCells];
-        [self.calendarView.collectionView setCollectionViewLayout:self.calendarView.flowLayout];
+        self.calendarView.selectedDate = self.tableViewController.calendarView.selectedDate;
+        [self.calendarView populateCellsWithEvents];
         self.navigationItem.leftBarButtonItem = nil;
     } completion:^(BOOL finished) {
-        self.calendarView.weekMode = NO;
-        [self.calendarView populateCells];
+        [self.calendarView populateCellsWithEvents];
     }];
+}
+
+#pragma mark- WeekCalendarView Delegate
+
+- (void)checkNavigationTitle:(NSString *)title
+{
+    self.title = title;
 }
 
 
