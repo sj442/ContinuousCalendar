@@ -66,4 +66,35 @@
     return [NSString stringWithFormat:@"%ld%@ %@, %ld",(long)day, [suffixLookup objectAtIndex:(day % 10)], monthName, (long)year];
 }
 
++ (NSString *)timeAtIndex:(NSInteger)index forDate:(NSDate *)date calendar:(NSCalendar *)calendar
+{
+    NSDateComponents *components = [calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:date];
+    NSDateComponents *dateComponents = [[NSDateComponents alloc]init];
+    [dateComponents setYear:components.year];
+    [dateComponents setMonth: components.month];
+    [dateComponents setDay:components.day];
+    NSString *time;
+    NSInteger quotient = index/12;
+    NSInteger remainder = index % 12;
+    
+    if ((quotient == 0 && remainder == 0) || (quotient == 2 && remainder == 0)) { //12 AM
+        time = @"12 AM";
+        dateComponents.hour = 0;
+    } else if (quotient ==1 && remainder == 0) { //Noon
+        time = @"Noon";
+        dateComponents.hour = 12;
+    } else if (quotient ==0 && remainder>0) { //12.01 AM to 11:59 AM
+        time = [NSString stringWithFormat:@"%ld AM", (long)remainder];
+        dateComponents.hour = remainder;
+    } else if (quotient == 1 && remainder >0) {
+        time = [NSString stringWithFormat:@"%ld PM", (long)remainder];
+        dateComponents.hour = index;
+    }
+    NSDate *dateAtIndex = [calendar dateFromComponents:dateComponents];
+    NSString *compoundString = [NSString stringWithFormat:@"%@~%@", time, dateAtIndex];
+    return compoundString;
+}
+
+
+
 @end

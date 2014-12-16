@@ -237,7 +237,7 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
     }
     events = [[[self class] eventsCache] objectForKey:selectedDate];
     [self.tableViewDelegate dataItems:events];
-    [self.tableViewDelegate setDayLabelText:[NSDate getOrdinalSuffixForDate:self.selectedDate forCalendar:self.calendar]];
+    [self.tableViewDelegate setToolbarText:[NSDate getOrdinalSuffixForDate:self.selectedDate forCalendar:self.calendar]];
     [self.collectionView reloadData];
 }
 

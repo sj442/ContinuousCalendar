@@ -17,4 +17,6 @@
 
 + (NSString *)getOrdinalSuffixForDate: (NSDate*)date forCalendar:(NSCalendar *)calendar;
 
++ (NSString *)timeAtIndex:(NSInteger)index forDate:(NSDate *)date calendar:(NSCalendar *)calendar;
+
 @end

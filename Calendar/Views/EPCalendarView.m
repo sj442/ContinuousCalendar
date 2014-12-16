@@ -295,8 +295,8 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     [self didChangeValueForKey:@"selectedDate"];
     [self.collectionView reloadData];
     
-        [self.collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
-        [self.delegate moveupTableView];
+    [self.collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
+    [self.delegate moveupTableView];
 }
 
 - (void) setSelectedDate:(NSDate *)selectedDate

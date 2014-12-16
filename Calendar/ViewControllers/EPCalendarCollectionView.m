@@ -18,11 +18,9 @@
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    NSLog(@"touches began");
     UITouch *touch = [[touches allObjects] lastObject];
     if (touches.count==1) {
         CGPoint point = [touch locationInView:self];
-        NSLog(@"point %f", point.y);
         [self.myDelegate collectionViewTappedAtPoint:point];
     }
 }

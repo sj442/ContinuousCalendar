@@ -18,7 +18,7 @@
 @protocol CalendarTableViewDelegate <NSObject>
 
 - (void)dataItems:(NSArray *)items;
-- (void)setDayLabelText:(NSString *)text;
+- (void)setToolbarText:(NSString *)text;
 
 @end
 

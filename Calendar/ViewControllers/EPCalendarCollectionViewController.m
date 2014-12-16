@@ -38,20 +38,28 @@
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"B22_taskbar__add-icon-outline"] style:UIBarButtonItemStylePlain target:self action:@selector(addEvent:)];
 }
 
-- (void)viewDidAppear:(BOOL)animated
+- (void)viewWillAppear:(BOOL)animated
 {
-    [super viewDidAppear:animated];
+    [super viewWillAppear:animated];
     
     ExtendedNavBarView *dayView = [[ExtendedNavBarView alloc]initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)/25)];
     [self.view addSubview:dayView];
     
     self.dayView = dayView;
     
-    EPCalendarView *calendarView = [EPCalendarView new];
+    NSCalendar *gregorian = [[NSCalendar alloc]initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    
+    EPCalendarView *calendarView = [[EPCalendarView alloc]initWithCalendar:gregorian];
     calendarView.frame =CGRectMake(0, CGRectGetMaxY(self.dayView.frame), CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds) - CGRectGetHeight(self.dayView.frame));
     [self.view addSubview:calendarView];
     self.calendarView = calendarView;
     self.calendarView.delegate = self;
+
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
     
     EPCalendarTableViewController *tableVC = [[EPCalendarTableViewController alloc]init];
     self.tableViewController = tableVC;
@@ -60,9 +68,10 @@
     [self.view insertSubview:tableVC.view belowSubview:self.calendarView];
     [tableVC didMoveToParentViewController:self];
     
-    NSIndexPath *ip = [NSIndexPath indexPathForItem:0 inSection:calendarView.collectionView.numberOfSections/2];
-    [self.calendarView.collectionView scrollToItemAtIndexPath:ip atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
-
+//    NSIndexPath *ip = [NSIndexPath indexPathForItem:0 inSection:self.calendarView.collectionView.numberOfSections/2];
+//    [self.calendarView.collectionView scrollToItemAtIndexPath:ip atScrollPosition:UICollectionViewScrollPositionTop animated:YES];
+//    
+//    [self.calendarView populateCellsWithEvents];
 }
 
 - (void)didReceiveMemoryWarning {
