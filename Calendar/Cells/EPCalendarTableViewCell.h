@@ -14,10 +14,10 @@ static NSString *EPCalendarTableViewCellIdentifier = @"CalendarTableViewCellIden
 
 + (UINib *)nib;
 
-@property (weak, nonatomic) UILabel *separatorView;
+@property (weak, nonatomic) UILabel *separatorLabel;
 @property (strong, nonatomic) NSDate *startDate;
 @property (strong, nonatomic) NSDate *endDate;
 @property (strong, nonatomic) NSMutableArray *events;
-@property  BOOL hasEvents;
+@property NSInteger eventsCount;
 
 @end

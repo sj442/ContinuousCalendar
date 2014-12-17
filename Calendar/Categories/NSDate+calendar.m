@@ -73,6 +73,7 @@
     [dateComponents setYear:components.year];
     [dateComponents setMonth: components.month];
     [dateComponents setDay:components.day];
+    
     NSString *time;
     NSInteger quotient = index/12;
     NSInteger remainder = index % 12;
@@ -94,7 +95,5 @@
     NSString *compoundString = [NSString stringWithFormat:@"%@~%@", time, dateAtIndex];
     return compoundString;
 }
-
-
 
 @end

@@ -7,8 +7,10 @@
 //
 
 #import "EPCalendarTableViewCell.h"
+#import "UIColor+EH.h"
 
 @implementation EPCalendarTableViewCell
+
 
 + (UINib *)nib
 {
@@ -17,10 +19,20 @@
 
 - (void)layoutSubviews
 {
+    
 }
 
 - (void)awakeFromNib {
     // Initialization code
+    UILabel *separatorView = [[UILabel alloc]initWithFrame:CGRectMake(5, 1, 50, 10)];
+    separatorView.font = [UIFont systemFontOfSize:10];
+    separatorView.textColor = [UIColor secondaryColor];
+    self.separatorLabel = separatorView;
+    [self.contentView addSubview:separatorView];
+}
+
+- (void)configureCellAtIndexPath:(NSIndexPath *)indexPath
+{
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
@@ -28,5 +40,6 @@
 
     // Configure the view for the selected state
 }
+
 
 @end
