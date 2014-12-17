@@ -20,4 +20,7 @@
 
 @property (strong, nonatomic) NSArray *dataItems;
 
+- (void)drawEventsOnTableView;
+
+
 @end

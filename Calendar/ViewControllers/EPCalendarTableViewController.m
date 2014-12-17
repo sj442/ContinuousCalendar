@@ -35,6 +35,11 @@
     [self setupTableView];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+}
+
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
@@ -102,84 +107,79 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     EPCalendarTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:EPCalendarTableViewCellIdentifier];
     
+    for (UIView *view in cell.contentView.subviews) {
+        if (![view isKindOfClass:[UILabel class]]) {
+            [view removeFromSuperview];
+        }
+    }
     cell.separatorLabel.text = [self fetchObjectForKey:indexPath withCreator:^id {
         NSString *compoundString =[NSDate timeAtIndex:indexPath.row forDate:self.calendarView.selectedDate calendar:self.calendarView.calendar];
         NSString *time = [[compoundString componentsSeparatedByString:@"~"] firstObject];
         [self.separatorTimesCache setObject:time forKey:indexPath];
-        
-        NSString *dateString = [[compoundString componentsSeparatedByString:@"~"] lastObject];
-        NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
-        [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss ZZZ"];
-        NSDate *date = [formatter dateFromString:dateString];
-        [self.startTimesCache setObject:date forKey:indexPath];
-        NSDate *endDate  =[NSDate dateWithTimeInterval:3600 sinceDate:date];
-        [self.endTimesCache setObject:endDate forKey:indexPath];
+        NSString *hourString = [[compoundString componentsSeparatedByString:@"~"] lastObject];
+        NSInteger hour = hourString.integerValue;
+        [self.startTimesCache setObject:[NSNumber numberWithInt:hour] forKey:indexPath];
+        [self.endTimesCache setObject:[NSNumber numberWithInt:hour+1] forKey:indexPath];
         return time;
     }];
     
-    cell.startDate = [self.startTimesCache objectForKey:indexPath];
-    cell.endDate = [self.endTimesCache objectForKey:indexPath];
+    cell.startHour = ((NSNumber *)[self.startTimesCache objectForKey:indexPath]);
+    cell.endHour = ((NSNumber *)[self.endTimesCache objectForKey:indexPath]);
+    
+    for (EKEvent *event in self.dataItems) {
+        if (event.allDay) {
+            continue;
+        }
+        NSDate *startTime = event.startDate;
+        NSInteger startMinutes = [self minutesInDate:startTime];
+        NSDate *endTime = event.endDate;
+        NSInteger endMinutes  =[self minutesInDate:endTime];
+        if (endMinutes == 0) {
+            endMinutes =60;
+        }
+        NSDateComponents *selectedDateComponents = [self.calendarView.calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:self.calendarView.selectedDate];
+        NSDateComponents *startDateComponents = [[NSDateComponents alloc]init];
+        [startDateComponents setYear:selectedDateComponents.year];
+        [startDateComponents setMonth:selectedDateComponents.month];
+        [startDateComponents setDay:selectedDateComponents.day];
+        [startDateComponents setHour:[cell.startHour integerValue]];
+        NSDate *startDate = [self.calendarView.calendar dateFromComponents:startDateComponents];
         
-//    NSString *dateString = [[compoundString componentsSeparatedByString:@"~"] lastObject];
-//    NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
-//    [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss ZZZ"];
-//    NSDate *date = [formatter dateFromString:dateString];
-//    cell.startDate = date;
-//    NSDate *endDate = [NSDate dateWithTimeInterval:3600 sinceDate:date];
-//    cell.endDate = endDate;
-//    
-//    cell.hasEvents = NO;
-//    for (EKEvent *event in self.dataItems) {
-//        if (event.allDay) {
-//            continue;
-//        }
-//        NSDate *startTime = event.startDate;
-//        NSInteger startMinutes = [self minutesInDate:startTime];
-//        NSDate *endTime = event.endDate;
-//        NSInteger endMinutes  =[self minutesInDate:endTime];
-//        if (endMinutes == 0) {
-//            endMinutes =60;
-//        }
-//        NSComparisonResult startResult = [startTime compare:date];
-//        NSComparisonResult startBoundaryResult = [startTime compare:endDate];
-//        NSComparisonResult endBoundaryResult = [endTime compare:date];
-//        NSComparisonResult endResult = [endTime compare:endDate];
-//        CGFloat startPointY = 0.0;
-//        CGFloat height = 0.0;
-//        if ((startResult == NSOrderedDescending || startResult == NSOrderedSame) && (startBoundaryResult == NSOrderedAscending) && (endBoundaryResult == NSOrderedDescending) && (endResult == NSOrderedSame || endResult == NSOrderedAscending)) { //lies completely within the cell
-//            startPointY = (startMinutes*44)/60;
-//            height = ((endMinutes-startMinutes)*44)/60;
-//        } else if ((startResult == NSOrderedSame || startResult == NSOrderedDescending) && (startBoundaryResult == NSOrderedAscending) && (endBoundaryResult == NSOrderedDescending) && (endResult == NSOrderedDescending)) { //only start time lies in the cell
-//            startPointY = (startMinutes*44)/60;
-//            height = ((60-startMinutes)*44)/60;
-//        } else if ((startResult == NSOrderedAscending) && (endBoundaryResult == NSOrderedDescending) && (startBoundaryResult == NSOrderedAscending) && (endResult ==NSOrderedSame || endResult == NSOrderedAscending)) { //only end time lies in the cell
-//            startPointY = 0;
-//            height = (endMinutes*44)/60;
-//        } else if (startResult == NSOrderedAscending && endResult == NSOrderedDescending) { //cell is part of bigger event
-//            startPointY = 0;
-//            height =44;
-//        } else if (startResult == NSOrderedDescending && endResult == NSOrderedDescending){
-//            //event does not lie even partially in the cell
-//            startPointY =0;
-//            height =0;
-//        } else if (startResult == NSOrderedAscending && endResult == NSOrderedAscending) {
-//            startPointY =0;
-//            height =0;
-//        }
-//        if (!cell.hasEvents) {
-//            UIView *view = [[UIView alloc]initWithFrame:CGRectMake(50, startPointY, 200, height)];
-//            view.backgroundColor = [UIColor yellowColor];
-//            [cell.contentView addSubview:view];
-//            cell.hasEvents = YES;
-//        } else {
-//            for (UIView *view in cell.contentView.subviews) {
-//                if (![view isKindOfClass:[UILabel class]]) {
-//                    
-//                }
-//            }
-//        }
-//        
-//    }
+        [startDateComponents setHour:[cell.endHour integerValue]];
+        NSDate *endDate = [self.calendarView.calendar dateFromComponents:startDateComponents];
+        
+        NSComparisonResult startResult = [startTime compare:startDate];
+        NSComparisonResult startBoundaryResult = [startTime compare:endDate];
+        NSComparisonResult endBoundaryResult = [endTime compare:startDate];
+        NSComparisonResult endResult = [endTime compare:endDate];
+        CGFloat startPointY = 0.0;
+        CGFloat height = 0.0;
+        if ((startResult == NSOrderedDescending || startResult == NSOrderedSame) && (startBoundaryResult == NSOrderedAscending) && (endBoundaryResult == NSOrderedDescending) && (endResult == NSOrderedSame || endResult == NSOrderedAscending)) { //lies completely within the cell
+            startPointY = (startMinutes*44)/60;
+            height = ((endMinutes-startMinutes)*44)/60;
+        } else if ((startResult == NSOrderedSame || startResult == NSOrderedDescending) && (startBoundaryResult == NSOrderedAscending) && (endBoundaryResult == NSOrderedDescending) && (endResult == NSOrderedDescending)) { //only start time lies in the cell
+            startPointY = (startMinutes*44)/60;
+            height = ((60-startMinutes)*44)/60;
+        } else if ((startResult == NSOrderedAscending) && (endBoundaryResult == NSOrderedDescending) && (startBoundaryResult == NSOrderedAscending) && (endResult ==NSOrderedSame || endResult == NSOrderedAscending)) { //only end time lies in the cell
+            startPointY = 0;
+            height = (endMinutes*44)/60;
+        } else if (startResult == NSOrderedAscending && endResult == NSOrderedDescending) { //cell is part of bigger event
+            startPointY = 0;
+            height =44;
+        } else if (startResult == NSOrderedDescending && endResult == NSOrderedDescending){
+            //event does not lie even partially in the cell
+            startPointY =0;
+            height =0;
+        } else if (startResult == NSOrderedAscending && endResult == NSOrderedAscending) {
+            startPointY =0;
+            height =0;
+        }
+            NSDictionary *temp = [cell.layoutAttributes objectForKey:indexPath];
+            NSNumber *width = [temp objectForKey:@"width"];
+            UIView *view = [[UIView alloc]initWithFrame:CGRectMake(50, startPointY, width.floatValue, height)];
+            view.backgroundColor = [UIColor yellowColor];
+            [cell.contentView addSubview:view];
+    }
    return cell;
 }
 
@@ -188,31 +188,40 @@
 {
     NSSortDescriptor *descriptor = [[NSSortDescriptor alloc]initWithKey:@"startDate" ascending:YES];
     NSArray *sortedEvents = [self.dataItems sortedArrayUsingDescriptors:@[descriptor]];
+    NSMutableArray *arrayWithAllDayEvents = [NSMutableArray array];
     for (EKEvent *event in sortedEvents) {
+        if (!event.allDay) {
+            [arrayWithAllDayEvents addObject:event];
+        }
+    }
+    for (EKEvent *event in arrayWithAllDayEvents) {
         NSDate *startDate = event.startDate;
         NSDate *endDate = event.endDate;
         NSIndexPath *startIP = [self indexPathForDate:startDate];
         NSIndexPath *endIP = [self indexPathForDate:endDate];
+        [self.tableView scrollToRowAtIndexPath:startIP atScrollPosition:UITableViewScrollPositionTop animated:YES];
         EPCalendarTableViewCell *startCell = (EPCalendarTableViewCell *)[self.tableView cellForRowAtIndexPath:startIP];
         startCell.eventsCount ++;
         for (int i= startIP.row; i <= endIP.row; i++) {
             NSIndexPath *ip = [NSIndexPath indexPathForRow:i inSection:0];
             EPCalendarTableViewCell *cell = (EPCalendarTableViewCell *)[self.tableView cellForRowAtIndexPath:ip];
-            if (cell.eventsCount>1) {
-                //rearrange the previous events to accommodate new one
-            } else {
                 //give label dimensions
-            }
+            NSMutableDictionary *temp = [NSMutableDictionary dictionary];
+                CGFloat width = 200;
+                [temp setObject:@{@"event":event, @"width":[NSNumber numberWithFloat:width]} forKey:ip];
+                cell.layoutAttributes = temp;
         }
     }
+    [self.tableView reloadData];
 }
 
 
 - (NSIndexPath *)indexPathForDate:(NSDate *)date
 {
+    NSInteger hour = [self.calendarView.calendar component:NSCalendarUnitHour fromDate:date];
     for (NSIndexPath *ip in [self.startTimesCache allKeys]) {
-        NSDate *startDate = [self.startTimesCache objectForKey:ip];
-        if ([startDate isEqualToDate:date]) {
+        NSInteger startHour = ((NSNumber *)[self.startTimesCache objectForKey:ip]).integerValue;
+        if (startHour == hour) {
             return ip;
         }
     }
@@ -244,6 +253,7 @@
 - (void)dataItems:(NSArray *)items
 {
     self.dataItems = items;
+    [self drawEventsOnTableView];
     [self.tableView reloadData];
 }
 

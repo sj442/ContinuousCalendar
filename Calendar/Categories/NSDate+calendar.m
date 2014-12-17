@@ -77,22 +77,22 @@
     NSString *time;
     NSInteger quotient = index/12;
     NSInteger remainder = index % 12;
+    NSInteger hour = 0;
     
     if ((quotient == 0 && remainder == 0) || (quotient == 2 && remainder == 0)) { //12 AM
         time = @"12 AM";
-        dateComponents.hour = 0;
+        hour =0;
     } else if (quotient ==1 && remainder == 0) { //Noon
         time = @"Noon";
-        dateComponents.hour = 12;
+        hour =12;
     } else if (quotient ==0 && remainder>0) { //12.01 AM to 11:59 AM
         time = [NSString stringWithFormat:@"%ld AM", (long)remainder];
-        dateComponents.hour = remainder;
+        hour = remainder;
     } else if (quotient == 1 && remainder >0) {
         time = [NSString stringWithFormat:@"%ld PM", (long)remainder];
-        dateComponents.hour = index;
+        hour = index;
     }
-    NSDate *dateAtIndex = [calendar dateFromComponents:dateComponents];
-    NSString *compoundString = [NSString stringWithFormat:@"%@~%@", time, dateAtIndex];
+    NSString *compoundString = [NSString stringWithFormat:@"%@~%d", time, hour];
     return compoundString;
 }
 
