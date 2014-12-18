@@ -114,7 +114,6 @@
         abbreviatedDateFormatter.dateFormat = [abbreviatedDateFormatter.class dateFormatFromTemplate:@"yyyyLLLL" options:0 locale:[NSLocale currentLocale]];
         NSString *navtitle =[abbreviatedDateFormatter stringFromDate:self.calendarView.selectedDate];
         self.title = navtitle;
-        [self.tableViewController drawEventsOnTableView];
     }];
 }
      

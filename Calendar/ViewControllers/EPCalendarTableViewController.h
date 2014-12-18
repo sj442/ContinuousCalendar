@@ -11,7 +11,7 @@
 #import "EPCalendarView.h"
 
 
-@interface EPCalendarTableViewController : UIViewController <CalendarTableViewDelegate, UITableViewDataSource, UITableViewDelegate>
+@interface EPCalendarTableViewController : UIViewController <CalendarTableViewDelegate, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UIToolbar *toolBar;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -19,8 +19,6 @@
 @property (weak, nonatomic) EPWeekCalendarView *calendarView;
 
 @property (strong, nonatomic) NSArray *dataItems;
-
-- (void)drawEventsOnTableView;
 
 
 @end

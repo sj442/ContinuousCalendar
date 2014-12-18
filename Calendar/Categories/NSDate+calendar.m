@@ -79,7 +79,7 @@
     NSInteger remainder = index % 12;
     NSInteger hour = 0;
     
-    if ((quotient == 0 && remainder == 0) || (quotient == 2 && remainder == 0)) { //12 AM
+    if (quotient == 0 && remainder == 0) { //12 AM
         time = @"12 AM";
         hour =0;
     } else if (quotient ==1 && remainder == 0) { //Noon
@@ -91,6 +91,9 @@
     } else if (quotient == 1 && remainder >0) {
         time = [NSString stringWithFormat:@"%ld PM", (long)remainder];
         hour = index;
+    } else if (quotient ==2 && remainder ==0) {
+        time = @"12 AM";
+        hour =24;
     }
     NSString *compoundString = [NSString stringWithFormat:@"%@~%d", time, hour];
     return compoundString;
