@@ -99,4 +99,9 @@
     return compoundString;
 }
 
+- (BOOL)isCurrentDate
+{
+    return YES;
+}
+
 @end
