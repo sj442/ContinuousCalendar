@@ -129,6 +129,8 @@
     }];
     NSArray *events = [self.indexDictionary objectForKey:indexPath];
     NSInteger labels =0;
+    int i=0;
+    CGFloat startPointX = 50;
     for (EventDataClass *eventData in events) {
         for (UILabel *label in cell.contentView.subviews) {
             if (label.tag!=100) {
@@ -136,16 +138,21 @@
             }
         }
         NSInteger startDateCount = eventData.sameStartDate.integerValue;
-        CGFloat width = CGRectGetWidth(self.view.frame)/2;
+        CGFloat width = eventData.width.floatValue;
         CGFloat height = eventData.height.floatValue;
         CGFloat startPointY = eventData.startPointY.floatValue;
-        CGFloat startPointX = ((CGFloat)50 + 5*labels + 50*startDateCount);
+        if (startDateCount>0) {
+            startPointX = startPointX + 5*labels+width*i;
+        } else {
+            startPointX = startPointX +5*labels;
+        }
+        width = MIN(width, 320-startPointX);
         EPCalendarEventView *view = [[EPCalendarEventView alloc]initWithFrame:CGRectMake(startPointX, startPointY, width, height)];
         view.backgroundColor = [UIColor secondaryColor];
         view.event = eventData.event;
         [view addTarget:self action:@selector(viewTapped:) forControlEvents:UIControlEventTouchUpInside];
         if ([eventData.isStartIP isEqualToNumber:@1]) {
-            UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(5, 0, CGRectGetWidth(view.frame)-5, CGRectGetHeight(view.frame))];
+            UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(5, 0, CGRectGetWidth(view.frame)-10, CGRectGetHeight(view.frame))];
             titleLabel.text = eventData.event.title;
             titleLabel.font = [UIFont systemFontOfSize:12];
             titleLabel.textColor = [UIColor blackColor];
@@ -155,6 +162,7 @@
         }
         view.alpha = 0.3;
         [cell.contentView addSubview:view];
+        i++;
     }
        return cell;
 }
@@ -162,7 +170,6 @@
 - (void)viewTapped:(UIButton *)sender
 {
     EPCalendarEventView *button = (EPCalendarEventView *)sender;
-    NSLog(@"title %@", button.event.title);
     EPCreateEventTableViewController *createVC = [[EPCreateEventTableViewController alloc]initWithEvent:button.event eventName:button.event.title location:button.event.location notes:button.event.notes startDate:button.event.startDate endDate:button.event.endDate];
     createVC.eventSelected = YES;
     [self.navigationController pushViewController:createVC animated:YES];
@@ -285,6 +292,7 @@
         NSArray *sortedItems = [self.dataItems sortedArrayUsingDescriptors:@[descriptor]];
         NSInteger eventCount = 1;
         for (EKEvent *event in sortedItems) {
+            EventDataClass *eventData = [[EventDataClass alloc]init];
             NSDate *startDate = event.startDate;
             NSInteger startDay = [self.calendarView.calendar component:NSCalendarUnitDay fromDate:startDate];
             NSIndexPath *startIP = [self indexPathForDate:startDate];
@@ -294,6 +302,7 @@
             NSInteger endMinutes = 0;
             if (startDay != selectedDateDay) {
                 startMinutes = 0;
+                startIP = [NSIndexPath indexPathForRow:0 inSection:0];
             } else if (endDay !=selectedDateDay) {
                 endMinutes = 0;
             } else {
@@ -334,7 +343,6 @@
             if (startMinutes>50) {
                 startIP = [NSIndexPath indexPathForRow:startIP.row+1 inSection:startIP.section];
             }
-            EventDataClass *eventData = [[EventDataClass alloc]init];
             if (startIP.row == indexPath.row) {
                 eventData.isStartIP = [NSNumber numberWithInt:1];
             } else {
@@ -350,43 +358,47 @@
             eventData.event = event;
             eventData.height = [NSNumber numberWithFloat:height];
             eventData.startPointY = [NSNumber numberWithFloat:startPointY];
+            eventData.selectedDate = event.startDate;
             [array addObject:eventData];
         }
+        for (EventDataClass *eventDataClass in array) {
+                eventDataClass.width = [NSNumber numberWithFloat:(self.view.frame.size.width-50)/eventCount];
+        }
+        
         [self.indexDictionary setObject:array forKey:indexPath];
     }
-        [self.tableView scrollToRowAtIndexPath:scrollToIP
-                              atScrollPosition:UITableViewScrollPositionTop animated:YES];
+        [self.tableView scrollToRowAtIndexPath:scrollToIP atScrollPosition:UITableViewScrollPositionTop animated:YES];
         [self.tableView reloadData];
 }
 
-- (void)refreshCurrentTimeMarker
-{
-    if (self.currentTimer) {
-        [self.currentTimer invalidate];
-    }
-    
-    NSInteger minutes = [self.calendarView.calendar component:NSCalendarUnitMinute fromDate:[NSDate date]];
-    NSIndexPath *ip = [self indexPathForDate:[NSDate date]];
-    EPCalendarTableViewCell *cell = (EPCalendarTableViewCell *)[self.tableView cellForRowAtIndexPath:ip];
-    CGFloat startPointY = (minutes*44)/60;
-        UIView *lineView = [[UIView alloc]initWithFrame:CGRectMake(0, startPointY, CGRectGetWidth(self.view.frame), 2.0f)];
-        lineView.backgroundColor = [UIColor redColor];
-        [cell.contentView addSubview:lineView];
-        self.currentTimeMarker = lineView;
-    [self.tableView scrollToRowAtIndexPath:ip atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
-    self.currentTimer = [NSTimer scheduledTimerWithTimeInterval:60.0f target:self selector:@selector(updateTimeMarkerLocation:) userInfo:nil repeats:YES];
-}
-
-- (void)updateTimeMarkerLocation:(id)sender
-{
-    NSInteger minutes = [self.calendarView.calendar component:NSCalendarUnitMinute fromDate:[NSDate date]];
-    if (minutes ==0) {
-        [self refreshCurrentTimeMarker];
-    }
-    CGFloat startPointY = (minutes*44)/60;
-    CGRect rect = self.currentTimeMarker.frame;
-    rect.origin.y = startPointY;
-    self.currentTimeMarker.frame = rect;
-}
+//- (void)refreshCurrentTimeMarker
+//{
+//    if (self.currentTimer) {
+//        [self.currentTimer invalidate];
+//    }
+//    
+//    NSInteger minutes = [self.calendarView.calendar component:NSCalendarUnitMinute fromDate:[NSDate date]];
+//    NSIndexPath *ip = [self indexPathForDate:[NSDate date]];
+//    EPCalendarTableViewCell *cell = (EPCalendarTableViewCell *)[self.tableView cellForRowAtIndexPath:ip];
+//    CGFloat startPointY = (minutes*44)/60;
+//        UIView *lineView = [[UIView alloc]initWithFrame:CGRectMake(0, startPointY, CGRectGetWidth(self.view.frame), 2.0f)];
+//        lineView.backgroundColor = [UIColor redColor];
+//        [cell.contentView addSubview:lineView];
+//        self.currentTimeMarker = lineView;
+//    [self.tableView scrollToRowAtIndexPath:ip atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+//    self.currentTimer = [NSTimer scheduledTimerWithTimeInterval:60.0f target:self selector:@selector(updateTimeMarkerLocation:) userInfo:nil repeats:YES];
+//}
+//
+//- (void)updateTimeMarkerLocation:(id)sender
+//{
+//    NSInteger minutes = [self.calendarView.calendar component:NSCalendarUnitMinute fromDate:[NSDate date]];
+//    if (minutes ==0) {
+//        [self refreshCurrentTimeMarker];
+//    }
+//    CGFloat startPointY = (minutes*44)/60;
+//    CGRect rect = self.currentTimeMarker.frame;
+//    rect.origin.y = startPointY;
+//    self.currentTimeMarker.frame = rect;
+//}
 
 @end
