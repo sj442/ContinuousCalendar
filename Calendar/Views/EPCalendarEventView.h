@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <EventKit/EventKit.h>
 
-@interface EPCalendarEventView : UIView
+@interface EPCalendarEventView : UIButton
+
+@property (strong, nonatomic) EKEvent *event;
 
 @end

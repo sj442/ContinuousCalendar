@@ -49,6 +49,7 @@
 		3FD383DB1A377008003470B9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FD383DA1A377008003470B9 /* CoreGraphics.framework */; };
 		3FEF66A21A435D5D00E79703 /* CalendarEventLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FEF66A11A435D5D00E79703 /* CalendarEventLabel.m */; };
 		3FEF66A51A436C8C00E79703 /* EPCalendarEventView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FEF66A41A436C8C00E79703 /* EPCalendarEventView.m */; };
+		3FF29BC41A51A6A00066999E /* EventDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF29BC31A51A6A00066999E /* EventDataClass.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -136,6 +137,8 @@
 		3FEF66A11A435D5D00E79703 /* CalendarEventLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CalendarEventLabel.m; sourceTree = "<group>"; };
 		3FEF66A31A436C8C00E79703 /* EPCalendarEventView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EPCalendarEventView.h; sourceTree = "<group>"; };
 		3FEF66A41A436C8C00E79703 /* EPCalendarEventView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EPCalendarEventView.m; sourceTree = "<group>"; };
+		3FF29BC21A51A6A00066999E /* EventDataClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDataClass.h; sourceTree = "<group>"; };
+		3FF29BC31A51A6A00066999E /* EventDataClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventDataClass.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -205,6 +208,8 @@
 				3FBCBAC41A3F5345006ECB7E /* DateHelper.h */,
 				3FBCBAC51A3F5345006ECB7E /* EventStore.h */,
 				3FBCBAC61A3F5345006ECB7E /* EventStore.m */,
+				3FF29BC21A51A6A00066999E /* EventDataClass.h */,
+				3FF29BC31A51A6A00066999E /* EventDataClass.m */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -437,6 +442,7 @@
 				3FBCBAF31A3F5345006ECB7E /* EPCalendarTableViewController.m in Sources */,
 				3FBCBAE91A3F5345006ECB7E /* EPCalendarCell.m in Sources */,
 				3FBCBAF11A3F5345006ECB7E /* EPCalendarCollectionViewController.m in Sources */,
+				3FF29BC41A51A6A00066999E /* EventDataClass.m in Sources */,
 				3FBCBAE41A3F5345006ECB7E /* NSDate+calendar.m in Sources */,
 				3FBCBAE71A3F5345006ECB7E /* UIColor+EH.m in Sources */,
 				3FBCBAFC1A3F5345006ECB7E /* EPWeekCalendarView.m in Sources */,
