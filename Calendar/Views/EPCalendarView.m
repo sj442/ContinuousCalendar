@@ -126,10 +126,6 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 
 - (void)calendarCollectionViewWillLayoutSubviews:(EPCalendarCollectionView *)collectionView
 {
-    if (self.collectionView.contentOffset.y == 0.0f) {
-        [self populateCellsWithEvents];
-    }
-    
     if (collectionView.contentOffset.y < 0.0f) { //swiping down
         [self appendPastDates];
     }
@@ -146,14 +142,12 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     [self shiftDatesByComponents:components];
 }
 
-
 - (void)appendFutureDates
 {
     NSDateComponents *components = [[NSDateComponents alloc]init];
     components.month = 6;
     [self shiftDatesByComponents:components];
 }
-
 
 - (void)shiftDatesByComponents:(NSDateComponents *)components
 {
@@ -271,17 +265,17 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     return NO;
 }
 
-- (BOOL) collectionView:(UICollectionView *)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath *)indexPath
+- (BOOL)collectionView:(UICollectionView *)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath *)indexPath
 {
     return ((EPCalendarCell *)[collectionView cellForItemAtIndexPath:indexPath]).enabled;
 }
 
-- (BOOL) collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath
+- (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     return ((EPCalendarCell *)[collectionView cellForItemAtIndexPath:indexPath]).enabled;
 }
 
-- (void) collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     EPCalendarCell *cell = ((EPCalendarCell *)[self.collectionView cellForItemAtIndexPath:indexPath]);
     if (!cell.enabled) {
@@ -299,13 +293,13 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     [self.delegate moveupTableView];
 }
 
-- (void) setSelectedDate:(NSDate *)selectedDate
+- (void)setSelectedDate:(NSDate *)selectedDate
 {
     _selectedDate = selectedDate;
     [self.collectionView reloadData];
 }
 
-- (UICollectionReusableView *) collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
+- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
 {
     if ([kind isEqualToString:UICollectionElementKindSectionHeader]) {
         
@@ -340,12 +334,12 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     return nil;
 }
 
-- (NSDate *) dateFromCalendarDate:(EPCalendarDate)dateStruct
+- (NSDate *)dateFromCalendarDate:(EPCalendarDate)dateStruct
 {
     return [self.calendar dateFromComponents:[self dateComponentsFromPickerDate:dateStruct]];
 }
 
-- (NSDateComponents *) dateComponentsFromPickerDate:(EPCalendarDate)dateStruct
+- (NSDateComponents *)dateComponentsFromPickerDate:(EPCalendarDate)dateStruct
 {
     NSDateComponents *components = [NSDateComponents new];
     components.year = dateStruct.year;
@@ -354,7 +348,7 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     return components;
 }
 
-- (EPCalendarDate) calendarDateFromDate:(NSDate *)date
+- (EPCalendarDate)calendarDateFromDate:(NSDate *)date
 {
     NSDateComponents *components = [self.calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:date];
     return (EPCalendarDate) {

@@ -127,44 +127,37 @@
         [self.endTimesCache setObject:[NSNumber numberWithInteger:hour+1] forKey:indexPath];
         return time;
     }];
+    
     NSArray *events = [self.indexDictionary objectForKey:indexPath];
-    NSInteger labels =0;
-    int i=0;
     CGFloat startPointX = 50;
-    for (EventDataClass *eventData in events) {
-        for (UILabel *label in cell.contentView.subviews) {
-            if (label.tag!=100) {
-                labels++;
-            }
+    CGFloat height = 0;
+    CGFloat startPointY = 0;
+    
+    for (NSArray *arrayOfEvents in events) {
+        for (int k =0; k<arrayOfEvents.count; k++) {
+            EventDataClass *eventData = arrayOfEvents[k];
+            CGFloat width = 270/arrayOfEvents.count;
+            startPointX = 50 + width*k;
+            height = eventData.height.floatValue;
+            startPointY = eventData.startPointY.floatValue;
+            EPCalendarEventView *view = [[EPCalendarEventView alloc]initWithFrame:CGRectMake(startPointX, startPointY, width, height)];
+                  view.backgroundColor = [UIColor secondaryColor];
+                  view.event = eventData.event;
+                  [view addTarget:self action:@selector(viewTapped:) forControlEvents:UIControlEventTouchUpInside];
+                  if ([eventData.isStartIP isEqualToNumber:@1]) {
+                      UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(5, 0, CGRectGetWidth(view.frame)-10, CGRectGetHeight(view.frame))];
+                      titleLabel.text = eventData.event.title;
+                      titleLabel.font = [UIFont systemFontOfSize:12];
+                      titleLabel.textColor = [UIColor blackColor];
+                      titleLabel.numberOfLines = 3;
+                      titleLabel.alpha = 1;
+                      [view addSubview:titleLabel];
+                  }
+                  view.alpha = 0.3;
+                  [cell.contentView addSubview:view];
         }
-        NSInteger startDateCount = eventData.sameStartDate.integerValue;
-        CGFloat width = eventData.width.floatValue;
-        CGFloat height = eventData.height.floatValue;
-        CGFloat startPointY = eventData.startPointY.floatValue;
-        if (startDateCount>0) {
-            startPointX = startPointX + 5*labels+width*i;
-        } else {
-            startPointX = startPointX +5*labels;
-        }
-        width = MIN(width, 320-startPointX);
-        EPCalendarEventView *view = [[EPCalendarEventView alloc]initWithFrame:CGRectMake(startPointX, startPointY, width, height)];
-        view.backgroundColor = [UIColor secondaryColor];
-        view.event = eventData.event;
-        [view addTarget:self action:@selector(viewTapped:) forControlEvents:UIControlEventTouchUpInside];
-        if ([eventData.isStartIP isEqualToNumber:@1]) {
-            UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(5, 0, CGRectGetWidth(view.frame)-10, CGRectGetHeight(view.frame))];
-            titleLabel.text = eventData.event.title;
-            titleLabel.font = [UIFont systemFontOfSize:12];
-            titleLabel.textColor = [UIColor blackColor];
-            titleLabel.numberOfLines = 3;
-            titleLabel.alpha = 1;
-            [view addSubview:titleLabel];
-        }
-        view.alpha = 0.3;
-        [cell.contentView addSubview:view];
-        i++;
     }
-       return cell;
+    return cell;
 }
 
 - (void)viewTapped:(UIButton *)sender
@@ -276,7 +269,6 @@
     }
     for (int i=0; i<=24; i++) {
         NSIndexPath *previousIP = [NSIndexPath indexPathForRow:24 inSection:0];
-        NSMutableArray *array = [NSMutableArray array];
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:i inSection:0];
         NSDateComponents *selectedDateComponents = [self.calendarView.calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:self.calendarView.selectedDate];
         NSInteger selectedDateDay = [self.calendarView.calendar component:NSCalendarUnitDay fromDate:self.calendarView.selectedDate];
@@ -290,11 +282,18 @@
         NSDate *cellEndDate = [self.calendarView.calendar dateFromComponents:startDateComponents];
         NSSortDescriptor *descriptor = [[NSSortDescriptor alloc]initWithKey:@"startDate" ascending:YES];
         NSArray *sortedItems = [self.dataItems sortedArrayUsingDescriptors:@[descriptor]];
-        NSInteger eventCount = 1;
-        for (EKEvent *event in sortedItems) {
+        NSInteger itemsCount = sortedItems.count;
+        NSInteger startHour = 0;
+        NSMutableArray *listOfEvents = [NSMutableArray array];
+        NSMutableArray *tempArray = [NSMutableArray array];
+        int index  =0;
+        
+        for (int j=0; j<itemsCount; j++) {
+            EKEvent *event = sortedItems[j];
             EventDataClass *eventData = [[EventDataClass alloc]init];
             NSDate *startDate = event.startDate;
             NSInteger startDay = [self.calendarView.calendar component:NSCalendarUnitDay fromDate:startDate];
+            NSInteger eventStartHour = [self.calendarView.calendar component:NSCalendarUnitHour fromDate:startDate];
             NSIndexPath *startIP = [self indexPathForDate:startDate];
             NSDate *endDate = event.endDate;
             NSInteger endDay = [self.calendarView.calendar component:NSCalendarUnitDay fromDate:endDate];
@@ -302,6 +301,7 @@
             NSInteger endMinutes = 0;
             if (startDay != selectedDateDay) {
                 startMinutes = 0;
+                eventStartHour = 0;
                 startIP = [NSIndexPath indexPathForRow:0 inSection:0];
             } else if (endDay !=selectedDateDay) {
                 endMinutes = 0;
@@ -328,6 +328,9 @@
                 height = ((60-startMinutes)*44)/60;
             } else if ((startResult == NSOrderedAscending) && (endBoundaryResult == NSOrderedDescending) && (startBoundaryResult == NSOrderedAscending) && (endResult ==NSOrderedSame || endResult == NSOrderedAscending)) { //only end time lies in the cell
                 startPointY = 0;
+                if (endMinutes ==0) {
+                    endMinutes =60;
+                }
                 height = (endMinutes*44)/60;
             } else if (startResult == NSOrderedAscending && endResult == NSOrderedDescending) { //cell is part of bigger event
                 startPointY = 0;
@@ -348,24 +351,37 @@
             } else {
                 eventData.isStartIP = [NSNumber numberWithInt:0];
             }
-            if (startIP.row == previousIP.row) {
-                eventCount++;
-                eventData.sameStartDate = [NSNumber numberWithInteger:eventCount];
-            } else {
-                eventData.sameStartDate = [NSNumber numberWithInteger:0];
-            }
             previousIP = startIP;
             eventData.event = event;
             eventData.height = [NSNumber numberWithFloat:height];
             eventData.startPointY = [NSNumber numberWithFloat:startPointY];
-            eventData.selectedDate = event.startDate;
-            [array addObject:eventData];
+            
+            if (index == 0) {
+                startHour = eventStartHour;
+                [tempArray addObject:eventData];
+                index++;
+                if (itemsCount ==1 || j == itemsCount-1) {
+                    [listOfEvents addObject:tempArray];
+                }
+            } else if (startHour == eventStartHour) {
+                [tempArray addObject:eventData];
+                index++;
+                if (j== itemsCount-1) {
+                    [listOfEvents addObject:tempArray];
+                }
+            } else {
+                [listOfEvents addObject:tempArray];
+                tempArray = [NSMutableArray new];
+                index =0;
+                startHour = eventStartHour;
+                [tempArray addObject:eventData];
+                index++;
+                if (j == itemsCount-1) {
+                    [listOfEvents addObject:tempArray];
+                }
+            }
         }
-        for (EventDataClass *eventDataClass in array) {
-                eventDataClass.width = [NSNumber numberWithFloat:(self.view.frame.size.width-50)/eventCount];
-        }
-        
-        [self.indexDictionary setObject:array forKey:indexPath];
+        [self.indexDictionary setObject:listOfEvents forKey:indexPath];
     }
         [self.tableView scrollToRowAtIndexPath:scrollToIP atScrollPosition:UITableViewScrollPositionTop animated:YES];
         [self.tableView reloadData];

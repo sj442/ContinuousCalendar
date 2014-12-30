@@ -21,5 +21,4 @@
 
 @property (weak, nonatomic) id <EPCalendarCollectionViewDelegate> myDelegate;
 
-
 @end

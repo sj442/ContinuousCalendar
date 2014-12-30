@@ -11,6 +11,8 @@
 #import "EPCalendarView.h"
 #import "EPWeekCalendarView.h"
 
+typedef void (^UICollectionViewLayoutInteractiveTransitionCompletion)(BOOL completed, BOOL finish);
+
 @interface EPCalendarCollectionViewController : UIViewController <CalendarViewDelegate, UICollectionViewDelegate, CalendarWeekViewDelegate>
 
 @property (weak, nonatomic) IBOutlet EPCalendarView *calendarView;

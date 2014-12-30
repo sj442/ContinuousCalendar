@@ -54,7 +54,6 @@
     [self.view addSubview:calendarView];
     self.calendarView = calendarView;
     self.calendarView.delegate = self;
-
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -68,10 +67,13 @@
     [self.view insertSubview:tableVC.view belowSubview:self.calendarView];
     [tableVC didMoveToParentViewController:self];
     
-//    NSIndexPath *ip = [NSIndexPath indexPathForItem:0 inSection:self.calendarView.collectionView.numberOfSections/2];
-//    [self.calendarView.collectionView scrollToItemAtIndexPath:ip atScrollPosition:UICollectionViewScrollPositionTop animated:YES];
-//    
-//    [self.calendarView populateCellsWithEvents];
+    [self.calendarView.collectionView performBatchUpdates:^{
+        NSIndexPath *ip = [NSIndexPath indexPathForItem:0 inSection:self.calendarView.collectionView.numberOfSections/2];
+        [self.calendarView.collectionView scrollToItemAtIndexPath:ip atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
+
+    } completion:^(BOOL finished) {
+        [self.calendarView populateCellsWithEvents];
+    }];
 }
 
 - (void)didReceiveMemoryWarning {
