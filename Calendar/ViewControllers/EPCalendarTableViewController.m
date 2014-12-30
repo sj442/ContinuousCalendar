@@ -57,7 +57,7 @@
 - (void)setupCalendarView
 {
     EPWeekCalendarView *calendarView = [EPWeekCalendarView new];
-    calendarView.frame =CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)/5);
+    calendarView.frame =CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)/6);
     [self.view addSubview:calendarView];
     self.calendarView = calendarView;
     self.calendarView.tableViewDelegate = self;
@@ -301,10 +301,12 @@
             NSInteger endMinutes = 0;
             if (startDay != selectedDateDay) {
                 startMinutes = 0;
+                endMinutes  = [self minutesInDate:endDate];
                 eventStartHour = 0;
                 startIP = [NSIndexPath indexPathForRow:0 inSection:0];
             } else if (endDay !=selectedDateDay) {
                 endMinutes = 0;
+                startMinutes = [self minutesInDate:startDate];
             } else {
                 startMinutes = [self minutesInDate:startDate];
                 endMinutes  = [self minutesInDate:endDate];
@@ -386,6 +388,7 @@
         [self.tableView scrollToRowAtIndexPath:scrollToIP atScrollPosition:UITableViewScrollPositionTop animated:YES];
         [self.tableView reloadData];
 }
+
 
 //- (void)refreshCurrentTimeMarker
 //{

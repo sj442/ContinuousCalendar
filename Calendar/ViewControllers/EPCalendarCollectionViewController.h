@@ -17,4 +17,6 @@ typedef void (^UICollectionViewLayoutInteractiveTransitionCompletion)(BOOL compl
 
 @property (weak, nonatomic) IBOutlet EPCalendarView *calendarView;
 
+@property (nonatomic) BOOL fromCreateEvent;
+
 @end

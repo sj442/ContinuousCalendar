@@ -50,6 +50,7 @@
 		3FEF66A21A435D5D00E79703 /* CalendarEventLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FEF66A11A435D5D00E79703 /* CalendarEventLabel.m */; };
 		3FEF66A51A436C8C00E79703 /* EPCalendarEventView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FEF66A41A436C8C00E79703 /* EPCalendarEventView.m */; };
 		3FF29BC41A51A6A00066999E /* EventDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF29BC31A51A6A00066999E /* EventDataClass.m */; };
+		3FF29BCA1A5334D10066999E /* EPDotView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF29BC91A5334D10066999E /* EPDotView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -139,6 +140,8 @@
 		3FEF66A41A436C8C00E79703 /* EPCalendarEventView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EPCalendarEventView.m; sourceTree = "<group>"; };
 		3FF29BC21A51A6A00066999E /* EventDataClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDataClass.h; sourceTree = "<group>"; };
 		3FF29BC31A51A6A00066999E /* EventDataClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventDataClass.m; sourceTree = "<group>"; };
+		3FF29BC81A5334D10066999E /* EPDotView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EPDotView.h; sourceTree = "<group>"; };
+		3FF29BC91A5334D10066999E /* EPDotView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EPDotView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -253,6 +256,8 @@
 				3FEF66A11A435D5D00E79703 /* CalendarEventLabel.m */,
 				3FEF66A31A436C8C00E79703 /* EPCalendarEventView.h */,
 				3FEF66A41A436C8C00E79703 /* EPCalendarEventView.m */,
+				3FF29BC81A5334D10066999E /* EPDotView.h */,
+				3FF29BC91A5334D10066999E /* EPDotView.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -444,6 +449,7 @@
 				3FBCBAF11A3F5345006ECB7E /* EPCalendarCollectionViewController.m in Sources */,
 				3FF29BC41A51A6A00066999E /* EventDataClass.m in Sources */,
 				3FBCBAE41A3F5345006ECB7E /* NSDate+calendar.m in Sources */,
+				3FF29BCA1A5334D10066999E /* EPDotView.m in Sources */,
 				3FBCBAE71A3F5345006ECB7E /* UIColor+EH.m in Sources */,
 				3FBCBAFC1A3F5345006ECB7E /* EPWeekCalendarView.m in Sources */,
 				3FBCBAFD1A3F5345006ECB7E /* ExtendedNavBarView.m in Sources */,

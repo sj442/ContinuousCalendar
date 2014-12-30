@@ -42,11 +42,12 @@
 {
     [super viewWillAppear:animated];
     
+    if (self.fromCreateEvent) {
+        [self moveupTableView];
+    } else {
     ExtendedNavBarView *dayView = [[ExtendedNavBarView alloc]initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)/25)];
     [self.view addSubview:dayView];
-    
     self.dayView = dayView;
-    
     NSCalendar *gregorian = [[NSCalendar alloc]initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     
     EPCalendarView *calendarView = [[EPCalendarView alloc]initWithCalendar:gregorian];
@@ -54,19 +55,21 @@
     [self.view addSubview:calendarView];
     self.calendarView = calendarView;
     self.calendarView.delegate = self;
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     
+    if (!self.fromCreateEvent) {
     EPCalendarTableViewController *tableVC = [[EPCalendarTableViewController alloc]init];
     self.tableViewController = tableVC;
     [self addChildViewController:tableVC];
     tableVC.view.frame = self.calendarView.frame;
     [self.view insertSubview:tableVC.view belowSubview:self.calendarView];
     [tableVC didMoveToParentViewController:self];
-    
+    }
     [self.calendarView.collectionView performBatchUpdates:^{
         NSIndexPath *ip = [NSIndexPath indexPathForItem:0 inSection:self.calendarView.collectionView.numberOfSections/2];
         [self.calendarView.collectionView scrollToItemAtIndexPath:ip atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
@@ -78,7 +81,6 @@
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 - (void)addEvent:(id)sender

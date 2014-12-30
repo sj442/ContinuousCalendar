@@ -203,7 +203,7 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
     return [self.calendar dateFromComponents:components];
 }
 
-- (void) collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     EPCalendarWeekCell *cell = ((EPCalendarWeekCell *)[self.collectionView cellForItemAtIndexPath:indexPath]);
     self.selectedDate = cell.cellDate;
@@ -228,7 +228,7 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
     [self.collectionView reloadData];
 }
 
-- (void) setSelectedDate:(NSDate *)selectedDate
+- (void)setSelectedDate:(NSDate *)selectedDate
 {
     _selectedDate = selectedDate;
     NSArray *events;

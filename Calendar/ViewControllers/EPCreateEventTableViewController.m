@@ -109,10 +109,14 @@
 - (void)cancelPressed:(id)sender
 {
     if (self.eventSelected==1) {
+        EPCalendarCollectionViewController *collectionVC = [self.navigationController.viewControllers firstObject];
+        collectionVC.fromCreateEvent = YES;
         [self.navigationController popViewControllerAnimated:YES];
     }
+    
     else {
-        [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+        [self.navigationController dismissViewControllerAnimated:YES completion:^{
+        }];
     }
 }
 

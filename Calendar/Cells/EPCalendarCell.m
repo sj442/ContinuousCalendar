@@ -27,6 +27,18 @@
 @synthesize overlayView = _overlayView;
 @synthesize dotview = _dotview;
 
+-(void)drawRect:(CGRect)rect
+{
+    if (!_dotview) {
+        _dotview =  [[UIView alloc]initWithFrame:CGRectMake(17, 40, 10, 10)];
+        _dotview.layer.cornerRadius = 5;
+        _dotview.clipsToBounds = YES;
+        _dotview.backgroundColor = [UIColor primaryColor];
+        [self.contentView addSubview:_dotview];
+        _dotview.hidden = YES;
+    }
+}
+
 - (id) initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
@@ -90,18 +102,6 @@
     }];
     self.overlayView.hidden = !((self.selected || self.highlighted) && self.enabled) ;
     self.dotview.hidden = !self.hasEvents;
-}
-
-- (UIView *)dotview
-{
-    if (!_dotview) {
-        _dotview =  [[UIView alloc]initWithFrame:CGRectMake(17, 40, 10, 10)];
-        _dotview.layer.cornerRadius = 5;
-        _dotview.clipsToBounds = YES;
-        _dotview.backgroundColor = [UIColor primaryColor];
-        [self.contentView addSubview:_dotview];
-    }
-    return _dotview;
 }
 
 - (UIView *) overlayView {

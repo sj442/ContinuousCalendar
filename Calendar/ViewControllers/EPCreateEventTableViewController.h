@@ -7,6 +7,7 @@
 //
 
 #import "EPInlineDatePickerTableViewController.h"
+#import "EPCalendarCollectionViewController.h"
 
 @interface EPCreateEventTableViewController : EPInlineDatePickerTableViewController <UITableViewDataSource, UITableViewDelegate>
 

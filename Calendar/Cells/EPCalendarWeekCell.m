@@ -60,34 +60,28 @@
 - (void) layoutSubviews {
     
     [super layoutSubviews];
-    
     self.imageView.image = [[self class] fetchObjectForKey:[[self class] cacheKeyForCalendarDate:self.date] withCreator:^{
         
         UIGraphicsBeginImageContextWithOptions(self.bounds.size, YES, self.window.screen.scale);
         CGContextRef context = UIGraphicsGetCurrentContext();
-
         CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
-        
         CGContextFillRect(context, self.bounds);
         
-        UIFont *font = [UIFont boldSystemFontOfSize:18.0f];
-        CGRect textBounds = (CGRect){ 0.0f, 10.0f, 44.0f, 24.0f };
+        UIFont *font = [UIFont boldSystemFontOfSize:14.0f];
+        CGRect textBounds = (CGRect){ 0.0f, 10.0f, 36.0f, 20.0f };
         
         if (!self.isSelected) {
             CGContextSetFillColorWithColor(context, [UIColor blackColor].CGColor);
         } else {
             CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
         }
-        
         NSMutableParagraphStyle *textStyle = [[NSMutableParagraphStyle defaultParagraphStyle] mutableCopy];
         textStyle.lineBreakMode = NSLineBreakByCharWrapping;
         textStyle.alignment = NSTextAlignmentCenter;
         
         [[NSString stringWithFormat:@"%lu", (unsigned long) self.date.day] drawInRect:textBounds withAttributes:@{NSFontAttributeName:font, NSParagraphStyleAttributeName:textStyle}];
-    
         UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
-        
         return image;
     }];
     self.overlayView.hidden = !(self.selected || self.highlighted) ;
@@ -97,7 +91,7 @@
 - (UIView *)dotview
 {
     if (!_dotview) {
-        _dotview =  [[UIView alloc]initWithFrame:CGRectMake(17, 40, 10, 10)];
+        _dotview =  [[UIView alloc]initWithFrame:CGRectMake(14, 34, 8, 8)];
         _dotview.layer.cornerRadius = 5;
         _dotview.clipsToBounds = YES;
         _dotview.backgroundColor = [UIColor primaryColor];
@@ -108,7 +102,7 @@
 
 - (UIView *) overlayView {
     if (!_overlayView) {
-        _overlayView = [[UIView alloc] initWithFrame:CGRectMake(8, 8, 28, 28)];
+        _overlayView = [[UIView alloc] initWithFrame:CGRectMake(6, 6, 24, 24)];
         _overlayView.layer.cornerRadius = _overlayView.bounds.size.width/2;
         _overlayView.clipsToBounds = YES;
         _overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
