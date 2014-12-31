@@ -47,7 +47,6 @@
     [endDateComponents setDay:day];
     [endDateComponents setHour:endHour];
     [endDateComponents setMinute:endMinute];
-    
     return [calendar dateFromComponents:endDateComponents];
 }
 
@@ -100,9 +99,16 @@
     return compoundString;
 }
 
-- (BOOL)isCurrentDate
+- (BOOL)isCurrentDateForCalendar:(NSCalendar *)calendar
 {
-    return YES;
+    NSDate *date = (NSDate *)self;
+    NSDate *today = [NSDate date];
+    NSDateComponents *dateComponents = [calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:date];
+    NSDateComponents *todayComponents = [calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:today];
+    if (dateComponents.year == todayComponents.year && dateComponents.month == todayComponents.month && dateComponents.day == todayComponents.day) {
+        return YES;
+    }
+    return NO;
 }
 
 @end

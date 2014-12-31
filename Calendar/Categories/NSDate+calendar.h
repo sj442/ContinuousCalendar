@@ -19,7 +19,6 @@
 
 + (NSString *)timeAtIndex:(NSInteger)index forDate:(NSDate *)date calendar:(NSCalendar *)calendar;
 
-- (BOOL)isCurrentDate;
-
+- (BOOL)isCurrentDateForCalendar:(NSCalendar *)calendar;
 
 @end
