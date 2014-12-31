@@ -43,7 +43,7 @@
     [super viewWillAppear:animated];
     
     if (self.fromCreateEvent) {
-        [self moveupTableView];
+        [self showUpdatedTableView];
     } else {
     ExtendedNavBarView *dayView = [[ExtendedNavBarView alloc]initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)/25)];
     [self.view addSubview:dayView];
@@ -119,6 +119,18 @@
         NSString *navtitle =[abbreviatedDateFormatter stringFromDate:self.calendarView.selectedDate];
         self.title = navtitle;
     }];
+}
+
+- (void)showUpdatedTableView
+{
+    [self.view bringSubviewToFront:self.tableViewController.view];
+    self.calendarView.selectedDate = self.tableViewController.calendarView.selectedDate;
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(goBackToMonthView:)];
+    NSDateFormatter *abbreviatedDateFormatter = [[NSDateFormatter alloc]init];
+    abbreviatedDateFormatter.calendar = self.calendarView.calendar;
+    abbreviatedDateFormatter.dateFormat = [abbreviatedDateFormatter.class dateFormatFromTemplate:@"yyyyLLLL" options:0 locale:[NSLocale currentLocale]];
+    NSString *navtitle =[abbreviatedDateFormatter stringFromDate:self.calendarView.selectedDate];
+    self.title = navtitle;
 }
      
 - (void)goBackToMonthView: (id)sender
