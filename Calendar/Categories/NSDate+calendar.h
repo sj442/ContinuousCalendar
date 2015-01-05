@@ -10,6 +10,7 @@
 
 @interface NSDate (calendar)
 
++ (NSString *)getCurrentTimeForCalendar:(NSCalendar *)calendar;
 
 + (NSDate *)calendarStartDateFromDate:(NSDate*)date ForCalendar:(NSCalendar*)calendar;
 

@@ -95,8 +95,21 @@
         time = @"12 AM";
         hour =24;
     }
-    NSString *compoundString = [NSString stringWithFormat:@"%@~%d", time, hour];
+    NSString *compoundString = [NSString stringWithFormat:@"%@~%ld", time, (long)hour];
     return compoundString;
+}
+
++ (NSString *)getCurrentTimeForCalendar:(NSCalendar *)calendar
+{
+    NSInteger hour = [calendar component:NSCalendarUnitHour fromDate:[NSDate date]];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc]init];
+    if ((hour>=1 && hour<=9) || (hour>=13 && hour <=21)) {
+        [dateFormatter setDateFormat:@"H:mm a"];
+    } else {
+        [dateFormatter setDateFormat:@"HH:mm a"];
+    }
+    NSString *dateString = [dateFormatter stringFromDate:[NSDate date]];
+    return dateString;
 }
 
 - (BOOL)isCurrentDateForCalendar:(NSCalendar *)calendar

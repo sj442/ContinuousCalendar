@@ -22,6 +22,7 @@
 @property (strong, nonatomic) NSMutableDictionary *endTimesCache;
 @property (strong, nonatomic) NSMutableDictionary *indexDictionary;
 @property (strong, nonatomic) UIView *currentTimeMarker;
+@property (strong, nonatomic) UILabel *timeLabel;
 @property (strong, nonatomic) NSTimer *currentTimer;
 
 @end
@@ -138,7 +139,7 @@
     for (NSArray *arrayOfEvents in events) {
         for (int k =0; k<arrayOfEvents.count; k++) {
             EventDataClass *eventData = arrayOfEvents[k];
-            CGFloat width = 270/arrayOfEvents.count;
+            CGFloat width = (self.tableView.frame.size.width-50)/arrayOfEvents.count;
             startPointX = 50 + width*k;
             height = eventData.height.floatValue;
             startPointY = eventData.startPointY.floatValue;
@@ -447,6 +448,9 @@
     if (self.currentTimeMarker) {
         [self.currentTimeMarker removeFromSuperview];
     }
+    if (self.timeLabel) {
+        [self.timeLabel removeFromSuperview];
+    }
     if (self.currentTimer) {
         [self.currentTimer invalidate];
     }
@@ -455,10 +459,22 @@
         ip = [self indexPathForDate:[NSDate date]];
     }
     EPCalendarTableViewCell *cell = (EPCalendarTableViewCell *)[self.tableView cellForRowAtIndexPath:ip];
+    
+    if (minutes<25) {
+        cell.separatorLabel.hidden = YES;
+    } else {
+        cell.separatorLabel.hidden = NO;
+    }
     CGFloat startPointY = (minutes*44)/60;
-    UIView *lineView = [[UIView alloc]initWithFrame:CGRectMake(0, startPointY, CGRectGetWidth(self.view.frame), 1.0f)];
+    UIView *lineView = [[UIView alloc]initWithFrame:CGRectMake(50, startPointY, CGRectGetWidth(self.view.frame), 1.0f)];
     lineView.backgroundColor = [UIColor redColor];
     [cell.contentView addSubview:lineView];
+    UILabel *timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(5, startPointY-5, 50, 10)];
+    timeLabel.text = [NSDate getCurrentTimeForCalendar:self.calendarView.calendar];
+    timeLabel.font = [UIFont systemFontOfSize:10];
+    timeLabel.textColor = [UIColor redColor];
+    [cell.contentView addSubview:timeLabel];
+    self.timeLabel = timeLabel;
     self.currentTimeMarker = lineView;
     self.currentTimer = [NSTimer scheduledTimerWithTimeInterval:60.0f target:self selector:@selector(updateTimeMarkerLocation:) userInfo:nil repeats:YES];
 }
