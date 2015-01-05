@@ -29,7 +29,7 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
 
 @implementation EPWeekCalendarView
 
-- (instancetype) initWithCalendar:(NSCalendar *)calendar
+- (instancetype)initWithCalendar:(NSCalendar *)calendar
 {
     self = [super initWithFrame:CGRectZero];
     if (self) {
@@ -83,7 +83,6 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
         _collectionView.backgroundColor = [UIColor whiteColor];
         _collectionView.dataSource = self;
         _collectionView.delegate = self;
-        _collectionView.showsHorizontalScrollIndicator = NO;
         _collectionView.showsVerticalScrollIndicator = NO;
         _collectionView.scrollEnabled = NO;
         [_collectionView registerClass:[EPCalendarWeekCell class] forCellWithReuseIdentifier:EPCalendarWeekCellIdentifier];
@@ -96,6 +95,7 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
 {
     if (!self.weekFlowLayout) {
         UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
+        layout.scrollDirection = UICollectionViewScrollDirectionVertical;
         layout.headerReferenceSize = CGSizeZero;
         layout.itemSize = CGSizeMake(CGRectGetWidth(self.bounds)/8, CGRectGetHeight(self.bounds)/2);
         layout.minimumLineSpacing = 2.0f;
@@ -105,17 +105,17 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
     return self.weekFlowLayout;
 }
 
-- (NSInteger) numberOfSectionsInCollectionView:(UICollectionView *)collectionView
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
     return 1;
 }
 
-- (NSInteger) collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
     return 14;
 }
 
-- (NSDate *) dateForFirstDayInSection:(NSInteger)section
+- (NSDate *)dateForFirstDayInSection:(NSInteger)section
 {
     return [self.calendar dateByAddingComponents:((^{
         NSDateComponents *dateComponents = [NSDateComponents new];
@@ -124,7 +124,7 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
     })()) toDate:[self dateFromCalendarDate:self.fromDate] options:0];
 }
 
-- (NSUInteger) numberOfWeeksForMonthOfDate:(NSDate *)date
+- (NSUInteger)numberOfWeeksForMonthOfDate:(NSDate *)date
 {
     NSDate *firstDayInMonth = [self.calendar dateFromComponents:[self.calendar components:NSCalendarUnitYear|NSCalendarUnitMonth fromDate:date]];
     
@@ -241,12 +241,12 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
     [self.collectionView reloadData];
 }
 
-- (NSDate *) dateFromCalendarDate:(EPCalendarDate)dateStruct
+- (NSDate *)dateFromCalendarDate:(EPCalendarDate)dateStruct
 {
     return [self.calendar dateFromComponents:[self dateComponentsFromPickerDate:dateStruct]];
 }
 
-- (NSDateComponents *) dateComponentsFromPickerDate:(EPCalendarDate)dateStruct
+- (NSDateComponents *)dateComponentsFromPickerDate:(EPCalendarDate)dateStruct
 {
     NSDateComponents *components = [NSDateComponents new];
     components.year = dateStruct.year;
@@ -255,7 +255,7 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
     return components;
 }
 
-- (EPCalendarDate) calendarDateFromDate:(NSDate *)date
+- (EPCalendarDate)calendarDateFromDate:(NSDate *)date
 {
     NSDateComponents *components = [self.calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:date];
     return (EPCalendarDate) {
@@ -267,7 +267,7 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
 
 #pragma  mark - Events cache
 
-+ (NSCache *) eventsCache {
++ (NSCache *)eventsCache {
     static NSCache *cache;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{

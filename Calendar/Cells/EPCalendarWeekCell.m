@@ -1,15 +1,4 @@
-//
-//  EPCalendarWeekCell.m
-//  Calendar
-//
-//  Created by Sunayna Jain on 12/11/14.
-//  Copyright (c) 2014 Enhatch. All rights reserved.
-//
 
-//
-//  EPCalendarCell.m
-//  Calendar
-//
 //  Created by Sunayna Jain on 12/4/14.
 //  Copyright (c) 2014 Enhatch. All rights reserved.
 //
@@ -17,13 +6,11 @@
 #import "EPCalendarWeekCell.h"
 #import "UIColor+EH.h"
 
-
 @interface EPCalendarWeekCell ()
 
 + (NSCache *) imageCache;
 + (id) cacheKeyForCalendarDate:(EPCalendarDate)date;
 + (id) fetchObjectForKey:(id)key withCreator:(id(^)(void))block;
-
 
 @property (nonatomic, readonly, strong) UIImageView *imageView;
 @property (nonatomic, readonly, strong) UIView *dotview;
@@ -43,33 +30,29 @@
     return self;
 }
 
-- (void) setDate:(EPCalendarDate)date {
+- (void)setDate:(EPCalendarDate)date {
     _date = date;
     [self setNeedsLayout];
 }
 
-- (void) setHighlighted:(BOOL)highlighted {
+- (void)setHighlighted:(BOOL)highlighted {
     [super setHighlighted:highlighted];
     [self setNeedsLayout];
 }
-- (void) setSelected:(BOOL)selected {
+- (void)setSelected:(BOOL)selected {
     [super setSelected:selected];
     [self setNeedsLayout];
 }
 
-- (void) layoutSubviews {
-    
+- (void)layoutSubviews {
     [super layoutSubviews];
     self.imageView.image = [[self class] fetchObjectForKey:[[self class] cacheKeyForCalendarDate:self.date] withCreator:^{
-        
         UIGraphicsBeginImageContextWithOptions(self.bounds.size, YES, self.window.screen.scale);
         CGContextRef context = UIGraphicsGetCurrentContext();
         CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
         CGContextFillRect(context, self.bounds);
-        
         UIFont *font = [UIFont boldSystemFontOfSize:14.0f];
         CGRect textBounds = (CGRect){ 0.0f, 10.0f, 36.0f, 20.0f };
-        
         if (!self.isSelected) {
             CGContextSetFillColorWithColor(context, [UIColor blackColor].CGColor);
         } else {
@@ -78,13 +61,12 @@
         NSMutableParagraphStyle *textStyle = [[NSMutableParagraphStyle defaultParagraphStyle] mutableCopy];
         textStyle.lineBreakMode = NSLineBreakByCharWrapping;
         textStyle.alignment = NSTextAlignmentCenter;
-        
         [[NSString stringWithFormat:@"%lu", (unsigned long) self.date.day] drawInRect:textBounds withAttributes:@{NSFontAttributeName:font, NSParagraphStyleAttributeName:textStyle}];
         UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
         return image;
     }];
-    self.overlayView.hidden = !(self.selected || self.highlighted) ;
+    self.overlayView.hidden = !(self.selected || self.highlighted);
     self.dotview.hidden = !self.hasEvents;
 }
 

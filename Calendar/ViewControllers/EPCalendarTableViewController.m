@@ -4,7 +4,6 @@
 //
 //  Created by Sunayna Jain on 12/4/14.
 //  Copyright (c) 2014 Enhatch. All rights reserved.
-//
 
 #import "EPCalendarTableViewController.h"
 #import "EPCreateEventTableViewController.h"
@@ -42,7 +41,6 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [self populateStartAndEndTimeCache];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -50,6 +48,7 @@
     [super viewDidAppear:animated];
     if ([self.calendarView.selectedDate isCurrentDateForCalendar:self.calendarView.calendar]) {
         NSIndexPath *ip = [self indexPathForDate:[NSDate date]];
+        [self.tableView scrollToRowAtIndexPath:ip atScrollPosition:UITableViewScrollPositionTop animated:YES];
         [self refreshCurrentTimeMarkerAtIndexPath:ip];
     }
 }
@@ -131,7 +130,6 @@
         [self.endTimesCache setObject:[NSNumber numberWithInteger:hour+1] forKey:indexPath];
         return time;
     }];
-    
     NSArray *events = [self.indexDictionary objectForKey:indexPath];
     CGFloat startPointX = 50;
     CGFloat height = 0;
@@ -183,7 +181,12 @@
 - (void)viewTapped:(UIButton *)sender
 {
     EPCalendarEventView *button = (EPCalendarEventView *)sender;
-    EPCreateEventTableViewController *createVC = [[EPCreateEventTableViewController alloc]initWithEvent:button.event eventName:button.event.title location:button.event.location notes:button.event.notes startDate:button.event.startDate endDate:button.event.endDate];
+    EPCreateEventTableViewController *createVC = [[EPCreateEventTableViewController alloc]initWithEvent:button.event
+                                                                                              eventName:button.event.title
+                                                                                               location:button.event.location
+                                                                                                  notes:button.event.notes
+                                                                                              startDate:button.event.startDate
+                                                                                                endDate:button.event.endDate];
     createVC.eventSelected = YES;
     [self.navigationController pushViewController:createVC animated:YES];
 }
@@ -260,7 +263,8 @@
     return _endTimesCache;
 }
 
-- (id) fetchObjectForKey:(id)key withCreator:(id(^)(void))block {
+- (id)fetchObjectForKey:(id)key withCreator:(id(^)(void))block
+{
     id answer = [[self separatorTimesCache] objectForKey:key];
     if (!answer) {
         answer = block();
@@ -277,7 +281,9 @@
         EPCalendarTableViewCell *cell = (EPCalendarTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
         [self.indexDictionary removeAllObjects];
         cell.separatorLabel.text = [self fetchObjectForKey:indexPath withCreator:^id {
-            NSString *compoundString =[NSDate timeAtIndex:indexPath.row forDate:self.calendarView.selectedDate calendar:self.calendarView.calendar];
+            NSString *compoundString =[NSDate timeAtIndex:indexPath.row
+                                                  forDate:self.calendarView.selectedDate
+                                                 calendar:self.calendarView.calendar];
             NSString *time = [[compoundString componentsSeparatedByString:@"~"] firstObject];
             [self.separatorTimesCache setObject:time forKey:indexPath];
             NSString *hourString = [[compoundString componentsSeparatedByString:@"~"] lastObject];
@@ -345,8 +351,28 @@
         }
         [self.indexDictionary setObject:listOfEvents forKey:indexPath];
     }
-        [self.tableView scrollToRowAtIndexPath:scrollToIP atScrollPosition:UITableViewScrollPositionTop animated:YES];
-        [self.tableView reloadData];
+        [CATransaction begin];
+        [self.tableView beginUpdates];
+        [CATransaction setCompletionBlock:^{
+            [self refreshCurrentTimeMarkerAtIndexPath:nil];
+        }];
+    
+    if ([self.calendarView.selectedDate isCurrentDateForCalendar:self.calendarView.calendar]) {
+
+        NSIndexPath *ip = [self indexPathForDate:[NSDate date]];
+        [self.tableView scrollToRowAtIndexPath:ip
+                              atScrollPosition:UITableViewScrollPositionTop
+                                      animated:YES];
+        
+    } else {
+        [self.tableView scrollToRowAtIndexPath:scrollToIP
+                              atScrollPosition:UITableViewScrollPositionTop
+                                    animated:YES];
+    }
+    
+    [self.tableView endUpdates];
+    [CATransaction commit];
+    [self.tableView reloadData];
 }
 
 - (EventDataClass *)compareEvent:(EKEvent *)event withCellStartDate:(NSDate *)cellStartDate cellEndDate:(NSDate *)cellEndDate
@@ -398,7 +424,7 @@
     } else if (startResult == NSOrderedAscending && endResult == NSOrderedDescending) { //cell is part of bigger event
         startPointY = 0;
         height =44;
-    } else if (startResult == NSOrderedDescending && endResult == NSOrderedDescending){
+    } else if (startResult == NSOrderedDescending && endResult == NSOrderedDescending) {
         //event does not lie even partially in the cell
         startPointY =0;
         height =0;
@@ -430,7 +456,7 @@
     }
     EPCalendarTableViewCell *cell = (EPCalendarTableViewCell *)[self.tableView cellForRowAtIndexPath:ip];
     CGFloat startPointY = (minutes*44)/60;
-    UIView *lineView = [[UIView alloc]initWithFrame:CGRectMake(0, startPointY, CGRectGetWidth(self.view.frame), 2.0f)];
+    UIView *lineView = [[UIView alloc]initWithFrame:CGRectMake(0, startPointY, CGRectGetWidth(self.view.frame), 1.0f)];
     lineView.backgroundColor = [UIColor redColor];
     [cell.contentView addSubview:lineView];
     self.currentTimeMarker = lineView;
@@ -448,6 +474,5 @@
     rect.origin.y = startPointY;
     self.currentTimeMarker.frame = rect;
 }
-
 
 @end

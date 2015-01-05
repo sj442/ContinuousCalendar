@@ -11,6 +11,10 @@
 
 @implementation EPCalendarTableViewCell
 
+-(void)drawRect:(CGRect)rect
+{
+
+}
 
 + (UINib *)nib
 {
