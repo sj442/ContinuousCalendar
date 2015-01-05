@@ -103,11 +103,11 @@
 {
     NSInteger hour = [calendar component:NSCalendarUnitHour fromDate:[NSDate date]];
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc]init];
-    if ((hour>=1 && hour<=9) || (hour>=13 && hour <=21)) {
-        [dateFormatter setDateFormat:@"H:mm a"];
-    } else {
-        [dateFormatter setDateFormat:@"HH:mm a"];
-    }
+   if ((hour>=1 && hour<=9) || (hour>=13 && hour <=21)) {
+       [dateFormatter setDateFormat:@"h:mm a"];
+   } else {
+     [dateFormatter setDateFormat:@"hh:mm a"];
+   }
     NSString *dateString = [dateFormatter stringFromDate:[NSDate date]];
     return dateString;
 }

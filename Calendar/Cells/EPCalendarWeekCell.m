@@ -47,7 +47,7 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     self.imageView.image = [[self class] fetchObjectForKey:[[self class] cacheKeyForCalendarDate:self.date] withCreator:^{
-        UIGraphicsBeginImageContextWithOptions(self.bounds.size, YES, self.window.screen.scale);
+        UIGraphicsBeginImageContextWithOptions(self.bounds.size, NO, self.window.screen.scale);
         CGContextRef context = UIGraphicsGetCurrentContext();
         CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
         CGContextFillRect(context, self.bounds);

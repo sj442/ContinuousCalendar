@@ -115,11 +115,14 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     EPCalendarTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:EPCalendarTableViewCellIdentifier];
-    
+    cell.separatorLabel.hidden = NO;
     for (UIView *view in cell.contentView.subviews) {
         if (!(view.tag ==100)) {
             [view removeFromSuperview];
         }
+    }
+    if ([self.tableView respondsToSelector:@selector(layoutMargins)]) {
+        self.tableView.layoutMargins = UIEdgeInsetsMake(0, 50, 0, 0);
     }
     cell.separatorLabel.text = [self fetchObjectForKey:indexPath withCreator:^id {
         NSString *compoundString =[NSDate timeAtIndex:indexPath.row forDate:self.calendarView.selectedDate calendar:self.calendarView.calendar];
@@ -131,6 +134,7 @@
         [self.endTimesCache setObject:[NSNumber numberWithInteger:hour+1] forKey:indexPath];
         return time;
     }];
+    cell.separatorLabel.hidden = NO;
     NSArray *events = [self.indexDictionary objectForKey:indexPath];
     CGFloat startPointX = 50;
     CGFloat height = 0;
@@ -354,16 +358,16 @@
     }
         [CATransaction begin];
         [self.tableView beginUpdates];
-        [CATransaction setCompletionBlock:^{
-            [self refreshCurrentTimeMarkerAtIndexPath:nil];
-        }];
     
     if ([self.calendarView.selectedDate isCurrentDateForCalendar:self.calendarView.calendar]) {
-
         NSIndexPath *ip = [self indexPathForDate:[NSDate date]];
         [self.tableView scrollToRowAtIndexPath:ip
                               atScrollPosition:UITableViewScrollPositionTop
                                       animated:YES];
+        
+        [CATransaction setCompletionBlock:^{
+            [self refreshCurrentTimeMarkerAtIndexPath:nil];
+        }];
         
     } else {
         [self.tableView scrollToRowAtIndexPath:scrollToIP
@@ -459,24 +463,19 @@
         ip = [self indexPathForDate:[NSDate date]];
     }
     EPCalendarTableViewCell *cell = (EPCalendarTableViewCell *)[self.tableView cellForRowAtIndexPath:ip];
-    
-    if (minutes<25) {
-        cell.separatorLabel.hidden = YES;
-    } else {
-        cell.separatorLabel.hidden = NO;
-    }
     CGFloat startPointY = (minutes*44)/60;
     UIView *lineView = [[UIView alloc]initWithFrame:CGRectMake(50, startPointY, CGRectGetWidth(self.view.frame), 1.0f)];
     lineView.backgroundColor = [UIColor redColor];
     [cell.contentView addSubview:lineView];
-    UILabel *timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(5, startPointY-5, 50, 10)];
+    UILabel *timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(5, startPointY-5, 45, 10)];
     timeLabel.text = [NSDate getCurrentTimeForCalendar:self.calendarView.calendar];
     timeLabel.font = [UIFont systemFontOfSize:10];
     timeLabel.textColor = [UIColor redColor];
-    [cell.contentView addSubview:timeLabel];
+    timeLabel.backgroundColor = [UIColor whiteColor];
+    [cell.contentView insertSubview:timeLabel belowSubview:cell.separatorLabel];
     self.timeLabel = timeLabel;
     self.currentTimeMarker = lineView;
-    self.currentTimer = [NSTimer scheduledTimerWithTimeInterval:60.0f target:self selector:@selector(updateTimeMarkerLocation:) userInfo:nil repeats:YES];
+    self.currentTimer = [NSTimer scheduledTimerWithTimeInterval:5.0f target:self selector:@selector(updateTimeMarkerLocation:) userInfo:nil repeats:YES];
 }
 
 - (void)updateTimeMarkerLocation:(id)sender
@@ -489,6 +488,10 @@
     CGRect rect = self.currentTimeMarker.frame;
     rect.origin.y = startPointY;
     self.currentTimeMarker.frame = rect;
+    self.timeLabel.text = [NSDate getCurrentTimeForCalendar:self.calendarView.calendar];
+    rect = self.timeLabel.frame;
+    rect.origin.y = startPointY-5;
+    self.timeLabel.frame = rect;
 }
 
 @end

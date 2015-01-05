@@ -83,7 +83,6 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     if (!_collectionView) {
         _collectionView = [[EPCalendarCollectionView alloc]initWithFrame:self.bounds collectionViewLayout:self.flowLayout];
         _collectionView.backgroundColor = [UIColor whiteColor];
-        _collectionView.layer.shadowColor =[UIColor whiteColor].CGColor;
         _collectionView.dataSource = self;
         _collectionView.delegate = self;
         _collectionView.myDelegate = self;

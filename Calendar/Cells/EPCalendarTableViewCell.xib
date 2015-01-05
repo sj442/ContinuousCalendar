@@ -13,6 +13,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
                 <autoresizingMask key="autoresizingMask"/>
             </tableViewCellContentView>
+            <inset key="separatorInset" minX="50" minY="0.0" maxX="0.0" maxY="0.0"/>
             <point key="canvasLocation" x="256" y="111"/>
         </tableViewCell>
     </objects>
