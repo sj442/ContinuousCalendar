@@ -43,31 +43,8 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
-    if ([self.calendarView.selectedDate isCurrentDateForCalendar:self.calendarView.calendar]) {
-        NSInteger minutes = [self.calendarView.calendar component:NSCalendarUnitMinute fromDate:[NSDate date]];
-        NSInteger hour = [self.calendarView.calendar component:NSCalendarUnitHour fromDate:[NSDate date]];
-        CGFloat tableViewHeight = 44*25;
-        NSInteger totalMinutes = hour*60+ minutes;
-        CGFloat startPointY = (totalMinutes*tableViewHeight)/(25*60);
-        int cellNumber = startPointY/44;
-        int blankViewStartPointY = cellNumber*44-5;
-        UIView *blankView = [[UIView alloc]initWithFrame:CGRectMake(0, blankViewStartPointY, 50, 44)];
-        blankView.backgroundColor = [UIColor whiteColor];
-        [self.tableView addSubview:blankView];
-        self.blankView = blankView;
-        UIView *lineView = [[UIView alloc]initWithFrame:CGRectMake(50, startPointY, CGRectGetWidth(self.view.frame), 1.0f)];
-        lineView.backgroundColor = [UIColor redColor];
-        [self.tableView addSubview:lineView];
-        self.currentTimeMarker = lineView;
-        UILabel *timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(5, startPointY-5, 45, 10)];
-        timeLabel.text = [NSDate getCurrentTimeForCalendar:self.calendarView.calendar];
-        timeLabel.font = [UIFont systemFontOfSize:10];
-        timeLabel.textColor = [UIColor redColor];
-        [self.tableView addSubview:timeLabel];
-        self.timeLabel = timeLabel;
-        self.currentTimer = [NSTimer scheduledTimerWithTimeInterval:5.0f target:self selector:@selector(updateTimeMarkerLocation:) userInfo:nil repeats:YES];
-    }
+    [self refreshCurrentTimeMarker];
+
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -256,6 +233,7 @@
 {
     self.dataItems = items;
     [self populateStartAndEndTimeCache];
+    [self refreshCurrentTimeMarker];
 }
 
 - (void)setToolbarText:(NSString *)text
@@ -463,6 +441,42 @@
     eventData.startPointY = [NSNumber numberWithFloat:startPointY];
     eventData.startIP = startIP;
     return eventData;
+}
+
+- (void)refreshCurrentTimeMarker
+{
+    if ([self.calendarView.selectedDate isCurrentDateForCalendar:self.calendarView.calendar]) {
+        [self.currentTimeMarker removeFromSuperview];
+        [self.blankView removeFromSuperview];
+        [self.timeLabel removeFromSuperview];
+        NSInteger minutes = [self.calendarView.calendar component:NSCalendarUnitMinute fromDate:[NSDate date]];
+        NSInteger hour = [self.calendarView.calendar component:NSCalendarUnitHour fromDate:[NSDate date]];
+        CGFloat tableViewHeight = 44*25;
+        NSInteger totalMinutes = hour*60+ minutes;
+        CGFloat startPointY = (totalMinutes*tableViewHeight)/(25*60);
+        int cellNumber = startPointY/44;
+        int blankViewStartPointY = cellNumber*44-5;
+        UIView *blankView = [[UIView alloc]initWithFrame:CGRectMake(0, blankViewStartPointY, 50, 44)];
+        blankView.backgroundColor = [UIColor whiteColor];
+        [self.tableView addSubview:blankView];
+        self.blankView = blankView;
+        UIView *lineView = [[UIView alloc]initWithFrame:CGRectMake(50, startPointY, CGRectGetWidth(self.view.frame), 1.0f)];
+        lineView.backgroundColor = [UIColor redColor];
+        [self.tableView addSubview:lineView];
+        self.currentTimeMarker = lineView;
+        UILabel *timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(5, startPointY-5, 45, 10)];
+        timeLabel.text = [NSDate getCurrentTimeForCalendar:self.calendarView.calendar];
+        timeLabel.font = [UIFont systemFontOfSize:10];
+        timeLabel.textColor = [UIColor redColor];
+        [self.tableView addSubview:timeLabel];
+        self.timeLabel = timeLabel;
+        self.currentTimer = [NSTimer scheduledTimerWithTimeInterval:5.0f target:self selector:@selector(updateTimeMarkerLocation:) userInfo:nil repeats:YES];
+    } else {
+        [self.currentTimer invalidate];
+        [self.currentTimeMarker removeFromSuperview];
+        [self.blankView removeFromSuperview];
+        [self.timeLabel removeFromSuperview];
+    }
 }
 
 - (void)updateTimeMarkerLocation:(id)sender
