@@ -24,6 +24,7 @@
 @property (strong, nonatomic) UIView *currentTimeMarker;
 @property (strong, nonatomic) UILabel *timeLabel;
 @property (strong, nonatomic) NSTimer *currentTimer;
+@property (strong, nonatomic) UIView *blankView;
 
 @end
 
@@ -42,6 +43,31 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
+    if ([self.calendarView.selectedDate isCurrentDateForCalendar:self.calendarView.calendar]) {
+        NSInteger minutes = [self.calendarView.calendar component:NSCalendarUnitMinute fromDate:[NSDate date]];
+        NSInteger hour = [self.calendarView.calendar component:NSCalendarUnitHour fromDate:[NSDate date]];
+        CGFloat tableViewHeight = 44*25;
+        NSInteger totalMinutes = hour*60+ minutes;
+        CGFloat startPointY = (totalMinutes*tableViewHeight)/(25*60);
+        int cellNumber = startPointY/44;
+        int blankViewStartPointY = cellNumber*44-5;
+        UIView *blankView = [[UIView alloc]initWithFrame:CGRectMake(0, blankViewStartPointY, 50, 44)];
+        blankView.backgroundColor = [UIColor whiteColor];
+        [self.tableView addSubview:blankView];
+        self.blankView = blankView;
+        UIView *lineView = [[UIView alloc]initWithFrame:CGRectMake(50, startPointY, CGRectGetWidth(self.view.frame), 1.0f)];
+        lineView.backgroundColor = [UIColor redColor];
+        [self.tableView addSubview:lineView];
+        self.currentTimeMarker = lineView;
+        UILabel *timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(5, startPointY-5, 45, 10)];
+        timeLabel.text = [NSDate getCurrentTimeForCalendar:self.calendarView.calendar];
+        timeLabel.font = [UIFont systemFontOfSize:10];
+        timeLabel.textColor = [UIColor redColor];
+        [self.tableView addSubview:timeLabel];
+        self.timeLabel = timeLabel;
+        self.currentTimer = [NSTimer scheduledTimerWithTimeInterval:5.0f target:self selector:@selector(updateTimeMarkerLocation:) userInfo:nil repeats:YES];
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -50,7 +76,6 @@
     if ([self.calendarView.selectedDate isCurrentDateForCalendar:self.calendarView.calendar]) {
         NSIndexPath *ip = [self indexPathForDate:[NSDate date]];
         [self.tableView scrollToRowAtIndexPath:ip atScrollPosition:UITableViewScrollPositionTop animated:YES];
-        [self refreshCurrentTimeMarkerAtIndexPath:ip];
     }
 }
 
@@ -163,10 +188,6 @@
                   view.alpha = 0.3;
                   [cell.contentView addSubview:view];
         }
-    }
-    NSIndexPath *currentTimeIP = [self indexPathForDate:[NSDate date]];
-    if ([self.calendarView.selectedDate isCurrentDateForCalendar:self.calendarView.calendar] && [[self visibleIndexPaths] containsObject:currentTimeIP]) {
-        [self refreshCurrentTimeMarkerAtIndexPath:currentTimeIP];
     }
     return cell;
 }
@@ -366,15 +387,12 @@
                                       animated:YES];
         
         [CATransaction setCompletionBlock:^{
-            [self refreshCurrentTimeMarkerAtIndexPath:nil];
         }];
-        
     } else {
         [self.tableView scrollToRowAtIndexPath:scrollToIP
                               atScrollPosition:UITableViewScrollPositionTop
                                     animated:YES];
     }
-    
     [self.tableView endUpdates];
     [CATransaction commit];
     [self.tableView reloadData];
@@ -447,44 +465,13 @@
     return eventData;
 }
 
-- (void)refreshCurrentTimeMarkerAtIndexPath:(NSIndexPath *)ip
-{
-    if (self.currentTimeMarker) {
-        [self.currentTimeMarker removeFromSuperview];
-    }
-    if (self.timeLabel) {
-        [self.timeLabel removeFromSuperview];
-    }
-    if (self.currentTimer) {
-        [self.currentTimer invalidate];
-    }
-    NSInteger minutes = [self.calendarView.calendar component:NSCalendarUnitMinute fromDate:[NSDate date]];
-    if (ip ==nil) {
-        ip = [self indexPathForDate:[NSDate date]];
-    }
-    EPCalendarTableViewCell *cell = (EPCalendarTableViewCell *)[self.tableView cellForRowAtIndexPath:ip];
-    CGFloat startPointY = (minutes*44)/60;
-    UIView *lineView = [[UIView alloc]initWithFrame:CGRectMake(50, startPointY, CGRectGetWidth(self.view.frame), 1.0f)];
-    lineView.backgroundColor = [UIColor redColor];
-    [cell.contentView addSubview:lineView];
-    UILabel *timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(5, startPointY-5, 45, 10)];
-    timeLabel.text = [NSDate getCurrentTimeForCalendar:self.calendarView.calendar];
-    timeLabel.font = [UIFont systemFontOfSize:10];
-    timeLabel.textColor = [UIColor redColor];
-    timeLabel.backgroundColor = [UIColor whiteColor];
-    [cell.contentView insertSubview:timeLabel belowSubview:cell.separatorLabel];
-    self.timeLabel = timeLabel;
-    self.currentTimeMarker = lineView;
-    self.currentTimer = [NSTimer scheduledTimerWithTimeInterval:5.0f target:self selector:@selector(updateTimeMarkerLocation:) userInfo:nil repeats:YES];
-}
-
 - (void)updateTimeMarkerLocation:(id)sender
 {
     NSInteger minutes = [self.calendarView.calendar component:NSCalendarUnitMinute fromDate:[NSDate date]];
-    if (minutes ==0) {
-        [self refreshCurrentTimeMarkerAtIndexPath:nil];
-    }
-    CGFloat startPointY = (minutes*44)/60;
+    NSInteger hour = [self.calendarView.calendar component:NSCalendarUnitHour fromDate:[NSDate date]];
+    CGFloat tableViewHeight = 44*25;
+    NSInteger totalMinutes = hour*60+ minutes;
+    CGFloat startPointY = (totalMinutes*tableViewHeight)/(25*60);
     CGRect rect = self.currentTimeMarker.frame;
     rect.origin.y = startPointY;
     self.currentTimeMarker.frame = rect;
@@ -492,6 +479,17 @@
     rect = self.timeLabel.frame;
     rect.origin.y = startPointY-5;
     self.timeLabel.frame = rect;
+    int cellNumber = startPointY/44;
+    int blankViewStartPointY = cellNumber*44;
+    if (minutes<30) {
+        blankViewStartPointY = cellNumber*44-5;
+    } else {
+        blankViewStartPointY = (cellNumber+1)*44-5;
+    }
+    rect = self.blankView.frame;
+    rect.origin.y = blankViewStartPointY;
+    self.blankView.frame = rect;
+
 }
 
 @end

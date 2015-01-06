@@ -26,7 +26,8 @@
     
 }
 
-- (void)awakeFromNib {
+- (void)awakeFromNib
+{
     // Initialization code
     self.layoutAttributes = [NSMutableDictionary dictionary];
     self.events = [NSMutableArray array];
@@ -38,19 +39,9 @@
     self.separatorLabel = separatorView;
 }
 
-- (void)configureCellAtIndexPath:(NSIndexPath *)indexPath
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
-}
-
-- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
-{
-    
-}
-
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
 }
 
 
