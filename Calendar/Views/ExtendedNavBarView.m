@@ -10,14 +10,6 @@
 
 @implementation ExtendedNavBarView
 
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
-*/
-
 - (void)layoutSubviews
 {
     NSArray *days = @[@"S", @"M", @"T", @"W", @"T", @"F", @"S"];

@@ -52,7 +52,7 @@
         CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
         CGContextFillRect(context, self.bounds);
         UIFont *font = [UIFont boldSystemFontOfSize:14.0f];
-        CGRect textBounds = (CGRect){ 0.0f, 10.0f, 36.0f, 20.0f };
+        CGRect textBounds = (CGRect){ 4.0f, 10.0f, 36.0f, 20.0f };
         if (!self.isSelected) {
             CGContextSetFillColorWithColor(context, [UIColor blackColor].CGColor);
         } else {
@@ -73,7 +73,7 @@
 - (UIView *)dotview
 {
     if (!_dotview) {
-        _dotview =  [[UIView alloc]initWithFrame:CGRectMake(14, 34, 8, 8)];
+        _dotview =  [[UIView alloc]initWithFrame:CGRectMake(18, 30, 8, 8)];
         _dotview.layer.cornerRadius = 5;
         _dotview.clipsToBounds = YES;
         _dotview.backgroundColor = [UIColor primaryColor];
@@ -84,7 +84,7 @@
 
 - (UIView *) overlayView {
     if (!_overlayView) {
-        _overlayView = [[UIView alloc] initWithFrame:CGRectMake(6, 6, 24, 24)];
+        _overlayView = [[UIView alloc] initWithFrame:CGRectMake(9, 7, 24, 24)];
         _overlayView.layer.cornerRadius = _overlayView.bounds.size.width/2;
         _overlayView.clipsToBounds = YES;
         _overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;

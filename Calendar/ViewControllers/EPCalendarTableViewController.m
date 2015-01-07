@@ -25,65 +25,66 @@
 @property (strong, nonatomic) UILabel *timeLabel;
 @property (strong, nonatomic) NSTimer *currentTimer;
 @property (strong, nonatomic) UIView *blankView;
+@property CGRect initialFrame;
 
 @end
 
 @implementation EPCalendarTableViewController
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    
-    self.indexDictionary = [NSMutableDictionary dictionary];
-    [self setupCalendarView];
-    [self setupDayLabel];
-    [self setupToolBar];
-    [self setupTableView];
+#pragma mark - Initialization
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+  self = [super init];
+  if (self) {
+
+  }
+  return self;
+}
+#pragma mark - LifeCycle methods
+
+- (void)viewDidLoad
+{
+  [super viewDidLoad];
+  self.initialFrame = [UIScreen mainScreen].bounds;
+  self.indexDictionary = [NSMutableDictionary dictionary];
+  [self setupCalendarView];
+  [self setupToolBar];
+  [self setupTableView];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    [super viewWillAppear:animated];
-    [self refreshCurrentTimeMarker];
-
+  [super viewWillAppear:animated];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    [super viewDidAppear:animated];
-    if ([self.calendarView.selectedDate isCurrentDateForCalendar:self.calendarView.calendar]) {
-        NSIndexPath *ip = [self indexPathForDate:[NSDate date]];
-        [self.tableView scrollToRowAtIndexPath:ip atScrollPosition:UITableViewScrollPositionTop animated:YES];
-    }
+  [super viewDidAppear:animated];
+  [self refreshCurrentTimeMarker];
+  if ([self.calendarView.selectedDate isCurrentDateForCalendar:self.calendarView.calendar]) {
+    NSIndexPath *ip = [self indexPathForDate:[NSDate date]];
+    [self.tableView scrollToRowAtIndexPath:ip atScrollPosition:UITableViewScrollPositionTop animated:YES];
+  }
 }
 
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
     [super didReceiveMemoryWarning];
 }
 
 - (void)setupCalendarView
 {
-    EPWeekCalendarView *calendarView = [EPWeekCalendarView new];
-    calendarView.frame =CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)/6);
-    [self.view addSubview:calendarView];
-    self.calendarView = calendarView;
-    self.calendarView.tableViewDelegate = self;
-}
-
-- (void)setupDayLabel
-{
-    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(0, CGRectGetMaxY(self.calendarView.bounds), CGRectGetWidth(self.view.bounds), 20)];
-    label.text = @"date";
-    label.backgroundColor = [UIColor whiteColor];
-    label.textAlignment = NSTextAlignmentCenter;
-    label.textColor = [UIColor primaryColor];
-    label.font = [UIFont fontWithName:@"Helvetica-Bold" size:16];
-    [self.view addSubview:label];
-    self.dayLabel = label;
+  EPWeekCalendarView *calendarView = [EPWeekCalendarView new];
+  calendarView.frame = CGRectMake(0, 0, CGRectGetWidth(self.initialFrame), CGRectGetHeight(self.initialFrame)/6);
+  [self.view addSubview:calendarView];
+  self.calendarView = calendarView;
+  self.calendarView.tableViewDelegate = self;
 }
 
 - (void)setupToolBar
 {
-    UIToolbar *toolBar = [[UIToolbar alloc]initWithFrame:CGRectMake(0, CGRectGetMaxY(self.calendarView.frame), CGRectGetWidth(self.view.bounds), 44)];
+    UIToolbar *toolBar = [[UIToolbar alloc]initWithFrame:CGRectMake(0, CGRectGetMaxY(self.calendarView.frame), CGRectGetWidth(self.initialFrame), 44)];
     UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
     UIBarButtonItem *events = [[UIBarButtonItem alloc]initWithTitle:@"Event" style:UIBarButtonItemStyleDone target:self action:nil];
     toolBar.items = @[flexibleSpace, events, flexibleSpace];
@@ -95,7 +96,7 @@
 
 - (void)setupTableView
 {
-    UITableView *tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, CGRectGetMaxY(self.toolBar.frame), CGRectGetWidth(self.view.bounds), self.view.frame.size.height-CGRectGetHeight(self.calendarView.frame)-20-84)];
+  UITableView *tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, CGRectGetMaxY(self.toolBar.frame), CGRectGetWidth(self.initialFrame), CGRectGetHeight(self.initialFrame)-CGRectGetHeight(self.calendarView.frame)-CGRectGetHeight(self.toolBar.frame)-46-CGRectGetHeight(self.initialFrame)/25-64)];
     tableView.delegate = self;
     tableView.dataSource = self;
     [self.view addSubview:tableView];

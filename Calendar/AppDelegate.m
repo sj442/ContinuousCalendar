@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import "EPCalendarCollectionViewController.h"
+#import "EPTabBarController.h"
 #import "EventStore.h"
 
 @interface AppDelegate ()
@@ -16,22 +17,33 @@
 
 @implementation AppDelegate
 
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     
     self.window = [[UIWindow alloc]initWithFrame:[UIScreen mainScreen].bounds];
     self.window.backgroundColor = [UIColor whiteColor];
-    EPCalendarCollectionViewController *vc = [[EPCalendarCollectionViewController alloc]init];
-    UINavigationController *navC = [[UINavigationController alloc]initWithRootViewController:vc];
-    self.window.rootViewController = navC;
     [self.window makeKeyAndVisible];
-    
+  
+  EPTabBarController *tabBarVC = [[EPTabBarController alloc]initWithNibName:@"EPTabBarController" bundle:nil];
+  self.window.rootViewController = tabBarVC;
+  
+//    EPCalendarCollectionViewController *vc = [[EPCalendarCollectionViewController alloc]init];
+//    UINavigationController *navC = [[UINavigationController alloc]initWithRootViewController:vc];
+//    self.window.rootViewController = navC;
+  
     EKEventStore *store = [[EventStore sharedInstance] eventStore];
     [store requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
         // handle access here
         if (granted) {
-            
+            dispatch_sync(dispatch_get_main_queue(), ^{
+               // [[EventStore sharedInstance].eventStore reset];
+                //[vc reloadCalendar];
+                //remove no access image
+            });
+        } else {
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                //load no access image
+            });
         }
     }];
     return YES;

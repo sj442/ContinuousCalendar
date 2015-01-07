@@ -20,5 +20,6 @@
 
 @property (strong, nonatomic) NSArray *dataItems;
 
+-(instancetype)initWithFrame:(CGRect)frame;
 
 @end

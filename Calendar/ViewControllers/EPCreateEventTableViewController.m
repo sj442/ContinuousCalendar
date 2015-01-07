@@ -18,23 +18,23 @@
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        [self setupEventStore];
-        [self addSaveButton];
-        [self addCancelButton];
-    }
+  self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+  if (self) {
+    [self setupEventStore];
+    [self addSaveButton];
+    [self addCancelButton];
+  }
     return self;
 }
 
 - (id)initWithDate:(NSDate*)date
 {
-    self = [super init];
-    if (self) {
-        self.startDate = [NSDate dateWithTimeInterval:3600*10 sinceDate:date]; //10 am
-        self.endDate = [NSDate dateWithTimeInterval:3600*11 sinceDate:date]; //11 am
-    }
-    return self;
+  self = [super init];
+  if (self) {
+    self.startDate = [NSDate dateWithTimeInterval:3600*10 sinceDate:date]; //10 am
+    self.endDate = [NSDate dateWithTimeInterval:3600*11 sinceDate:date]; //11 am
+  }
+  return self;
 }
 
 - (id)initWithEvent:(EKEvent*)event eventName:(NSString*)name location:(NSString*)location notes:(NSString*)notes startDate:(NSDate*)startDate endDate:(NSDate*)endDate
@@ -108,16 +108,14 @@
 
 - (void)cancelPressed:(id)sender
 {
-    if (self.eventSelected==1) {
-        EPCalendarCollectionViewController *collectionVC = [self.navigationController.viewControllers firstObject];
-        collectionVC.fromCreateEvent = YES;
-        [self.navigationController popViewControllerAnimated:YES];
-    }
-    
-    else {
-        [self.navigationController dismissViewControllerAnimated:YES completion:^{
-        }];
-    }
+  if (self.eventSelected==1) {
+    [self.delegate viewWillBePopped];
+    [self.navigationController popViewControllerAnimated:YES];
+  } else {
+    [self.delegate viewWillBeDismissed];
+    [self.navigationController dismissViewControllerAnimated:YES completion:^{
+    }];
+  }
 }
 
 - (void)editButtonPressed:(UIBarButtonItem*)sender
@@ -191,7 +189,8 @@
                                   description:self.notes
                                     startDate:self.startDate
                                       endDate:self.endDate];
-            [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+          [self.delegate viewWillBeDismissed];
+          [self.navigationController dismissViewControllerAnimated:YES completion:nil];
         }
     }
 }
@@ -207,14 +206,12 @@
 
 - (void)saveEditedEvent:(EKEvent *)event
 {
-    NSError *error;
-    [self.localEventStore saveEvent:event
-                               span:EKSpanThisEvent
-                             commit:YES
-                              error:&error];
-//    if (self.contact) {
-//        [[EPDataManagerT sharedInstance] updateContact:self.contact eventDate:event.startDate forCalendarEvent:event.eventIdentifier];
-//    }
+  NSError *error;
+  [self.localEventStore saveEvent:event
+                             span:EKSpanThisEvent
+                           commit:YES
+                            error:&error];
+  [self.delegate viewWillBePopped];
     if (!error) {
         [self.navigationController popViewControllerAnimated:YES];
     }
@@ -226,16 +223,15 @@
 
 - (void)saveEvent:(EKEvent*)event
 {
-    NSError *error;
-    [self.localEventStore saveEvent:event
+  NSError *error;
+  [self.localEventStore saveEvent:event
                                span:EKSpanThisEvent
                              commit:YES
                               error:&error];
-//    if (self.contact) {
-//        [[EPDataManagerT sharedInstance] attachContact:self.contact eventDate:event.startDate toCalendarEvent:event.eventIdentifier];
-//    }
+  
+  [self.delegate viewWillBePopped];
 
-    if (!error) {
+  if (!error) {
         [self.navigationController popViewControllerAnimated:YES];
     }
     else {
@@ -273,12 +269,15 @@
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
+  [self.delegate viewWillBePopped];
+
     if (buttonIndex==1) {
         [self popViewControllerAndDissmissAlertView:alertView AndClickedButtonIndex:buttonIndex WithCompletionHandler:^(NSError *error)
          {
-             if (error) {
-                 NSLog(@"error deleting event:%@", [error description]);
-             }
+           if (error) {
+             NSLog(@"error deleting event:%@", [error description]);
+           }
+           
              [self.navigationController popViewControllerAnimated:YES];
          }];
         [self.navigationController popViewControllerAnimated:YES];

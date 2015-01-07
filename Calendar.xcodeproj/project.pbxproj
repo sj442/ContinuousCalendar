@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3F63A1C31A5D90BA0070F3A7 /* EPTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F63A1C11A5D90BA0070F3A7 /* EPTabBarController.m */; };
+		3F63A1C41A5D90BA0070F3A7 /* EPTabBarController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3F63A1C21A5D90BA0070F3A7 /* EPTabBarController.xib */; };
 		3FBCBA821A3F2EF4006ECB7E /* B22_taskbar__add-icon-outline.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FBCBA801A3F2EF4006ECB7E /* B22_taskbar__add-icon-outline.png */; };
 		3FBCBA831A3F2EF4006ECB7E /* B22_taskbar__add-icon-outline@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FBCBA811A3F2EF4006ECB7E /* B22_taskbar__add-icon-outline@2x.png */; };
 		3FBCBAA41A3F31C1006ECB7E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FBCBAA31A3F31C1006ECB7E /* UIKit.framework */; };
@@ -64,6 +66,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3F63A1C01A5D90BA0070F3A7 /* EPTabBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EPTabBarController.h; sourceTree = "<group>"; };
+		3F63A1C11A5D90BA0070F3A7 /* EPTabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EPTabBarController.m; sourceTree = "<group>"; };
+		3F63A1C21A5D90BA0070F3A7 /* EPTabBarController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EPTabBarController.xib; sourceTree = "<group>"; };
 		3FBCBA801A3F2EF4006ECB7E /* B22_taskbar__add-icon-outline.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "B22_taskbar__add-icon-outline.png"; sourceTree = "<group>"; };
 		3FBCBA811A3F2EF4006ECB7E /* B22_taskbar__add-icon-outline@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "B22_taskbar__add-icon-outline@2x.png"; sourceTree = "<group>"; };
 		3FBCBAA31A3F31C1006ECB7E /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -220,6 +225,9 @@
 		3FBCBAC71A3F5345006ECB7E /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				3F63A1C01A5D90BA0070F3A7 /* EPTabBarController.h */,
+				3F63A1C11A5D90BA0070F3A7 /* EPTabBarController.m */,
+				3F63A1C21A5D90BA0070F3A7 /* EPTabBarController.xib */,
 				3FBCBAC81A3F5345006ECB7E /* EPCalendarCollectionView.h */,
 				3FBCBAC91A3F5345006ECB7E /* EPCalendarCollectionView.m */,
 				3FBCBACA1A3F5345006ECB7E /* EPCalendarCollectionViewController.h */,
@@ -420,6 +428,7 @@
 			files = (
 				3FBCBA831A3F2EF4006ECB7E /* B22_taskbar__add-icon-outline@2x.png in Resources */,
 				3FBCBAF21A3F5345006ECB7E /* EPCalendarCollectionViewController.xib in Resources */,
+				3F63A1C41A5D90BA0070F3A7 /* EPTabBarController.xib in Resources */,
 				3FBCBAEE1A3F5345006ECB7E /* EPTextViewCell.xib in Resources */,
 				3FBD971B1A30BFD300BDE8B7 /* LaunchScreen.xib in Resources */,
 				3FBCBB021A3F6B76006ECB7E /* EPCalendarTableViewCell.xib in Resources */,
@@ -470,6 +479,7 @@
 				3FBCBAF81A3F5345006ECB7E /* ViewController.m in Sources */,
 				3FBCBAEA1A3F5345006ECB7E /* EPCalendarWeekCell.m in Sources */,
 				3FBCBAE61A3F5345006ECB7E /* NSString+EH.m in Sources */,
+				3F63A1C31A5D90BA0070F3A7 /* EPTabBarController.m in Sources */,
 				3FBCBAEB1A3F5345006ECB7E /* EPDatePickerCell.m in Sources */,
 				3FBCBAFA1A3F5345006ECB7E /* EPCalendarView.m in Sources */,
 				3FBD970D1A30BFD300BDE8B7 /* main.m in Sources */,
