@@ -7,11 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+
 @class EPCalendarCollectionView;
 
 @protocol EPCalendarCollectionViewDelegate <UICollectionViewDelegate>
 
--(void)calendarCollectionViewWillLayoutSubviews: (EPCalendarCollectionView *)collectionView;
+- (void)calendarCollectionViewWillLayoutSubviews: (EPCalendarCollectionView *)collectionView;
 
 - (void)collectionViewTappedAtPoint:(CGPoint)point;
 

@@ -12,6 +12,9 @@
 
 //for comparing event stand and end times
 + (BOOL)checkIfFirstDate:(NSDate*)firstDate isSmallerThanSecondDate:(NSDate*)secondDate;
+
++ (NSString*)getOrdinalSuffix: (NSDate*)date forCalendar:(NSCalendar*)calendar;
+
 - (NSString *)description;
 
 // Returns a three letter abbreviation of weekday name
@@ -40,7 +43,8 @@
 
 // Prints out dates such as 12, 2013
 - (NSString *)dayOfMonthAndYearOnCalendar:(NSCalendar *)calendar;
+
 - (NSString*)formattedString;
-+ (NSString*)getOrdinalSuffix: (NSDate*)date forCalendar:(NSCalendar*)calendar;
+
 
 @end

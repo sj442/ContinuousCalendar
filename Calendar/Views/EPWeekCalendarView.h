@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-
 @protocol CalendarWeekViewDelegate <NSObject>
 
 - (void)checkNavigationTitle:(NSString *)title;
@@ -19,6 +18,7 @@
 
 - (void)dataItems:(NSArray *)items;
 - (void)setToolbarText:(NSString *)text;
+- (void)setTableViewSelectedDate:(NSDate *)date;
 
 @end
 
@@ -36,6 +36,6 @@
 @property (strong, nonatomic) UICollectionViewFlowLayout *weekFlowLayout;
 @property (strong, nonatomic) NSCalendar *calendar;
 
-- (void)populateCellsWithEvents;
+- (void)refreshEventsCache;
 
 @end

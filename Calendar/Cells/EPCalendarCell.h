@@ -16,6 +16,5 @@
 @property (nonatomic) BOOL hasEvents;
 @property (strong, nonatomic) NSDate *cellDate;
 @property (nonatomic, readonly, strong) UIView *overlayView;
-@property BOOL weekMode;
 
 @end

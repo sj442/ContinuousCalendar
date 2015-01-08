@@ -11,11 +11,6 @@
 
 @implementation EPCalendarTableViewCell
 
--(void)drawRect:(CGRect)rect
-{
-
-}
-
 + (UINib *)nib
 {
   return [UINib nibWithNibName:@"EPCalendarTableViewCell" bundle:nil];
@@ -23,7 +18,7 @@
 
 - (void)layoutSubviews
 {
-    
+  
 }
 
 - (void)awakeFromNib
@@ -41,7 +36,7 @@
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
-    [super setSelected:selected animated:animated];
+  [super setSelected:selected animated:animated];
 }
 
 

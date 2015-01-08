@@ -14,6 +14,9 @@
 
 @property (nonatomic, readonly, strong) UIImageView *imageView;
 @property (nonatomic, readonly, strong) UIView *dotview;
+@property CGFloat width;
+@property CGFloat height;
+
 
 @end
 
@@ -22,108 +25,114 @@
 @synthesize overlayView = _overlayView;
 @synthesize dotview = _dotview;
 
+#pragma mark - Layout methods
+
 - (id) initWithFrame:(CGRect)frame {
-    self = [super initWithFrame:frame];
-    if (self) {
-        self.backgroundColor = [UIColor whiteColor];
-    }
-    return self;
-}
-
-- (void)setDate:(EPCalendarDate)date {
-    _date = date;
-    [self setNeedsLayout];
-}
-
-- (void)setHighlighted:(BOOL)highlighted {
-    [super setHighlighted:highlighted];
-    [self setNeedsLayout];
-}
-- (void)setSelected:(BOOL)selected {
-    [super setSelected:selected];
-    [self setNeedsLayout];
+  self = [super initWithFrame:frame];
+  if (self) {
+    self.backgroundColor = [UIColor whiteColor];
+    self.width = self.frame.size.width;
+    self.height = self.frame.size.height;
+  }
+  return self;
 }
 
 - (void)layoutSubviews {
-    [super layoutSubviews];
-    self.imageView.image = [[self class] fetchObjectForKey:[[self class] cacheKeyForCalendarDate:self.date] withCreator:^{
-        UIGraphicsBeginImageContextWithOptions(self.bounds.size, NO, self.window.screen.scale);
-        CGContextRef context = UIGraphicsGetCurrentContext();
-        CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
-        CGContextFillRect(context, self.bounds);
-        UIFont *font = [UIFont boldSystemFontOfSize:14.0f];
-        CGRect textBounds = (CGRect){ 4.0f, 10.0f, 36.0f, 20.0f };
-        if (!self.isSelected) {
-            CGContextSetFillColorWithColor(context, [UIColor blackColor].CGColor);
-        } else {
-            CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
-        }
-        NSMutableParagraphStyle *textStyle = [[NSMutableParagraphStyle defaultParagraphStyle] mutableCopy];
-        textStyle.lineBreakMode = NSLineBreakByCharWrapping;
-        textStyle.alignment = NSTextAlignmentCenter;
-        [[NSString stringWithFormat:@"%lu", (unsigned long) self.date.day] drawInRect:textBounds withAttributes:@{NSFontAttributeName:font, NSParagraphStyleAttributeName:textStyle}];
-        UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
-        return image;
-    }];
-    self.overlayView.hidden = !(self.selected || self.highlighted);
-    self.dotview.hidden = !self.hasEvents;
+  [super layoutSubviews];
+  self.imageView.image = [[self class] fetchObjectForKey:[[self class] cacheKeyForCalendarDate:self.date] withCreator:^{
+    UIGraphicsBeginImageContextWithOptions(self.bounds.size, NO, self.window.screen.scale);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
+    CGContextFillRect(context, self.bounds);
+    UIFont *font = [UIFont boldSystemFontOfSize:14.0f];
+    CGRect textBounds = (CGRect){ 0.0f, self.height/2-10, self.width, 20.0f };
+    if (!self.isSelected) {
+      CGContextSetFillColorWithColor(context, [UIColor blackColor].CGColor);
+    } else {
+      CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
+    }
+    NSMutableParagraphStyle *textStyle = [[NSMutableParagraphStyle defaultParagraphStyle] mutableCopy];
+    textStyle.lineBreakMode = NSLineBreakByCharWrapping;
+    textStyle.alignment = NSTextAlignmentCenter;
+    [[NSString stringWithFormat:@"%lu", (unsigned long) self.date.day] drawInRect:textBounds withAttributes:@{NSFontAttributeName:font, NSParagraphStyleAttributeName:textStyle}];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image;
+  }];
+  self.overlayView.hidden = !(self.selected || self.highlighted);
+  self.dotview.hidden = !self.hasEvents;
 }
 
 - (UIView *)dotview
 {
-    if (!_dotview) {
-        _dotview =  [[UIView alloc]initWithFrame:CGRectMake(18, 30, 8, 8)];
-        _dotview.layer.cornerRadius = 5;
-        _dotview.clipsToBounds = YES;
-        _dotview.backgroundColor = [UIColor primaryColor];
-        [self.contentView addSubview:_dotview];
-    }
-    return _dotview;
+  if (!_dotview) {
+    _dotview =  [[UIView alloc]initWithFrame:CGRectMake(self.width/2-4, self.height-11, 8, 8)];
+    _dotview.layer.cornerRadius = 5;
+    _dotview.clipsToBounds = YES;
+    _dotview.backgroundColor = [UIColor primaryColor];
+    [self.contentView addSubview:_dotview];
+  }
+  return _dotview;
 }
 
 - (UIView *) overlayView {
-    if (!_overlayView) {
-        _overlayView = [[UIView alloc] initWithFrame:CGRectMake(9, 7, 24, 24)];
-        _overlayView.layer.cornerRadius = _overlayView.bounds.size.width/2;
-        _overlayView.clipsToBounds = YES;
-        _overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-        _overlayView.backgroundColor = [UIColor blackColor];
-        _overlayView.alpha = 0.25f;
-        [self.contentView addSubview:_overlayView];
-    }
-    return _overlayView;
+  if (!_overlayView) {
+    _overlayView = [[UIView alloc] initWithFrame:CGRectMake(self.width/2-12, self.height/2-12, 24, 24)];
+    _overlayView.layer.cornerRadius = _overlayView.bounds.size.width/2;
+    _overlayView.clipsToBounds = YES;
+    _overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+    _overlayView.backgroundColor = [UIColor blackColor];
+    _overlayView.alpha = 0.25f;
+    [self.contentView addSubview:_overlayView];
+  }
+  return _overlayView;
 }
 
 - (UIImageView *) imageView {
-    if (!_imageView) {
-        _imageView = [[UIImageView alloc] initWithFrame:self.contentView.bounds];
-        _imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-        [self.contentView addSubview:_imageView];
-    }
-    return _imageView;
+  if (!_imageView) {
+    _imageView = [[UIImageView alloc] initWithFrame:self.contentView.bounds];
+    _imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+    [self.contentView addSubview:_imageView];
+  }
+  return _imageView;
 }
 
+- (void)setDate:(EPCalendarDate)date {
+  _date = date;
+  [self setNeedsLayout];
+}
+
+- (void)setHighlighted:(BOOL)highlighted {
+  [super setHighlighted:highlighted];
+  [self setNeedsLayout];
+}
+- (void)setSelected:(BOOL)selected {
+  [super setSelected:selected];
+  [self setNeedsLayout];
+}
+
+#pragma mark = Image Cache
+
 + (NSCache *) imageCache {
-    static NSCache *cache;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        cache = [NSCache new];
-    });
-    return cache;
+  static NSCache *cache;
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    cache = [NSCache new];
+  });
+  return cache;
 }
 
 + (id) cacheKeyForCalendarDate:(EPCalendarDate)date {
-    return @(date.day);
+  return @(date.day);
 }
 
 + (id) fetchObjectForKey:(id)key withCreator:(id(^)(void))block {
-    id answer = [[self imageCache] objectForKey:key];
-    if (!answer) {
-        answer = block();
-        [[self imageCache] setObject:answer forKey:key];
-    }
-    return answer;
+  id answer = [[self imageCache] objectForKey:key];
+  if (!answer) {
+    answer = block();
+    [[self imageCache] setObject:answer forKey:key];
+  }
+  return answer;
 }
 
 

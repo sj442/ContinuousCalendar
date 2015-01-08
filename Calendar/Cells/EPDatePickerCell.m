@@ -12,36 +12,31 @@
 
 +(UINib*)nib
 {
-    return [UINib nibWithNibName:@"EPDatePickerCell" bundle:nil];
+  return [UINib nibWithNibName:@"EPDatePickerCell" bundle:nil];
 }
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
-    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
-    if (self) {
-    }
-    return self;
-}
-
-- (void)awakeFromNib
-{
-    
+  self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+  if (self) {
+  }
+  return self;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
-    [super setSelected:selected animated:animated];
+  [super setSelected:selected animated:animated];
 }
 
 
 -(void)timeButtonPressed:(id)sender
 {
-    [self.datePickerDelegate timePickerButtonWasPressed];
+  [self.datePickerDelegate timePickerButtonWasPressed];
 }
 
 -(void)dateButtonPressed:(id)sender
 {
-    [self.datePickerDelegate datePickerButtonWasPressed];
+  [self.datePickerDelegate datePickerButtonWasPressed];
 }
 
 @end

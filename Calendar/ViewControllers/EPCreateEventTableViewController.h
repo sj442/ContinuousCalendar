@@ -20,7 +20,7 @@
 
 @property (weak, nonatomic) id <CreateEventDelegate> delegate;
 
--(id)initWithEvent:(EKEvent*)event eventName:(NSString*)name location:(NSString*)location notes:(NSString*)notes startDate:(NSDate*)startDate endDate:(NSDate*)endDate;
--(id)initWithDate:(NSDate*)date;
+- (id)initWithEvent:(EKEvent*)event eventName:(NSString*)name location:(NSString*)location notes:(NSString*)notes startDate:(NSDate*)startDate endDate:(NSDate*)endDate;
+- (id)initWithDate:(NSDate*)date;
 
 @end

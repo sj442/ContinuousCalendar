@@ -44,12 +44,11 @@
   self.automaticallyAdjustsScrollViewInsets = NO;
   [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor primaryColor]}];
   self.navigationController.navigationBar.tintColor = [UIColor primaryColor];
-
+  
   [self.navigationController.navigationBar setShadowImage:[[UIImage alloc] init]];
-    
   [self.navigationController.navigationBar setBackgroundImage:[[UIImage alloc]init]
-                                                  forBarMetrics:UIBarMetricsDefault];
-    
+                                                forBarMetrics:UIBarMetricsDefault];
+  
   self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"B22_taskbar__add-icon-outline"] style:UIBarButtonItemStylePlain target:self action:@selector(addEvent:)];
   
   CGRect bounds = [UIScreen mainScreen].bounds;
@@ -58,53 +57,13 @@
   self.dayView = dayView;
   
   [self setUpCalendarView];
-  
-  EPCalendarTableViewController *tableVC = [[EPCalendarTableViewController alloc]init];
-  self.tableViewController = tableVC;
-  [self addChildViewController:tableVC];
-  tableVC.view.frame = self.calendarView.frame;
-  [self.view insertSubview:tableVC.view belowSubview:self.calendarView];
-  [tableVC didMoveToParentViewController:self];
-  self.tableViewController.selectedDate = self.calendarView.selectedDate;
-}
-
-- (void)setUpCalendarView
-{
-  CGRect bounds = [UIScreen mainScreen].bounds;
-  NSCalendar *gregorian = [[NSCalendar alloc]initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-  EPCalendarView *calendarView = [[EPCalendarView alloc]initWithCalendar:gregorian];
-  calendarView.frame =CGRectMake(0, CGRectGetMaxY(self.dayView.frame), CGRectGetWidth(bounds), CGRectGetHeight(bounds) - CGRectGetHeight(self.dayView.frame)-64);
-  [self.view addSubview:calendarView];
-  self.calendarView = calendarView;
-  self.calendarView.delegate = self;
+  [self addCalendarTableViewController];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
   [self checkCalendarPermissions];
-}
-
-- (void)checkCalendarPermissions
-{
-  [self.eventStore requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
-    // handle access here
-    if (granted) {
-      dispatch_sync(dispatch_get_main_queue(), ^{
-        [self.eventStore reset];
-        [self calendarViewReload];
-      });
-    } else {
-      dispatch_sync(dispatch_get_main_queue(), ^{
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
-      });
-    }
-  }];
-}
-
-- (void)calendarViewReload
-{
-  
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -120,7 +79,45 @@
 
 - (void)didReceiveMemoryWarning
 {
-    [super didReceiveMemoryWarning];
+  [super didReceiveMemoryWarning];
+}
+
+- (void)setUpCalendarView
+{
+  CGRect bounds = [UIScreen mainScreen].bounds;
+  NSCalendar *gregorian = [[NSCalendar alloc]initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+  EPCalendarView *calendarView = [[EPCalendarView alloc]initWithCalendar:gregorian];
+  calendarView.frame =CGRectMake(0, CGRectGetMaxY(self.dayView.frame), CGRectGetWidth(bounds), CGRectGetHeight(bounds) - CGRectGetHeight(self.dayView.frame)-64);
+  [self.view addSubview:calendarView];
+  self.calendarView = calendarView;
+  self.calendarView.delegate = self;
+}
+
+- (void)addCalendarTableViewController
+{
+  EPCalendarTableViewController *tableVC = [[EPCalendarTableViewController alloc]init];
+  self.tableViewController = tableVC;
+  [self addChildViewController:tableVC];
+  tableVC.view.frame = self.calendarView.frame;
+  [self.view insertSubview:tableVC.view belowSubview:self.calendarView];
+  [tableVC didMoveToParentViewController:self];
+  self.tableViewController.selectedDate = self.calendarView.selectedDate;
+}
+
+- (void)checkCalendarPermissions
+{
+  [self.eventStore requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
+    // handle access here
+    if (granted) {
+      dispatch_sync(dispatch_get_main_queue(), ^{
+        [self.eventStore reset];
+      });
+    } else {
+      dispatch_sync(dispatch_get_main_queue(), ^{
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+      });
+    }
+  }];
 }
 
 - (void)addEvent:(id)sender
@@ -152,41 +149,41 @@
     self.tableViewController.calendarView.referenceDate = self.calendarView.selectedDate;
     [self.view bringSubviewToFront:self.tableViewController.view];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(goBackToMonthView:)];
-    } completion:^(BOOL finished) {
-      NSDateFormatter *abbreviatedDateFormatter = [[NSDateFormatter alloc]init];
-      abbreviatedDateFormatter.calendar = self.calendarView.calendar;
-      abbreviatedDateFormatter.dateFormat = [abbreviatedDateFormatter.class dateFormatFromTemplate:@"yyyyLLLL" options:0 locale:[NSLocale currentLocale]];
-      NSString *navtitle =[abbreviatedDateFormatter stringFromDate:self.calendarView.selectedDate];
-      self.navigationItem.title = navtitle;
-    }];
-}
-
-- (void)showUpdatedTableView
-{
-    [self.view bringSubviewToFront:self.tableViewController.view];
-    self.calendarView.selectedDate = self.tableViewController.calendarView.selectedDate;
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(goBackToMonthView:)];
+  } completion:^(BOOL finished) {
     NSDateFormatter *abbreviatedDateFormatter = [[NSDateFormatter alloc]init];
     abbreviatedDateFormatter.calendar = self.calendarView.calendar;
     abbreviatedDateFormatter.dateFormat = [abbreviatedDateFormatter.class dateFormatFromTemplate:@"yyyyLLLL" options:0 locale:[NSLocale currentLocale]];
     NSString *navtitle =[abbreviatedDateFormatter stringFromDate:self.calendarView.selectedDate];
     self.navigationItem.title = navtitle;
+  }];
 }
-     
-- (void)goBackToMonthView: (id)sender
+
+- (void)showUpdatedTableView
 {
-    [UIView animateWithDuration:0.25f animations:^{
-        CGRect frame = self.tableViewController.view.frame;
-        frame.origin.y = self.calendarView.frame.origin.y;
-        frame.size.height = self.calendarView.frame.size.height;
-        self.tableViewController.view.frame = frame;
-        [self.view bringSubviewToFront:self.calendarView];
-        self.calendarView.selectedDate = self.tableViewController.calendarView.selectedDate;
-        [self.calendarView populateCellsWithEvents];
-        self.navigationItem.leftBarButtonItem = nil;
-    } completion:^(BOOL finished) {
-        [self.calendarView populateCellsWithEvents];
-    }];
+  [self.view bringSubviewToFront:self.tableViewController.view];
+  self.calendarView.selectedDate = self.tableViewController.calendarView.selectedDate;
+  self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(goBackToMonthView:)];
+  NSDateFormatter *abbreviatedDateFormatter = [[NSDateFormatter alloc]init];
+  abbreviatedDateFormatter.calendar = self.calendarView.calendar;
+  abbreviatedDateFormatter.dateFormat = [abbreviatedDateFormatter.class dateFormatFromTemplate:@"yyyyLLLL" options:0 locale:[NSLocale currentLocale]];
+  NSString *navtitle =[abbreviatedDateFormatter stringFromDate:self.calendarView.selectedDate];
+  self.navigationItem.title = navtitle;
+}
+
+- (void)goBackToMonthView:(id)sender
+{
+  [UIView animateWithDuration:0.25f animations:^{
+    CGRect frame = self.tableViewController.view.frame;
+    frame.origin.y = self.calendarView.frame.origin.y;
+    frame.size.height = self.calendarView.frame.size.height;
+    self.tableViewController.view.frame = frame;
+    [self.view bringSubviewToFront:self.calendarView];
+    self.calendarView.selectedDate = self.tableViewController.calendarView.selectedDate;
+    [self.calendarView populateCellsWithEvents];
+    self.navigationItem.leftBarButtonItem = nil;
+  } completion:^(BOOL finished) {
+    [self.calendarView populateCellsWithEvents];
+  }];
 }
 
 #pragma mark- WeekCalendarView Delegate

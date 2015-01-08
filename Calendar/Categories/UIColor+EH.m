@@ -12,17 +12,17 @@
 
 + (UIColor *)primaryColor
 {
-    return [UIColor colorWithRed:0/255.0 green:94/255.0 blue:153/255.0 alpha:1.0];
+  return [UIColor colorWithRed:0/255.0 green:94/255.0 blue:153/255.0 alpha:1.0];
 }
 
 + (UIColor *)secondaryColor
 {
-    return [UIColor lightGrayColor];
+  return [UIColor lightGrayColor];
 }
 
 + (UIColor *)tableViewSeparator
 {
-    return [UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1.0];
+  return [UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1.0];
 }
 
 @end
