@@ -16,9 +16,13 @@
   return [UINib nibWithNibName:@"EPCalendarTableViewCell" bundle:nil];
 }
 
-- (void)layoutSubviews
+- (void)drawRect:(CGRect)rect
 {
   
+}
+
+- (void)layoutSubviews
+{
 }
 
 - (void)awakeFromNib
@@ -32,6 +36,7 @@
   separatorView.textColor = [UIColor secondaryColor];
   [self.contentView addSubview:separatorView];
   self.separatorLabel = separatorView;
+  self.separatorInset = UIEdgeInsetsMake(0, 50, 0, 0);
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated

@@ -87,7 +87,7 @@
 {
   UIToolbar *toolBar = [[UIToolbar alloc]initWithFrame:CGRectMake(0, CGRectGetMaxY(self.calendarView.frame), CGRectGetWidth(self.initialFrame), 44)];
   UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
-  UIBarButtonItem *events = [[UIBarButtonItem alloc]initWithTitle:@"Event" style:UIBarButtonItemStyleDone target:self action:nil];
+  UIBarButtonItem *events = [[UIBarButtonItem alloc]initWithTitle:@"Events" style:UIBarButtonItemStyleDone target:self action:nil];
   toolBar.items = @[flexibleSpace, events, flexibleSpace];
   toolBar.tintColor = [UIColor primaryColor];
   [self.view addSubview:toolBar];
@@ -108,24 +108,27 @@
 
 #pragma mark - Table view data source & delegate methods
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
   return 1;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
   return 25;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
   EPCalendarTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:EPCalendarTableViewCellIdentifier];
   for (UIView *view in cell.contentView.subviews) {
     if (!(view.tag ==100)) {
       [view removeFromSuperview];
     }
   }
-  if ([self.tableView respondsToSelector:@selector(layoutMargins)]) {
-    self.tableView.layoutMargins = UIEdgeInsetsMake(0, 50, 0, 0);
-  }
+//  if ([self.tableView respondsToSelector:@selector(layoutMargins)]) {
+//    self.tableView.layoutMargins = UIEdgeInsetsMake(0, 50, 0, 50);
+//  }
   cell.separatorLabel.text = [self fetchObjectForKey:indexPath withCreator:^id {
     NSString *compoundString =[NSDate timeAtIndex:indexPath.row forDate:self.calendarView.selectedDate calendar:self.calendarView.calendar];
     NSString *time = [[compoundString componentsSeparatedByString:@"~"] firstObject];
@@ -136,7 +139,6 @@
     [self.endTimesCache setObject:[NSNumber numberWithInteger:hour+1] forKey:indexPath];
     return time;
   }];
-  cell.separatorLabel.hidden = NO;
   NSArray *events = [self.indexDictionary objectForKey:indexPath];
   CGFloat startPointX = 50;
   CGFloat height = 0;
@@ -471,7 +473,7 @@
     self.currentTimer = [NSTimer scheduledTimerWithTimeInterval:5.0f target:self selector:@selector(updateTimeMarkerLocation:) userInfo:nil repeats:YES];
   } else {
     [self.currentTimer invalidate];
-    }
+  }
 }
 
 - (void)updateTimeMarkerLocation:(id)sender
