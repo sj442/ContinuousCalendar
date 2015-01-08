@@ -96,9 +96,9 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
         UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
         layout.scrollDirection = UICollectionViewScrollDirectionVertical;
         layout.headerReferenceSize = CGSizeZero;
-        layout.itemSize = CGSizeMake(CGRectGetWidth(self.bounds)/8, CGRectGetHeight(self.bounds)/2);
+        layout.itemSize = CGSizeMake(CGRectGetWidth(self.bounds)/7, CGRectGetHeight(self.bounds)/2);
         layout.minimumLineSpacing = 2.0f;
-        layout.minimumInteritemSpacing = 2.0f;
+        layout.minimumInteritemSpacing = 0.0f;
         self.weekFlowLayout = layout;
     }
     return self.weekFlowLayout;
@@ -218,7 +218,6 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
     abbreviatedDateFormatter.dateFormat = [abbreviatedDateFormatter.class dateFormatFromTemplate:@"yyyyLLLL" options:0 locale:[NSLocale currentLocale]];
     NSString *navtitle =[abbreviatedDateFormatter stringFromDate:self.selectedDate];
     [self.weekDelegate checkNavigationTitle:navtitle];
-    
     if (indexPath.item>6) {
         self.referenceDate = [self oneWeekBeforeFromDate:self.selectedDate];
     } else {
@@ -229,20 +228,20 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
 
 - (void)setSelectedDate:(NSDate *)selectedDate
 {
-    _selectedDate = selectedDate;
-    NSArray *events;
-    if (![[[self class] eventsCache] objectForKey:selectedDate]) {
-        [self calendarEventsForDate:selectedDate];
-    }
-    events = [[[self class] eventsCache] objectForKey:selectedDate];
-    [self.tableViewDelegate dataItems:events];
-    [self.tableViewDelegate setToolbarText:[NSDate getOrdinalSuffixForDate:self.selectedDate forCalendar:self.calendar]];
-    [self.collectionView reloadData];
+  _selectedDate = selectedDate;
+  NSArray *events;
+  if (![[[self class] eventsCache] objectForKey:selectedDate]) {
+    [self calendarEventsForDate:selectedDate];
+  }
+  events = [[[self class] eventsCache] objectForKey:selectedDate];
+  [self.tableViewDelegate dataItems:events];
+  [self.tableViewDelegate setToolbarText:[NSDate getOrdinalSuffixForDate:self.selectedDate forCalendar:self.calendar]];
+  [self.collectionView reloadData];
 }
 
 - (NSDate *)dateFromCalendarDate:(EPCalendarDate)dateStruct
 {
-    return [self.calendar dateFromComponents:[self dateComponentsFromPickerDate:dateStruct]];
+  return [self.calendar dateFromComponents:[self dateComponentsFromPickerDate:dateStruct]];
 }
 
 - (NSDateComponents *)dateComponentsFromPickerDate:(EPCalendarDate)dateStruct
@@ -262,6 +261,15 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
         components.month,
         components.day
     };
+}
+
+- (void)populateCellsWithEvents
+{
+  NSArray *visibleCells = [self.collectionView visibleCells];
+  for (EPCalendarWeekCell *cell in visibleCells) {
+    cell.hasEvents = [self calendarEventsForDate:cell.cellDate];
+    [cell layoutSubviews];
+  }
 }
 
 #pragma  mark - Events cache

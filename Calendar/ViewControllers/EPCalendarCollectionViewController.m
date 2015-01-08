@@ -9,12 +9,13 @@
 #import "EPCalendarCollectionViewController.h"
 #import "EPCalendarTableViewController.h"
 #import "UIColor+EH.h"
-
+#import "EventStore.h"
 #import "ExtendedNavBarView.h"
 
 @interface EPCalendarCollectionViewController ()
 
 @property (weak, nonatomic) ExtendedNavBarView *dayView;
+@property (strong, nonatomic) EKEventStore *eventStore;
 
 @property CGRect initialFrame;
 
@@ -38,6 +39,7 @@
 - (void) viewDidLoad
 {
   [super viewDidLoad];
+  self.eventStore= [[EventStore sharedInstance] eventStore];
   self.navigationController.navigationBar.translucent = NO;
   self.automaticallyAdjustsScrollViewInsets = NO;
   [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor primaryColor]}];
@@ -55,12 +57,7 @@
   [self.view addSubview:dayView];
   self.dayView = dayView;
   
-  NSCalendar *gregorian = [[NSCalendar alloc]initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-  EPCalendarView *calendarView = [[EPCalendarView alloc]initWithCalendar:gregorian];
-  calendarView.frame =CGRectMake(0, CGRectGetMaxY(self.dayView.frame), CGRectGetWidth(bounds), CGRectGetHeight(bounds) - CGRectGetHeight(self.dayView.frame)-64);
-  [self.view addSubview:calendarView];
-  self.calendarView = calendarView;
-  self.calendarView.delegate = self;
+  [self setUpCalendarView];
   
   EPCalendarTableViewController *tableVC = [[EPCalendarTableViewController alloc]init];
   self.tableViewController = tableVC;
@@ -68,11 +65,46 @@
   tableVC.view.frame = self.calendarView.frame;
   [self.view insertSubview:tableVC.view belowSubview:self.calendarView];
   [tableVC didMoveToParentViewController:self];
+  self.tableViewController.selectedDate = self.calendarView.selectedDate;
+}
+
+- (void)setUpCalendarView
+{
+  CGRect bounds = [UIScreen mainScreen].bounds;
+  NSCalendar *gregorian = [[NSCalendar alloc]initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+  EPCalendarView *calendarView = [[EPCalendarView alloc]initWithCalendar:gregorian];
+  calendarView.frame =CGRectMake(0, CGRectGetMaxY(self.dayView.frame), CGRectGetWidth(bounds), CGRectGetHeight(bounds) - CGRectGetHeight(self.dayView.frame)-64);
+  [self.view addSubview:calendarView];
+  self.calendarView = calendarView;
+  self.calendarView.delegate = self;
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
+  [self checkCalendarPermissions];
+}
+
+- (void)checkCalendarPermissions
+{
+  [self.eventStore requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
+    // handle access here
+    if (granted) {
+      dispatch_sync(dispatch_get_main_queue(), ^{
+        [self.eventStore reset];
+        [self calendarViewReload];
+      });
+    } else {
+      dispatch_sync(dispatch_get_main_queue(), ^{
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+      });
+    }
+  }];
+}
+
+- (void)calendarViewReload
+{
+  
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -94,7 +126,7 @@
 - (void)addEvent:(id)sender
 {
   EPCreateEventTableViewController *createEventVC;
-  createEventVC = [[EPCreateEventTableViewController alloc] initWithDate:self.calendarView.selectedDate];
+  createEventVC = [[EPCreateEventTableViewController alloc] initWithDate:self.tableViewController.calendarView.selectedDate];
   createEventVC.editMode = YES;
   UINavigationController *navC = [[UINavigationController alloc] initWithRootViewController:createEventVC];
   createEventVC.title = @"New Event";

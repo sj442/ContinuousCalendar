@@ -36,5 +36,6 @@
 @property (strong, nonatomic) UICollectionViewFlowLayout *weekFlowLayout;
 @property (strong, nonatomic) NSCalendar *calendar;
 
+- (void)populateCellsWithEvents;
 
 @end

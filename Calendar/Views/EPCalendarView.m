@@ -17,7 +17,6 @@
 #import "EventStore.h"
 #import "UIColor+EH.h"
 
-
 static NSString * const EPCalendarCellIDentifier = @"CalendarCell";
 static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 
@@ -115,9 +114,9 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     if (!self.flowLayout) {
         UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
         layout.headerReferenceSize = CGSizeMake(self.bounds.size.width, 44);
-        layout.itemSize = CGSizeMake(CGRectGetWidth(self.bounds)/8, CGRectGetHeight(self.bounds)/8);
+        layout.itemSize = CGSizeMake(CGRectGetWidth(self.bounds)/7, CGRectGetHeight(self.bounds)/8);
         layout.minimumLineSpacing = 2.0f;
-        layout.minimumInteritemSpacing = 2.0f;
+        layout.minimumInteritemSpacing = 0.0f;
         self.flowLayout = layout;
     }
     return self.flowLayout;
