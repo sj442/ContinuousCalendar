@@ -42,7 +42,7 @@
 -(void)drawRect:(CGRect)rect
 {
   if (!_dotview) {
-    _dotview =  [[UIView alloc]initWithFrame:CGRectMake(self.width/2-5, self.height-15, 10, 10)];
+    _dotview =  [[UIView alloc]initWithFrame:CGRectMake(self.width/2-5, self.height-10, 10, 10)];
     _dotview.layer.cornerRadius = 5;
     _dotview.clipsToBounds = YES;
     _dotview.backgroundColor = [UIColor primaryColor];
@@ -71,14 +71,19 @@
     return image;
   }];
   self.imageView.alpha = self.enabled ? 1.0f : 0.0f;
-  self.overlayView.hidden = !((self.selected || self.highlighted) && self.enabled) ;
+  self.overlayView.hidden = !(self.selected && self.enabled) ;
+  self.dotview.hidden = !self.hasEvents;
+}
+
+- (void)refreshDotViews
+{
   self.dotview.hidden = !self.hasEvents;
 }
 
 - (UIView *)overlayView
 {
   if (!_overlayView) {
-    _overlayView = [[UIView alloc] initWithFrame:CGRectMake(self.width/2-14, self.height/2-14, 28, 28)];
+    _overlayView = [[UIView alloc] initWithFrame:CGRectMake(self.width/2-13, self.height/2-13, 26, 26)];
     _overlayView.layer.cornerRadius = _overlayView.bounds.size.width/2;
     _overlayView.clipsToBounds = YES;
     _overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;

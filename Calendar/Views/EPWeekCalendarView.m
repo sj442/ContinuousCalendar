@@ -12,6 +12,7 @@
 #import "NSCalendar+dates.h"
 #import "NSDate+calendar.h"
 #import "EventStore.h"
+#import "NSDate+calendar.h"
 
 static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
 
@@ -97,7 +98,7 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
     layout.scrollDirection = UICollectionViewScrollDirectionVertical;
     layout.headerReferenceSize = CGSizeZero;
     layout.itemSize = CGSizeMake(CGRectGetWidth(self.bounds)/7, CGRectGetHeight(self.bounds)/2);
-    layout.minimumLineSpacing = 2.0f;
+    layout.minimumLineSpacing = 0.0f;
     layout.minimumInteritemSpacing = 0.0f;
     self.weekFlowLayout = layout;
   }
@@ -164,8 +165,7 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   cell.hasEvents = [self calendarEventsForDate:cell.cellDate];
   EPCalendarDate cellPickerDate = [self calendarDateFromDate:cellDate];
   cell.date = cellPickerDate;
-  EPCalendarDate today = [self calendarDateFromDate:[NSDate date]];
-  cell.selected = ([self.selectedDate isEqualToDate:cellDate] || ((cellPickerDate.year == today.year) && (cellPickerDate.month == today.month) && (cellPickerDate.day == today.day)));
+  cell.selected = (([self.selectedDate isEqualToDate:cellDate]) || ([cellDate isCurrentDateForCalendar:self.calendar] && ![self.selectedDate isEqualToDate:cellDate]));
   return cell;
 }
 
@@ -212,7 +212,6 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   ? [self.calendar dateFromComponents:[self dateComponentsFromPickerDate:cell.date]]
   : nil;
   [self didChangeValueForKey:@"selectedDate"];
-  
   NSDateFormatter *abbreviatedDateFormatter = [[NSDateFormatter alloc]init];
   abbreviatedDateFormatter.calendar = self.calendar;
   abbreviatedDateFormatter.dateFormat = [abbreviatedDateFormatter.class dateFormatFromTemplate:@"yyyyLLLL" options:0 locale:[NSLocale currentLocale]];

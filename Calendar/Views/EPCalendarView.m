@@ -24,6 +24,7 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 
 @property (assign, nonatomic) EPCalendarDate fromDate;
 @property (assign, nonatomic) EPCalendarDate toDate;
+@property (strong, nonatomic) EKEventStore *eventStore;
 
 + (NSCache *) eventsCache;
 
@@ -46,6 +47,7 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     
     components.month = 6;
     self.toDate = [self calendarDateFromDate:[self.calendar dateByAddingComponents:components toDate:now options:0]];
+    self.eventStore = [EventStore sharedInstance].eventStore;
   }
   return self;
 }
@@ -105,7 +107,7 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   }
   
   if (pan.state == UIGestureRecognizerStateEnded && fabsf([pan velocityInView:self].y)<500.0f) {
-    [self populateCells];
+    [self populateCellsWithEvents];
   }
 }
 
@@ -244,19 +246,21 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   EPCalendarDate cellPickerDate = [self calendarDateFromDate:cellDate];
   cell.date = cellPickerDate;
   cell.enabled = ((firstDayPickerDate.year == cellPickerDate.year) && (firstDayPickerDate.month == cellPickerDate.month));
-  EPCalendarDate today = [self calendarDateFromDate:[NSDate date]];
-  cell.selected = ([self.selectedDate isEqualToDate:cellDate] || ((cellPickerDate.year == today.year) && (cellPickerDate.month == today.month) && (cellPickerDate.day == today.day)));
+  cell.selected = (([self.selectedDate isEqualToDate:cellDate]) || ([cellDate isCurrentDateForCalendar:self.calendar] && ![self.selectedDate isEqualToDate:cellDate]));
   return cell;
 }
 
 - (BOOL)calendarEventsForDate:(NSDate *)date
 {
-  EKEventStore *eventStore = [[EventStore sharedInstance] eventStore];
+  EKAuthorizationStatus access = [EKEventStore authorizationStatusForEntityType:EKEntityTypeEvent];
+  NSLog(@"event access %ld", access);
+  NSLog(@"event store identifier 2 %@", self.eventStore.eventStoreIdentifier);
   //get EKEvents
   NSDate *startDate = [NSDate calendarStartDateFromDate:date ForCalendar:self.calendar]; //starting from 12:01 am
   NSDate *endDate = [NSDate calendarEndDateFromDate:date ForCalendar:self.calendar]; // ending at 11:59 pm
-  NSPredicate *predicate = [eventStore predicateForEventsWithStartDate:startDate endDate:endDate calendars:nil];
-  NSArray *events = [eventStore eventsMatchingPredicate:predicate];
+  NSPredicate *predicate = [self.eventStore predicateForEventsWithStartDate:startDate endDate:endDate calendars:nil];
+  NSArray *events = [self.eventStore eventsMatchingPredicate:predicate];
+  NSLog(@"events count for date %@ is %lu", date, (unsigned long)events.count);
   if (events.count>0) {
     [[[self class] eventsCache] setObject:events forKey:date];
     return YES;
@@ -359,7 +363,7 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-  [self populateCells];
+  [self populateCellsWithEvents];
 }
 
 #pragma  mark - Events cache
@@ -391,10 +395,21 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 - (void)populateCellsWithEvents
 {
   NSArray *visibleCells = [self.collectionView visibleCells];
+  dispatch_queue_t myQueue = dispatch_queue_create("My Queue",NULL);
+  
   for (EPCalendarCell *cell in visibleCells) {
+    dispatch_async(myQueue, ^{
+    // Perform long running process
     cell.hasEvents = [self calendarEventsForDate:cell.cellDate] && cell.isEnabled;
-    [cell layoutSubviews];
+      
+      dispatch_async(dispatch_get_main_queue(), ^{
+        // Update the UI
+        [cell layoutSubviews];
+      });
+
+      });
   }
 }
+
 
 @end

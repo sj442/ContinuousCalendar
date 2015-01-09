@@ -17,4 +17,6 @@
 @property (strong, nonatomic) NSDate *cellDate;
 @property (nonatomic, readonly, strong) UIView *overlayView;
 
+-(void)refreshDotViews;
+
 @end

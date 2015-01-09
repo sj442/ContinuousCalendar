@@ -30,6 +30,9 @@
 
 @property (strong, nonatomic) NSCalendar *calendar;
 
+- (void)populateCells;
+
 - (void)populateCellsWithEvents;
+
 
 @end

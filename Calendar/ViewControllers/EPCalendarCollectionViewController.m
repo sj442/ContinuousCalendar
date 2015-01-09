@@ -15,7 +15,6 @@
 @interface EPCalendarCollectionViewController ()
 
 @property (weak, nonatomic) ExtendedNavBarView *dayView;
-@property (strong, nonatomic) EKEventStore *eventStore;
 
 @property CGRect initialFrame;
 
@@ -39,7 +38,6 @@
 - (void) viewDidLoad
 {
   [super viewDidLoad];
-  self.eventStore= [[EventStore sharedInstance] eventStore];
   self.navigationController.navigationBar.translucent = NO;
   self.automaticallyAdjustsScrollViewInsets = NO;
   [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor primaryColor]}];
@@ -55,8 +53,8 @@
   ExtendedNavBarView *dayView = [[ExtendedNavBarView alloc]initWithFrame:CGRectMake(0, 0, CGRectGetWidth(bounds), CGRectGetHeight(bounds)/25)];
   [self.view addSubview:dayView];
   self.dayView = dayView;
-  
   [self setUpCalendarView];
+
   [self addCalendarTableViewController];
 }
 
@@ -75,6 +73,7 @@
   } completion:^(BOOL finished) {
     [self.calendarView populateCellsWithEvents];
   }];
+
 }
 
 - (void)didReceiveMemoryWarning
@@ -106,11 +105,18 @@
 
 - (void)checkCalendarPermissions
 {
-  [self.eventStore requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
+  EKAuthorizationStatus access =[EKEventStore authorizationStatusForEntityType:EKEntityTypeEvent];
+  NSLog(@"access 0 is %ld", access);
+  EKEventStore *eventStore = [[EventStore sharedInstance] eventStore];
+  [eventStore requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
     // handle access here
     if (granted) {
       dispatch_sync(dispatch_get_main_queue(), ^{
-        [self.eventStore reset];
+        [eventStore reset];
+         EKAuthorizationStatus access =[EKEventStore authorizationStatusForEntityType:EKEntityTypeEvent];
+        NSLog(@"access 1 is %ld", access);
+      NSLog(@"event store identifier 1 %@", eventStore.eventStoreIdentifier);
+        [self.calendarView populateCells];
       });
     } else {
       dispatch_sync(dispatch_get_main_queue(), ^{

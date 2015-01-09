@@ -12,7 +12,6 @@
 + (id) cacheKeyForCalendarDate:(EPCalendarDate)date;
 + (id) fetchObjectForKey:(id)key withCreator:(id(^)(void))block;
 
-@property (nonatomic, readonly, strong) UIImageView *imageView;
 @property (nonatomic, readonly, strong) UIView *dotview;
 @property CGFloat width;
 @property CGFloat height;
@@ -59,14 +58,14 @@
     UIGraphicsEndImageContext();
     return image;
   }];
-  self.overlayView.hidden = !(self.selected || self.highlighted);
+  self.overlayView.hidden = !self.selected;
   self.dotview.hidden = !self.hasEvents;
 }
 
 - (UIView *)dotview
 {
   if (!_dotview) {
-    _dotview =  [[UIView alloc]initWithFrame:CGRectMake(self.width/2-4, self.height-11, 8, 8)];
+    _dotview =  [[UIView alloc]initWithFrame:CGRectMake(self.width/2-4, self.height-10, 8, 8)];
     _dotview.layer.cornerRadius = 5;
     _dotview.clipsToBounds = YES;
     _dotview.backgroundColor = [UIColor primaryColor];
@@ -77,7 +76,7 @@
 
 - (UIView *) overlayView {
   if (!_overlayView) {
-    _overlayView = [[UIView alloc] initWithFrame:CGRectMake(self.width/2-12, self.height/2-12, 24, 24)];
+    _overlayView = [[UIView alloc] initWithFrame:CGRectMake(self.width/2-11, self.height/2-11, 22, 22)];
     _overlayView.layer.cornerRadius = _overlayView.bounds.size.width/2;
     _overlayView.clipsToBounds = YES;
     _overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
@@ -134,7 +133,6 @@
   }
   return answer;
 }
-
 
 @end
 
