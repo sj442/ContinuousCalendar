@@ -10,13 +10,11 @@
 #import "EPWeekCalendarView.h"
 #import "EPCalendarView.h"
 
-
 @interface EPCalendarTableViewController : UIViewController <CalendarTableViewDelegate, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate>
 
 @property (strong, nonatomic) NSDate *selectedDate;
 @property (strong, nonatomic) NSArray *dataItems;
 @property (strong, nonatomic) NSCalendar *calendar;
-@property (strong, nonatomic) NSMutableDictionary *events;
 
 - (instancetype)initWithFrame:(CGRect)frame;
 

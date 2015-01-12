@@ -83,7 +83,9 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   tableVC.view.frame = CGRectMake(0, CGRectGetMaxY(self.toolBar.frame), CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)-CGRectGetHeight(self.collectionView.frame)-CGRectGetHeight(self.toolBar.frame));
   [self.view addSubview:tableVC.view];
   [tableVC didMoveToParentViewController:self];
-  self.tableViewController.events = self.events;
+  self.tableViewController.calendar = self.calendar;
+  self.tableViewController.selectedDate = self.selectedDate;
+  self.tableViewController.dataItems = [self.events objectForKey:self.selectedDate];
   [self.tableViewController refreshTableView];
 }
 
@@ -225,22 +227,12 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
     self.referenceDate = self.selectedDate;
   }
   [self.collectionView reloadData];
-  [self.tableViewController refreshTableView];
 }
 
 - (void)setSelectedDate:(NSDate *)selectedDate
 {
   _selectedDate = selectedDate;
-//  NSArray *events;
-//  if (![[[self class] eventsCache] objectForKey:selectedDate]) {
-//    [self calendarEventsForDate:selectedDate];
-//  }
-//  events = [[[self class] eventsCache] objectForKey:selectedDate];
-//  [self.tableViewDelegate dataItems:events];
-//  [self.tableViewDelegate setTableViewSelectedDate:self.selectedDate];
-//  [self.tableViewDelegate setToolbarText:[NSDate getOrdinalSuffixForDate:self.selectedDate forCalendar:self.calendar]];
-//  [self.collectionView reloadData];
-  
+  self.tableViewController.selectedDate = self.selectedDate;
   self.tableViewController.dataItems = [self.events objectForKey:self.selectedDate];
   [self.tableViewController refreshTableView];
 }

@@ -64,7 +64,6 @@
 {
   [super viewDidAppear:animated];
   [self setupTableView];
-  self.dataItems = [self.events objectForKey:self.selectedDate];
   [self populateStartAndEndTimeCache];
   [self.tableView reloadData];
   
@@ -332,7 +331,6 @@
     }
     [self.indexDictionary setObject:listOfEvents forKey:indexPath];
   }
-  
   if ([self.selectedDate isCurrentDateForCalendar:self.calendar]) {
     NSIndexPath *ip = [self indexPathForDate:[NSDate date]];
     [self.tableView scrollToRowAtIndexPath:ip
@@ -478,7 +476,6 @@
 
 - (void)refreshTableView
 {
-  self.dataItems = [self.events objectForKey:self.selectedDate];
   [self populateStartAndEndTimeCache];
   [self.tableView reloadData];
   
