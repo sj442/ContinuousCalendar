@@ -7,7 +7,7 @@
 //
 
 #import "AppDelegate.h"
-#import "EPCalendarCollectionViewController.h"
+#import "EPCalendarViewController.h"
 #import "EPTabBarController.h"
 #import "EventStore.h"
 
@@ -24,7 +24,7 @@
   self.window.backgroundColor = [UIColor whiteColor];
   [self.window makeKeyAndVisible];
   
-  EPCalendarCollectionViewController *vc = [[EPCalendarCollectionViewController alloc]init];
+  EPCalendarViewController *vc = [[EPCalendarViewController alloc]init];
   UINavigationController *navC = [[UINavigationController alloc]initWithRootViewController:vc];
   
   EPTabBarController *tabBarVC = [[EPTabBarController alloc]initWithNibName:@"EPTabBarController" bundle:nil];

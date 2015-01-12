@@ -7,7 +7,7 @@
 //
 
 #import "EPInlineDatePickerTableViewController.h"
-#import "EPCalendarCollectionViewController.h"
+#import "EPCalendarViewController.h"
 
 @protocol CreateEventDelegate <NSObject>
 

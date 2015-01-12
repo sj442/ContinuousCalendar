@@ -1,12 +1,12 @@
 //
-//  EPCalendarView.m
+//  EPCollectionViewController.m
 //  Calendar
 //
-//  Created by Sunayna Jain on 12/5/14.
-//  Copyright (c) 2014 Enhatch. All rights reserved.
+//  Created by Sunayna Jain on 1/9/15.
+//  Copyright (c) 2015 Enhatch. All rights reserved.
 //
 
-#import "EPCalendarView.h"
+#import "EPCollectionViewController.h"
 #import  <QuartzCore/QuartzCore.h>
 #import "EPCalendarCollectionView.h"
 #import "EPCalendarMonthHeader.h"
@@ -20,21 +20,19 @@
 static NSString * const EPCalendarCellIDentifier = @"CalendarCell";
 static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 
-@interface EPCalendarView () <UICollectionViewDelegate, UICollectionViewDataSource, EPCalendarCollectionViewDelegate>
+@interface EPCollectionViewController ()
 
 @property (assign, nonatomic) EPCalendarDate fromDate;
 @property (assign, nonatomic) EPCalendarDate toDate;
 @property (strong, nonatomic) EKEventStore *eventStore;
 
-+ (NSCache *) eventsCache;
-
 @end
 
-@implementation EPCalendarView
+@implementation EPCollectionViewController
 
 - (instancetype) initWithCalendar:(NSCalendar *)calendar
 {
-  self = [super initWithFrame:CGRectZero];
+  self = [super init];
   if (self) {
     self.calendar = calendar;
     self.selectedDate = [NSDate date];
@@ -51,37 +49,31 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   return self;
 }
 
-- (id)initWithFrame:(CGRect)frame
+- (void)viewDidLoad
 {
-  self = [self initWithCalendar:[NSCalendar currentCalendar]];
-  if (self) {
-    self.frame = frame;
-  }
-  return self;
-}
-
-- (void)layoutSubviews
-{
-  [super layoutSubviews];
-  
+  [super viewDidLoad];
   [self initializeFlowLayout];
   [self initializeCollectionView];
-  
-  self.collectionView.frame = self.bounds;
-  if (!self.collectionView.superview) {
-    [self addSubview:self.collectionView];
-  }
 }
 
-- (void)willMoveToSuperview:(UIView *)newSuperview
+- (void)viewDidAppear:(BOOL)animated
 {
-  [super willMoveToSuperview:newSuperview];
+  [super viewDidAppear:animated];
+//  [self.delegate updateEventsDictionaryWithCompletionBlock:^{
+//    [self populateCellsWithEvents];
+//  }];
+}
+
+- (void)didReceiveMemoryWarning
+{
+  [super didReceiveMemoryWarning];
 }
 
 - (EPCalendarCollectionView *)initializeCollectionView
 {
   if (!_collectionView) {
-    _collectionView = [[EPCalendarCollectionView alloc]initWithFrame:self.bounds collectionViewLayout:self.flowLayout];
+    _collectionView = [[EPCalendarCollectionView alloc]initWithFrame:self.view.bounds collectionViewLayout:self.flowLayout];
+    [self.view addSubview:_collectionView];
     _collectionView.backgroundColor = [UIColor whiteColor];
     _collectionView.dataSource = self;
     _collectionView.delegate = self;
@@ -101,12 +93,14 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 
 - (void)collectionViewPanned:(UIPanGestureRecognizer *)pan
 {
-  if (fabsf([pan velocityInView:self].y)>500.0f) {
+  if (fabsf([pan velocityInView:self.view].y)>500.0f) {
     return;
   }
   
-  if (pan.state == UIGestureRecognizerStateEnded && fabsf([pan velocityInView:self].y)<500.0f) {
-    [self populateCellsWithEvents];
+  if (pan.state == UIGestureRecognizerStateEnded && fabsf([pan velocityInView:self.view].y)<500.0f) {
+    [self.delegate updateEventsDictionaryWithCompletionBlock:^{
+      [self populateCellsWithEvents];
+    }];
   }
 }
 
@@ -114,15 +108,14 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 {
   if (!self.flowLayout) {
     UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
-    layout.headerReferenceSize = CGSizeMake(self.bounds.size.width, 44);
-    layout.itemSize = CGSizeMake(CGRectGetWidth(self.bounds)/7, CGRectGetHeight(self.bounds)/8);
+    layout.headerReferenceSize = CGSizeMake(self.view.bounds.size.width, 44);
+    layout.itemSize = CGSizeMake(CGRectGetWidth(self.view.bounds)/7, MIN(CGRectGetHeight(self.view.bounds)/8, 568/8));
     layout.minimumLineSpacing = 2.0f;
     layout.minimumInteritemSpacing = 0.0f;
     self.flowLayout = layout;
   }
   return self.flowLayout;
 }
-
 
 - (void)calendarCollectionViewWillLayoutSubviews:(EPCalendarCollectionView *)collectionView
 {
@@ -162,7 +155,7 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   NSInteger fromSection = fromIndexPath.section;
   NSDate *fromSectionOfDate = [self dateForFirstDayInSection:fromSection];
   UICollectionViewLayoutAttributes *fromAttrs = [cvLayout layoutAttributesForItemAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:fromSection]];
-  CGPoint fromSectionOrigin = [self convertPoint:fromAttrs.frame.origin fromView:cv];
+  CGPoint fromSectionOrigin = [self.view convertPoint:fromAttrs.frame.origin fromView:cv];
   
   self.fromDate= [self calendarDateFromDate:[self.calendar dateByAddingComponents:components toDate:[self dateFromCalendarDate:self.fromDate] options:0]];
   self.toDate= [self calendarDateFromDate:[self.calendar dateByAddingComponents:components toDate:[self dateFromCalendarDate:self.toDate] options:0]];
@@ -173,7 +166,7 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   
   NSInteger toSection = [self.calendar components:NSCalendarUnitMonth fromDate:[self dateForFirstDayInSection:0] toDate:fromSectionOfDate options:0].month;
   UICollectionViewLayoutAttributes *toAttrs = [cvLayout layoutAttributesForItemAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:toSection]];
-  CGPoint toSectionOrigin = [self convertPoint:toAttrs.frame.origin fromView:cv];
+  CGPoint toSectionOrigin = [self.view convertPoint:toAttrs.frame.origin fromView:cv];
   
   [cv setContentOffset:(CGPoint) {
     cv.contentOffset.x,
@@ -248,20 +241,6 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   return cell;
 }
 
-- (BOOL)calendarEventsForDate:(NSDate *)date
-{
-  NSDate *startDate = [NSDate calendarStartDateFromDate:date ForCalendar:self.calendar]; //starting from 12:01 am
-  NSDate *endDate = [NSDate calendarEndDateFromDate:date ForCalendar:self.calendar]; // ending at 11:59 pm
-  NSPredicate *predicate = [self.eventStore predicateForEventsWithStartDate:startDate endDate:endDate calendars:nil];
-  NSArray *events = [self.eventStore eventsMatchingPredicate:predicate];
-  NSLog(@"events count for date %@ is %lu", date, (unsigned long)events.count);
-  if (events.count>0) {
-    [[[self class] eventsCache] setObject:events forKey:date];
-    return YES;
-  }
-  return NO;
-}
-
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath *)indexPath
 {
   return ((EPCalendarCell *)[collectionView cellForItemAtIndexPath:indexPath]).enabled;
@@ -284,10 +263,9 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   ? [self.calendar dateFromComponents:[self dateComponentsFromPickerDate:cell.date]]
   : nil;
   [self didChangeValueForKey:@"selectedDate"];
+  [self.delegate cellWasSelected];
   [self.collectionView reloadData];
-  
   [self.collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
-  [self.delegate moveupTableView];
 }
 
 - (void)setSelectedDate:(NSDate *)selectedDate
@@ -315,11 +293,10 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     abbreviatedDateFormatter.dateFormat = [dateFormatter.class dateFormatFromTemplate:@"yyyyLLLL" options:0 locale:[NSLocale currentLocale]];
     NSString *navtitle =[abbreviatedDateFormatter stringFromDate:formattedDate];
     [self.delegate setNavigationTitle:navtitle];
-    
     NSString *monthHeaderString = [dateFormatter stringFromDate:formattedDate];
     monthHeader.textLabel.text = [monthHeaderString uppercaseString];
     CGRect frame = monthHeader.textLabel.frame;
-    frame.origin.x = 5+CGRectGetWidth(self.bounds)/7*(weekday-1);
+    frame.origin.x = 5+CGRectGetWidth(self.view.bounds)/7*(weekday-1);
     frame.size.width = 50;
     monthHeader.textLabel.frame = frame;
     monthHeader.textLabel.textColor = [UIColor primaryColor];
@@ -353,22 +330,31 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   };
 }
 
+- (void)populateCellsWithEvents
+{
+  NSArray *visibleCells = [self.collectionView visibleCells];
+  for (EPCalendarCell *cell in visibleCells) {
+      //get calendar events
+    NSArray *events = [self.events objectForKey:cell.cellDate];
+    if (events.count>0) {
+      cell.hasEvents = cell.isEnabled && YES;
+    } else {
+      cell.hasEvents = NO;
+    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+      // Update the UI
+      [cell layoutSubviews];
+    });
+  }
+}
+
 #pragma mark - ScrollView delegate
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-  [self populateCellsWithEvents];
-}
-
-#pragma  mark - Events cache
-
-+ (NSCache *) eventsCache {
-  static NSCache *cache;
-  static dispatch_once_t onceToken;
-  dispatch_once(&onceToken, ^{
-    cache = [NSCache new];
-  });
-  return cache;
+  [self.delegate updateEventsDictionaryWithCompletionBlock:^{
+    [self populateCellsWithEvents];
+  }];
 }
 
 - (void)collectionViewTappedAtPoint:(CGPoint)point
@@ -376,33 +362,5 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   NSIndexPath *ip = [self.collectionView indexPathForItemAtPoint:point];
   [self collectionView:self.collectionView didSelectItemAtIndexPath:ip];
 }
-
-- (void)populateCells
-{
-  NSArray *visibleCells = [self.collectionView visibleCells];
-  for (EPCalendarCell *cell in visibleCells) {
-    cell.hasEvents = [self calendarEventsForDate:cell.cellDate] && cell.isEnabled;
-    [cell layoutSubviews];
-  }
-}
-
-- (void)populateCellsWithEvents
-{
-  NSArray *visibleCells = [self.collectionView visibleCells];
-  dispatch_queue_t myQueue = dispatch_queue_create("My Queue",NULL);
-  
-  for (EPCalendarCell *cell in visibleCells) {
-    dispatch_async(myQueue, ^{
-      //get calendar events
-    cell.hasEvents = [self calendarEventsForDate:cell.cellDate] && cell.isEnabled;
-      
-      dispatch_async(dispatch_get_main_queue(), ^{
-        // Update the UI
-        [cell layoutSubviews];
-      });
-    });
-  }
-}
-
 
 @end

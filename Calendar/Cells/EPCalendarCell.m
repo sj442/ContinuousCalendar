@@ -15,7 +15,6 @@
 + (id) fetchObjectForKey:(id)key withCreator:(id(^)(void))block;
 
 @property (nonatomic, readonly, strong) UIImageView *imageView;
-@property (nonatomic, readonly, strong) UIView *dotview;
 @property CGFloat width;
 @property CGFloat height;
 

@@ -13,8 +13,13 @@
 
 @interface EPCalendarTableViewController : UIViewController <CalendarTableViewDelegate, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate>
 
-@property (weak, nonatomic) EPWeekCalendarView *calendarView;
 @property (strong, nonatomic) NSDate *selectedDate;
 @property (strong, nonatomic) NSArray *dataItems;
+@property (strong, nonatomic) NSCalendar *calendar;
+@property (strong, nonatomic) NSMutableDictionary *events;
+
+- (instancetype)initWithFrame:(CGRect)frame;
+
+- (void)refreshTableView;
 
 @end

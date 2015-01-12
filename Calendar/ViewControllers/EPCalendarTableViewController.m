@@ -38,30 +38,38 @@
 
 #pragma mark - LifeCycle methods
 
+- (instancetype)initWithFrame:(CGRect)frame
+{
+  self = [super init];
+  if (self) {
+    self.initialFrame = frame;
+  }
+  return self;
+}
+
 - (void)viewDidLoad
 {
   [super viewDidLoad];
   self.initialFrame = [UIScreen mainScreen].bounds;
   self.indexDictionary = [NSMutableDictionary dictionary];
-  [self setupCalendarView];
-  [self setupToolBar];
-  [self setupTableView];
+  self.automaticallyAdjustsScrollViewInsets = NO;
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
-  [self.calendarView refreshEventsCache];
-  self.dataItems = [self calendarEventsForDate:self.selectedDate];
-  [self populateStartAndEndTimeCache];
-  [self.tableView reloadData];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
   [super viewDidAppear:animated];
+  [self setupTableView];
+  self.dataItems = [self.events objectForKey:self.selectedDate];
+  [self populateStartAndEndTimeCache];
+  [self.tableView reloadData];
+  
   [self refreshCurrentTimeMarker];
-  if ([self.calendarView.selectedDate isCurrentDateForCalendar:self.calendarView.calendar]) {
+  if ([self.selectedDate isCurrentDateForCalendar:self.calendar]) {
     NSIndexPath *ip = [self indexPathForDate:[NSDate date]];
     [self.tableView scrollToRowAtIndexPath:ip atScrollPosition:UITableViewScrollPositionTop animated:YES];
   }
@@ -74,30 +82,9 @@
 
 #pragma mark - Layout methods
 
-- (void)setupCalendarView
-{
-  EPWeekCalendarView *calendarView = [[EPWeekCalendarView alloc]initWithCalendar:[NSCalendar currentCalendar]];;
-  calendarView.frame = CGRectMake(0, 0, CGRectGetWidth(self.initialFrame), CGRectGetHeight(self.initialFrame)/6);
-  [self.view addSubview:calendarView];
-  self.calendarView = calendarView;
-  self.calendarView.tableViewDelegate = self;
-}
-
-- (void)setupToolBar
-{
-  UIToolbar *toolBar = [[UIToolbar alloc]initWithFrame:CGRectMake(0, CGRectGetMaxY(self.calendarView.frame), CGRectGetWidth(self.initialFrame), 44)];
-  UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
-  UIBarButtonItem *events = [[UIBarButtonItem alloc]initWithTitle:@"Events" style:UIBarButtonItemStyleDone target:self action:nil];
-  toolBar.items = @[flexibleSpace, events, flexibleSpace];
-  toolBar.tintColor = [UIColor primaryColor];
-  [self.view addSubview:toolBar];
-  self.toolBar = toolBar;
-  self.eventsButton = events;
-}
-
 - (void)setupTableView
 {
-  UITableView *tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, CGRectGetMaxY(self.toolBar.frame), CGRectGetWidth(self.initialFrame), CGRectGetHeight(self.initialFrame)-CGRectGetHeight(self.calendarView.frame)-CGRectGetHeight(self.toolBar.frame)-46-CGRectGetHeight(self.initialFrame)/25-64)];
+  UITableView *tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame))];
   tableView.delegate = self;
   tableView.dataSource = self;
   [self.view addSubview:tableView];
@@ -126,11 +113,8 @@
       [view removeFromSuperview];
     }
   }
-//  if ([self.tableView respondsToSelector:@selector(layoutMargins)]) {
-//    self.tableView.layoutMargins = UIEdgeInsetsMake(0, 50, 0, 50);
-//  }
   cell.separatorLabel.text = [self fetchObjectForKey:indexPath withCreator:^id {
-    NSString *compoundString =[NSDate timeAtIndex:indexPath.row forDate:self.calendarView.selectedDate calendar:self.calendarView.calendar];
+    NSString *compoundString =[NSDate timeAtIndex:indexPath.row forDate:self.selectedDate calendar:self.calendar];
     NSString *time = [[compoundString componentsSeparatedByString:@"~"] firstObject];
     [self.separatorTimesCache setObject:time forKey:indexPath];
     NSString *hourString = [[compoundString componentsSeparatedByString:@"~"] lastObject];
@@ -181,7 +165,7 @@
 
 - (NSInteger)minutesInDate:(NSDate *)date
 {
-  NSInteger minutes = [self.calendarView.calendar component:NSCalendarUnitMinute fromDate:date];
+  NSInteger minutes = [self.calendar component:NSCalendarUnitMinute fromDate:date];
   return minutes;
 }
 
@@ -205,7 +189,7 @@
 
 - (NSIndexPath *)indexPathForDate:(NSDate *)date
 {
-  NSInteger hour = [self.calendarView.calendar component:NSCalendarUnitHour fromDate:date];
+  NSInteger hour = [self.calendar component:NSCalendarUnitHour fromDate:date];
   for (NSIndexPath *ip in [self.startTimesCache allKeys]) {
     NSInteger startHour = ((NSNumber *)[self.startTimesCache objectForKey:ip]).integerValue;
     if (startHour == hour) {
@@ -213,16 +197,6 @@
     }
   }
   return nil;
-}
-
-- (NSArray *)calendarEventsForDate:(NSDate *)date
-{
-  EKEventStore *eventStore = [[EventStore sharedInstance] eventStore];
-  NSDate *startDate = [NSDate calendarStartDateFromDate:date ForCalendar:self.calendarView.calendar]; //starting from 12:01 am
-  NSDate *endDate = [NSDate calendarEndDateFromDate:date ForCalendar:self.calendarView.calendar]; // ending at 11:59 pm
-  NSPredicate *predicate = [eventStore predicateForEventsWithStartDate:startDate endDate:endDate calendars:nil];
-  NSArray *events = [eventStore eventsMatchingPredicate:predicate];
-  return events;
 }
 
 #pragma mark - CalendarTableView Delegate
@@ -289,8 +263,8 @@
     [self.indexDictionary removeAllObjects];
     cell.separatorLabel.text = [self fetchObjectForKey:indexPath withCreator:^id {
       NSString *compoundString =[NSDate timeAtIndex:indexPath.row
-                                            forDate:self.calendarView.selectedDate
-                                           calendar:self.calendarView.calendar];
+                                            forDate:self.selectedDate
+                                           calendar:self.calendar];
       NSString *time = [[compoundString componentsSeparatedByString:@"~"] firstObject];
       [self.separatorTimesCache setObject:time forKey:indexPath];
       NSString *hourString = [[compoundString componentsSeparatedByString:@"~"] lastObject];
@@ -302,15 +276,15 @@
   }
   for (int i=0; i<=24; i++) {
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:i inSection:0];
-    NSDateComponents *selectedDateComponents = [self.calendarView.calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:self.calendarView.selectedDate];
+    NSDateComponents *selectedDateComponents = [self.calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:self.selectedDate];
     NSDateComponents *startDateComponents = [[NSDateComponents alloc]init];
     [startDateComponents setYear:selectedDateComponents.year];
     [startDateComponents setMonth:selectedDateComponents.month];
     [startDateComponents setDay:selectedDateComponents.day];
     [startDateComponents setHour:i];
-    NSDate *cellStartDate = [self.calendarView.calendar dateFromComponents:startDateComponents];
+    NSDate *cellStartDate = [self.calendar dateFromComponents:startDateComponents];
     [startDateComponents setHour:i+1];
-    NSDate *cellEndDate = [self.calendarView.calendar dateFromComponents:startDateComponents];
+    NSDate *cellEndDate = [self.calendar dateFromComponents:startDateComponents];
     
     NSSortDescriptor *descriptor = [[NSSortDescriptor alloc]initWithKey:@"startDate" ascending:YES];
     NSArray *sortedItems = [self.dataItems sortedArrayUsingDescriptors:@[descriptor]];
@@ -322,7 +296,7 @@
     
     for (int j=0; j<itemsCount; j++) {
       EKEvent *event = sortedItems[j];
-      NSInteger eventStartHour = [self.calendarView.calendar component:NSCalendarUnitHour fromDate:event.startDate];
+      NSInteger eventStartHour = [self.calendar component:NSCalendarUnitHour fromDate:event.startDate];
       EventDataClass *eventData = [self compareEvent:event withCellStartDate:cellStartDate cellEndDate:cellEndDate];
       NSIndexPath *startIP = eventData.startIP;
       if (startIP.row == indexPath.row) {
@@ -359,7 +333,7 @@
     [self.indexDictionary setObject:listOfEvents forKey:indexPath];
   }
   
-  if ([self.calendarView.selectedDate isCurrentDateForCalendar:self.calendarView.calendar]) {
+  if ([self.selectedDate isCurrentDateForCalendar:self.calendar]) {
     NSIndexPath *ip = [self indexPathForDate:[NSDate date]];
     [self.tableView scrollToRowAtIndexPath:ip
                           atScrollPosition:UITableViewScrollPositionTop
@@ -375,14 +349,14 @@
 
 - (EventDataClass *)compareEvent:(EKEvent *)event withCellStartDate:(NSDate *)cellStartDate cellEndDate:(NSDate *)cellEndDate
 {
-  NSInteger selectedDateDay = [self.calendarView.calendar component:NSCalendarUnitDay fromDate:self.calendarView.selectedDate];
+  NSInteger selectedDateDay = [self.calendar component:NSCalendarUnitDay fromDate:self.selectedDate];
   NSIndexPath *startIP = [self indexPathForDate:event.startDate];
   EventDataClass *eventData = [[EventDataClass alloc]init];
   NSDate *startDate = event.startDate;
-  NSInteger startDay = [self.calendarView.calendar component:NSCalendarUnitDay fromDate:startDate];
-  NSInteger eventStartHour = [self.calendarView.calendar component:NSCalendarUnitHour fromDate:startDate];
+  NSInteger startDay = [self.calendar component:NSCalendarUnitDay fromDate:startDate];
+  NSInteger eventStartHour = [self.calendar component:NSCalendarUnitHour fromDate:startDate];
   NSDate *endDate = event.endDate;
-  NSInteger endDay = [self.calendarView.calendar component:NSCalendarUnitDay fromDate:endDate];
+  NSInteger endDay = [self.calendar component:NSCalendarUnitDay fromDate:endDate];
   NSInteger startMinutes = 0;
   NSInteger endMinutes = 0;
   if (startDay != selectedDateDay) {
@@ -445,9 +419,9 @@
   [self.currentTimeMarker removeFromSuperview];
   [self.blankView removeFromSuperview];
   [self.timeLabel removeFromSuperview];
-  if ([self.calendarView.selectedDate isCurrentDateForCalendar:self.calendarView.calendar]) {
-    NSInteger minutes = [self.calendarView.calendar component:NSCalendarUnitMinute fromDate:[NSDate date]];
-    NSInteger hour = [self.calendarView.calendar component:NSCalendarUnitHour fromDate:[NSDate date]];
+  if ([self.selectedDate isCurrentDateForCalendar:self.calendar]) {
+    NSInteger minutes = [self.calendar component:NSCalendarUnitMinute fromDate:[NSDate date]];
+    NSInteger hour = [self.calendar component:NSCalendarUnitHour fromDate:[NSDate date]];
     CGFloat tableViewHeight = 44*25;
     NSInteger totalMinutes = hour*60+ minutes;
     CGFloat startPointY = (totalMinutes*tableViewHeight)/(25*60);
@@ -465,7 +439,7 @@
     [self.tableView addSubview:lineView];
     self.currentTimeMarker = lineView;
     UILabel *timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(5, startPointY-5, 45, 10)];
-    timeLabel.text = [NSDate getCurrentTimeForCalendar:self.calendarView.calendar];
+    timeLabel.text = [NSDate getCurrentTimeForCalendar:self.calendar];
     timeLabel.font = [UIFont systemFontOfSize:10];
     timeLabel.textColor = [UIColor redColor];
     [self.tableView addSubview:timeLabel];
@@ -478,15 +452,15 @@
 
 - (void)updateTimeMarkerLocation:(id)sender
 {
-  NSInteger minutes = [self.calendarView.calendar component:NSCalendarUnitMinute fromDate:[NSDate date]];
-  NSInteger hour = [self.calendarView.calendar component:NSCalendarUnitHour fromDate:[NSDate date]];
+  NSInteger minutes = [self.calendar component:NSCalendarUnitMinute fromDate:[NSDate date]];
+  NSInteger hour = [self.calendar component:NSCalendarUnitHour fromDate:[NSDate date]];
   CGFloat tableViewHeight = 44*25;
   NSInteger totalMinutes = hour*60+ minutes;
   CGFloat startPointY = (totalMinutes*tableViewHeight)/(25*60);
   CGRect rect = self.currentTimeMarker.frame;
   rect.origin.y = startPointY;
   self.currentTimeMarker.frame = rect;
-  self.timeLabel.text = [NSDate getCurrentTimeForCalendar:self.calendarView.calendar];
+  self.timeLabel.text = [NSDate getCurrentTimeForCalendar:self.calendar];
   rect = self.timeLabel.frame;
   rect.origin.y = startPointY-5;
   self.timeLabel.frame = rect;
@@ -500,6 +474,19 @@
   rect = self.blankView.frame;
   rect.origin.y = blankViewStartPointY;
   self.blankView.frame = rect;
+}
+
+- (void)refreshTableView
+{
+  self.dataItems = [self.events objectForKey:self.selectedDate];
+  [self populateStartAndEndTimeCache];
+  [self.tableView reloadData];
+  
+  [self refreshCurrentTimeMarker];
+  if ([self.selectedDate isCurrentDateForCalendar:self.calendar]) {
+    NSIndexPath *ip = [self indexPathForDate:[NSDate date]];
+    [self.tableView scrollToRowAtIndexPath:ip atScrollPosition:UITableViewScrollPositionTop animated:YES];
+  }
 }
 
 @end

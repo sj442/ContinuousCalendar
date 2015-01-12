@@ -7,7 +7,7 @@
 //
 
 #import "EPTabBarController.h"
-#import "EPCalendarCollectionViewController.h"
+#import "EPCalendarViewController.h"
 
 @interface EPTabBarController ()
 
@@ -18,7 +18,7 @@
 - (void)viewDidLoad
 {
   [super viewDidLoad];
-  EPCalendarCollectionViewController *vc = [[EPCalendarCollectionViewController alloc]init];
+  EPCalendarViewController *vc = [[EPCalendarViewController alloc]init];
   UINavigationController *navC = [[UINavigationController alloc]initWithRootViewController:vc];
   UITabBarItem *calendar = [[UITabBarItem alloc]initWithTitle:@"Calendar" image:nil selectedImage:nil];
   navC.tabBarItem = calendar;

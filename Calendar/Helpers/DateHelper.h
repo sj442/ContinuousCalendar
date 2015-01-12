@@ -13,4 +13,4 @@ typedef struct {
 } EPCalendarDate;
 
 #import "EPCalendarView.h"
-#import "EPCalendarCollectionViewController.h"
+#import "EPCalendarViewController.h"
