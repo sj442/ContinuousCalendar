@@ -270,9 +270,9 @@
        if (error) {
          NSLog(@"error deleting event:%@", [error description]);
        }
-       
        [self.navigationController popViewControllerAnimated:YES];
      }];
+    
     [self.navigationController popViewControllerAnimated:YES];
   }
 }

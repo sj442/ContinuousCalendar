@@ -71,7 +71,7 @@
   if ([self.selectedDate isCurrentDateForCalendar:self.calendar]) {
     NSIndexPath *ip = [self indexPathForDate:[NSDate date]];
     [self.tableView scrollToRowAtIndexPath:ip atScrollPosition:UITableViewScrollPositionTop animated:YES];
-  }
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -183,6 +183,7 @@
                                                                                             startDate:button.event.startDate
                                                                                               endDate:button.event.endDate];
   createVC.eventSelected = YES;
+  self.fromCreateEvent = YES;
   [self.navigationController pushViewController:createVC animated:YES];
 }
 
@@ -429,7 +430,7 @@
       blankViewStartPointY = (cellNumber+1)*44-5;
     }
     UIView *blankView = [[UIView alloc]initWithFrame:CGRectMake(0, blankViewStartPointY, 50, 44)];
-    blankView.backgroundColor = [UIColor whiteColor];
+    blankView.backgroundColor = [UIColor yellowColor];
     [self.tableView addSubview:blankView];
     self.blankView = blankView;
     UIView *lineView = [[UIView alloc]initWithFrame:CGRectMake(50, startPointY, CGRectGetWidth(self.view.frame), 1.0f)];
@@ -440,8 +441,8 @@
     timeLabel.text = [NSDate getCurrentTimeForCalendar:self.calendar];
     timeLabel.font = [UIFont systemFontOfSize:10];
     timeLabel.textColor = [UIColor redColor];
-    [self.tableView addSubview:timeLabel];
     self.timeLabel = timeLabel;
+    [self.tableView addSubview:timeLabel];
     self.currentTimer = [NSTimer scheduledTimerWithTimeInterval:5.0f target:self selector:@selector(updateTimeMarkerLocation:) userInfo:nil repeats:YES];
   } else {
     [self.currentTimer invalidate];

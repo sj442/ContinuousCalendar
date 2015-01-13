@@ -15,6 +15,7 @@
 @property (strong, nonatomic) NSDate *selectedDate;
 @property (strong, nonatomic) NSArray *dataItems;
 @property (strong, nonatomic) NSCalendar *calendar;
+@property BOOL fromCreateEvent;
 
 - (instancetype)initWithFrame:(CGRect)frame;
 

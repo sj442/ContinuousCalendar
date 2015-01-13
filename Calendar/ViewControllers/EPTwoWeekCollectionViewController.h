@@ -7,10 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "EPCalendarTableViewController.h"
+
 
 @protocol EPTwoWeekCollectionViewControllerDelegate <NSObject>
 
 - (void)checkNavigationTitle:(NSString *)title;
+- (void)updateTwoWeekEventsWithCompletionBlock:(void(^)(void))completion;
+
 @end
 
 @interface EPTwoWeekCollectionViewController : UIViewController <UICollectionViewDelegate, UICollectionViewDataSource>
@@ -22,6 +26,8 @@
 @property (strong, nonatomic) NSIndexPath *selectedIndexPath;
 @property (strong, nonatomic) NSDate *referenceDate;
 @property (strong, nonatomic) NSMutableDictionary *events;
+@property BOOL fromCreateEvent;
+@property (strong, nonatomic) EPCalendarTableViewController *tableViewController;
 
 @property (strong, nonatomic) UICollectionViewFlowLayout *weekFlowLayout;
 @property (strong, nonatomic) NSCalendar *calendar;

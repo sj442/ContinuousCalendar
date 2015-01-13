@@ -10,17 +10,14 @@
 #import "DateHelper.h"
 #import "NSCalendar+dates.h"
 #import "NSDate+calendar.h"
-#import "EventStore.h"
 #import "NSDate+calendar.h"
 #import "UIColor+EH.h"
-#import "EPCalendarTableViewController.h"
 #import "EPTwoWeekCollectionViewController.h"
 
 static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
 
 @interface EPTwoWeekCollectionViewController ()
 
-@property (strong, nonatomic) EPCalendarTableViewController *tableViewController;
 @property (assign, nonatomic) EPCalendarDate fromDate;
 @property (assign, nonatomic) EPCalendarDate toDate;
 @property CGFloat itemWidth;
@@ -61,6 +58,20 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   [self initializeCollectionView];
   [self setupToolBar];
   [self addCalendarTableViewController];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+  [super viewDidAppear:animated];
+  
+  if (self.fromCreateEvent) {
+    self.fromCreateEvent = NO;
+    [self.weekDelegate updateTwoWeekEventsWithCompletionBlock:^{
+    [self.collectionView reloadData];
+    self.tableViewController.dataItems = [self.events objectForKey:self.selectedDate];
+    [self.tableViewController refreshTableView];
+  }];
+  }
 }
 
 - (void)setupToolBar
@@ -259,6 +270,14 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
     components.month,
     components.day
   };
+}
+
+-(void)refreshCollectionView
+{
+  NSArray *visibleCells = [self.collectionView visibleCells];
+  for (EPCalendarWeekCell *cell in visibleCells) {
+    [cell layoutSubviews];
+  }
 }
 
 @end

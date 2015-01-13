@@ -16,6 +16,7 @@
 @property (strong, nonatomic) NSDate *cellDate;
 @property (nonatomic, readonly, strong) UIView *overlayView;
 @property (nonatomic, readonly, strong) UIImageView *imageView;
+@property (nonatomic, readonly, strong) UIView *dotview;
 
 @end
 

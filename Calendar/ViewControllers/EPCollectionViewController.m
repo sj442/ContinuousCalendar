@@ -14,7 +14,6 @@
 #import "DateHelper.h"
 #import "NSCalendar+dates.h"
 #import "NSDate+calendar.h"
-#import "EventStore.h"
 #import "UIColor+EH.h"
 
 static NSString * const EPCalendarCellIDentifier = @"CalendarCell";
@@ -24,7 +23,6 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 
 @property (assign, nonatomic) EPCalendarDate fromDate;
 @property (assign, nonatomic) EPCalendarDate toDate;
-@property (strong, nonatomic) EKEventStore *eventStore;
 
 @end
 
@@ -44,7 +42,6 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     
     components.month = 6;
     self.toDate = [self calendarDateFromDate:[self.calendar dateByAddingComponents:components toDate:now options:0]];
-    self.eventStore = [EventStore sharedInstance].eventStore;
   }
   return self;
 }
@@ -226,7 +223,6 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   NSDate *firstDayInMonth = [self dateForFirstDayInSection:indexPath.section];
   EPCalendarDate firstDayPickerDate = [self calendarDateFromDate:firstDayInMonth];
   NSUInteger weekday = [self.calendar components:NSCalendarUnitWeekday fromDate:firstDayInMonth].weekday;
-  
   NSDate *cellDate = [self.calendar dateByAddingComponents:((^{
     NSDateComponents *dateComponents = [NSDateComponents new];
     dateComponents.day = indexPath.item - (weekday - 1);
@@ -336,6 +332,7 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   for (EPCalendarCell *cell in visibleCells) {
       //get calendar events
     NSArray *events = [self.events objectForKey:cell.cellDate];
+    NSLog(@"event count %d for date %@", events.count, cell.cellDate);
     if (events.count>0) {
       cell.hasEvents = cell.isEnabled && YES;
     } else {
