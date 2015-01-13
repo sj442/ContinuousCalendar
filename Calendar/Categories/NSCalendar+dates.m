@@ -19,9 +19,7 @@
     dateFormatter = block();
     threadDictionary[name] = dateFormatter;
   }
-  
   return dateFormatter;
-  
 }
 
 @end

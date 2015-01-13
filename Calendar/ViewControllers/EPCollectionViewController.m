@@ -309,14 +309,14 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 {
   NSArray *visibleCells = [self.collectionView visibleCells];
   for (EPCalendarCell *cell in visibleCells) {
-      //get calendar events
+    //get calendar events
     NSArray *events = [self.events objectForKey:cell.cellDate];
     if (events.count>0) {
       cell.hasEvents = cell.isEnabled && YES;
     } else {
       cell.hasEvents = NO;
     }
-      [cell layoutSubviews];
+    [cell layoutSubviews];
   }
 }
 

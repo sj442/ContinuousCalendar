@@ -54,28 +54,20 @@
 - (void)viewDidAppear:(BOOL)animated
 {
   [super viewDidAppear:animated];
-  [self checkCalendarPermissions];
   
   if (!self.collectionViewDrawn) {
     [self addCollectionViewController];
   }
-  [self restCalendarPermissionsWithCompletionHandler:^{
-    if (!self.fromCreateEvent) {
-      [self.collectionVC.collectionView performBatchUpdates:^{
-        NSIndexPath *ip = [NSIndexPath indexPathForItem:0 inSection:self.collectionVC.collectionView.numberOfSections/2];
-        [self.collectionVC.collectionView scrollToItemAtIndexPath:ip atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
-      } completion:^(BOOL finished) {
-        [self updateEventsDictionaryWithCompletionBlock:^{
-          [self.collectionVC populateCellsWithEvents];
-        }];
-      }];
-    } else {
-      self.fromCreateEvent = NO;
-      [self updateEventsDictionaryWithCompletionBlock:^{
-        [self.collectionVC populateCellsWithEvents];
-      }];
-    }
-  }];
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  NSNumber *access = [defaults objectForKey:@"calendarPermissionDone"];
+  if (access == nil) {
+    [self checkCalendarPermissions];
+    [self restCalendarPermissionsWithCompletionHandler:^{
+        [self updateCollectionView];
+    }];
+  } else {
+    [self updateCollectionView];
+  }
 }
 
 - (void)didReceiveMemoryWarning
@@ -93,7 +85,7 @@
   [self.navigationController.navigationBar setShadowImage:[[UIImage alloc] init]];
   [self.navigationController.navigationBar setBackgroundImage:[[UIImage alloc]init]
                                                 forBarMetrics:UIBarMetricsDefault];
-
+  
   self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"B22_taskbar__add-icon-outline"] style:UIBarButtonItemStylePlain target:self action:@selector(addEvent:)];
   CGRect bounds = [UIScreen mainScreen].bounds;
   ExtendedNavBarView *dayView = [[ExtendedNavBarView alloc]initWithFrame:CGRectMake(0, 0, CGRectGetWidth(bounds), CGRectGetHeight(bounds)/25)];
@@ -133,7 +125,7 @@
     // handle access here
     if (granted) {
       [eventStore reset];
-      }
+    }
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(eventStoreChangedNotification:) name:EKEventStoreChangedNotification object:nil];
   }];
 }
@@ -141,14 +133,7 @@
 - (void)eventStoreChangedNotification:(NSNotification *)sneder
 {
   if (!self.fromCreateEvent) {
-    [self.collectionVC.collectionView performBatchUpdates:^{
-      NSIndexPath *ip = [NSIndexPath indexPathForItem:0 inSection:self.collectionVC.collectionView.numberOfSections/2];
-      [self.collectionVC.collectionView scrollToItemAtIndexPath:ip atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
-    } completion:^(BOOL finished) {
-      [self updateEventsDictionaryWithCompletionBlock:^{
-        [self.collectionVC populateCellsWithEvents];
-      }];
-    }];
+    [self updateCollectionView];
   } else {
     self.fromCreateEvent = NO;
     [self updateEventsDictionaryWithCompletionBlock:^{
@@ -165,12 +150,18 @@
     // handle access here
     if (granted) {
       dispatch_sync(dispatch_get_main_queue(), ^{
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setObject:[NSNumber numberWithBool:YES] forKey:@"calendarPermissionDone"];
         [eventStore reset];
         completion();
       });
     } else {
-      completion();
-      [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+      dispatch_sync(dispatch_get_main_queue(), ^{
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setObject:[NSNumber numberWithBool:YES] forKey:@"calendarPermissionDone"];
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+        completion();
+      });
     }
   }];
 }
@@ -300,6 +291,18 @@
       }
     });
   }
+}
+
+- (void)updateCollectionView
+{
+  [self.collectionVC.collectionView performBatchUpdates:^{
+    NSIndexPath *ip = [NSIndexPath indexPathForItem:0 inSection:self.collectionVC.collectionView.numberOfSections/2];
+    [self.collectionVC.collectionView scrollToItemAtIndexPath:ip atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
+  } completion:^(BOOL finished) {
+    [self updateEventsDictionaryWithCompletionBlock:^{
+      [self.collectionVC populateCellsWithEvents];
+    }];
+  }];
 }
 
 @end
