@@ -432,6 +432,7 @@
     }
     UIView *blankView = [[UIView alloc]initWithFrame:CGRectMake(0, blankViewStartPointY, 50, 44)];
     [self.tableView addSubview:blankView];
+    blankView.backgroundColor = [UIColor whiteColor];
     self.blankView = blankView;
     UIView *lineView = [[UIView alloc]initWithFrame:CGRectMake(50, startPointY, CGRectGetWidth(self.view.frame), 1.0f)];
     lineView.backgroundColor = [UIColor redColor];

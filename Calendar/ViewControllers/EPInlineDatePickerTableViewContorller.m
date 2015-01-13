@@ -30,20 +30,12 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
 
 @implementation EPInlineDatePickerTableViewController
 
-- (id)initWithStyle:(UITableViewStyle)style
-{
-  self = [super initWithStyle:style];
-  if (self) {
-  }
-  return self;
-}
-
 - (void)viewDidLoad
 {
   [super viewDidLoad];
   [self.tableView registerNib:[EPDatePickerCell nib] forCellReuseIdentifier:EPDatePickerCellIdentifier];
   [self.tableView registerNib:[EPTextViewCell nib] forCellReuseIdentifier:EPTextViewCellIdentifier];
-  self.rows=2;
+  self.rows= 2;
   self.startTimeIndex = 0;
   self.endTimeIndex = 1;
   self.startDatePickerIndex = 100;
@@ -61,12 +53,7 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
   
   CGRect screenRect = [[UIScreen mainScreen] bounds];
   CGFloat screenHeight = screenRect.size.height;
-  if (screenHeight==568) {
-    self.totalViewHeight = 568;
-  }
-  else {
-    self.totalViewHeight = 480;
-  }
+    self.totalViewHeight = screenHeight;
   [self addBackgroundImageWithY:64];
 }
 
