@@ -24,8 +24,8 @@
 @property (strong, nonatomic) NSIndexPath *selectedIndexPath;
 @property (strong, nonatomic) UICollectionViewFlowLayout *flowLayout;
 @property (strong, nonatomic) NSCalendar *calendar;
-@property (weak, nonatomic) id <EPCollectionViewControllerDelegate> delegate;
 @property (strong, nonatomic) NSDictionary *events;
+@property (weak, nonatomic) id <EPCollectionViewControllerDelegate> delegate;
 
 - (instancetype) initWithCalendar:(NSCalendar *)calendar;
 - (void)populateCellsWithEvents;

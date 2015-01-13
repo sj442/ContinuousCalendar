@@ -30,6 +30,8 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
 
 @implementation EPTwoWeekCollectionViewController
 
+#pragma mark - Initialization methods
+
 - (instancetype)initWithCalendar:(NSCalendar *)calendar
 {
   self = [super init];
@@ -49,6 +51,8 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   }
   return self;
 }
+
+#pragma mark - Lifecycle methods
 
 - (void)viewDidLoad
 {
@@ -73,6 +77,8 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
     }];
   }
 }
+
+#pragma mark - Layout methods
 
 - (void)setupToolBar
 {
@@ -131,6 +137,8 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   return self.weekFlowLayout;
 }
 
+#pragma mark - UICollectionView Delegate & DataSource
+
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
   return 1;
@@ -139,41 +147,6 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
   return 14;
-}
-
-- (NSDate *)dateForFirstDayInSection:(NSInteger)section
-{
-  return [self.calendar dateByAddingComponents:((^{
-    NSDateComponents *dateComponents = [NSDateComponents new];
-    dateComponents.month = section;
-    return dateComponents;
-  })()) toDate:[self dateFromCalendarDate:self.fromDate] options:0];
-}
-
-- (NSUInteger)numberOfWeeksForMonthOfDate:(NSDate *)date
-{
-  NSDate *firstDayInMonth = [self.calendar dateFromComponents:[self.calendar components:NSCalendarUnitYear|NSCalendarUnitMonth fromDate:date]];
-
-  NSDate *lastDayInMonth = [self.calendar dateByAddingComponents:((^{
-    NSDateComponents *dateComponents = [NSDateComponents new];
-    dateComponents.month = 1;
-    dateComponents.day = -1;
-    return dateComponents;
-  })()) toDate:firstDayInMonth options:0];
-  
-  NSDate *fromSunday = [self.calendar dateFromComponents:((^{
-    NSDateComponents *dateComponents = [self.calendar components:NSCalendarUnitWeekOfYear|NSCalendarUnitYearForWeekOfYear fromDate:firstDayInMonth];
-    dateComponents.weekday = 1;
-    return dateComponents;
-  })())];
-  
-  NSDate *toSunday = [self.calendar dateFromComponents:((^{
-    NSDateComponents *dateComponents = [self.calendar components:NSCalendarUnitWeekOfYear|NSCalendarUnitYearForWeekOfYear fromDate:lastDayInMonth];
-    dateComponents.weekday = 1;
-    return dateComponents;
-  })())];
-  
-  return 1 + [self.calendar components:NSCalendarUnitWeekOfMonth fromDate:fromSunday toDate:toSunday options:0].weekOfMonth;
 }
 
 - (EPCalendarWeekCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -198,24 +171,6 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   cell.date = cellPickerDate;
   cell.selected = (([self.selectedDate isEqualToDate:cellDate]) || ([cellDate isCurrentDateForCalendar:self.calendar] && ![self.selectedDate isEqualToDate:cellDate]));
   return cell;
-}
-
-- (NSDate *)dateForFirstDayInWeekForDate:(NSDate *)date
-{
-  NSDateComponents *components = [self.calendar components:NSCalendarUnitYear|NSCalendarUnitMonth| NSCalendarUnitDay fromDate:date];
-  NSInteger weekday = [self.calendar component:NSCalendarUnitWeekday fromDate:date];
-  
-  [components setDay:components.day-weekday+1];
-  NSDate *firstDay = [self.calendar dateFromComponents:components];
-  return firstDay;
-}
-
-- (NSDate *)oneWeekBeforeFromDate:(NSDate *)selectedDate
-{
-  NSDateComponents *components = [self.calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:selectedDate];
-  NSInteger weekday = [self.calendar component:NSCalendarUnitWeekday fromDate:selectedDate];
-  [components setDay:components.day-weekday];
-  return [self.calendar dateFromComponents:components];
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
@@ -249,6 +204,33 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   [self.tableViewController refreshTableView];
 }
 
+- (NSDate *)dateForFirstDayInSection:(NSInteger)section
+{
+  return [self.calendar dateByAddingComponents:((^{
+    NSDateComponents *dateComponents = [NSDateComponents new];
+    dateComponents.month = section;
+    return dateComponents;
+  })()) toDate:[self dateFromCalendarDate:self.fromDate] options:0];
+}
+
+- (NSDate *)dateForFirstDayInWeekForDate:(NSDate *)date
+{
+  NSDateComponents *components = [self.calendar components:NSCalendarUnitYear|NSCalendarUnitMonth| NSCalendarUnitDay fromDate:date];
+  NSInteger weekday = [self.calendar component:NSCalendarUnitWeekday fromDate:date];
+  
+  [components setDay:components.day-weekday+1];
+  NSDate *firstDay = [self.calendar dateFromComponents:components];
+  return firstDay;
+}
+
+- (NSDate *)oneWeekBeforeFromDate:(NSDate *)selectedDate
+{
+  NSDateComponents *components = [self.calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:selectedDate];
+  NSInteger weekday = [self.calendar component:NSCalendarUnitWeekday fromDate:selectedDate];
+  [components setDay:components.day-weekday];
+  return [self.calendar dateFromComponents:components];
+}
+
 - (NSDate *)dateFromCalendarDate:(EPCalendarDate)dateStruct
 {
   return [self.calendar dateFromComponents:[self dateComponentsFromPickerDate:dateStruct]];
@@ -273,13 +255,7 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   };
 }
 
--(void)refreshCollectionView
-{
-  NSArray *visibleCells = [self.collectionView visibleCells];
-  for (EPCalendarWeekCell *cell in visibleCells) {
-    [cell layoutSubviews];
-  }
-}
+#pragma mark - EPTableViewDelegate
 
 - (void)eventWasSelected
 {

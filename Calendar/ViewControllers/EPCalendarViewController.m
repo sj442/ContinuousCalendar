@@ -23,6 +23,7 @@
 @property (strong, nonatomic) NSCalendar *calendar;
 @property (strong, nonatomic) NSMutableDictionary *eventsDictionary;
 @property (strong, nonatomic) EKEventStore *eventStore;
+
 @property BOOL collectionViewDrawn;
 @property BOOL twoWeekViewDrawn;
 
@@ -53,31 +54,28 @@
 - (void)viewDidAppear:(BOOL)animated
 {
   [super viewDidAppear:animated];
+  [self checkCalendarPermissions];
   
   if (!self.collectionViewDrawn) {
     [self addCollectionViewController];
-    self.collectionViewDrawn = YES;
   }
-  
-  [self checkCalendarPermissions];
-
-    [self checkCalendarPermissionsWithCompletionHandler:^{
-        if (!self.fromCreateEvent) {
-          [self.collectionVC.collectionView performBatchUpdates:^{
-            NSIndexPath *ip = [NSIndexPath indexPathForItem:0 inSection:self.collectionVC.collectionView.numberOfSections/2];
-            [self.collectionVC.collectionView scrollToItemAtIndexPath:ip atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
-          } completion:^(BOOL finished) {
-            [self updateEventsDictionaryWithCompletionBlock:^{
-              [self.collectionVC populateCellsWithEvents];
-            }];
-          }];
-        } else {
-          self.fromCreateEvent = NO;
-          [self updateEventsDictionaryWithCompletionBlock:^{
-            [self.collectionVC populateCellsWithEvents];
-          }];
-        }
-    }];
+  [self restCalendarPermissionsWithCompletionHandler:^{
+    if (!self.fromCreateEvent) {
+      [self.collectionVC.collectionView performBatchUpdates:^{
+        NSIndexPath *ip = [NSIndexPath indexPathForItem:0 inSection:self.collectionVC.collectionView.numberOfSections/2];
+        [self.collectionVC.collectionView scrollToItemAtIndexPath:ip atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
+      } completion:^(BOOL finished) {
+        [self updateEventsDictionaryWithCompletionBlock:^{
+          [self.collectionVC populateCellsWithEvents];
+        }];
+      }];
+    } else {
+      self.fromCreateEvent = NO;
+      [self updateEventsDictionaryWithCompletionBlock:^{
+        [self.collectionVC populateCellsWithEvents];
+      }];
+    }
+  }];
 }
 
 - (void)didReceiveMemoryWarning
@@ -135,16 +133,13 @@
     // handle access here
     if (granted) {
       [eventStore reset];
-      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(eventStoreChangedNotification:) name:EKEventStoreChangedNotification object:nil];
-      } else {
-      [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
-    }
+      }
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(eventStoreChangedNotification:) name:EKEventStoreChangedNotification object:nil];
   }];
 }
 
 - (void)eventStoreChangedNotification:(NSNotification *)sneder
 {
-  NSLog(@"event store changed notification");
   if (!self.fromCreateEvent) {
     [self.collectionVC.collectionView performBatchUpdates:^{
       NSIndexPath *ip = [NSIndexPath indexPathForItem:0 inSection:self.collectionVC.collectionView.numberOfSections/2];
@@ -163,7 +158,7 @@
   }
 }
 
-- (void)checkCalendarPermissionsWithCompletionHandler:(void (^)(void))completion
+- (void)restCalendarPermissionsWithCompletionHandler:(void (^)(void))completion
 {
   EKEventStore *eventStore = [[EventStore sharedInstance] eventStore];
   [eventStore requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
@@ -174,8 +169,8 @@
         completion();
       });
     } else {
-      [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
       completion();
+      [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
     }
   }];
 }
@@ -191,33 +186,6 @@
   UINavigationController *navC = [[UINavigationController alloc] initWithRootViewController:createEventVC];
   createEventVC.title = @"New Event";
   [self presentViewController:navC animated:YES completion:nil];
-}
-
-- (void)cellWasSelected
-{
-  self.twoWeekVC.events = self.eventsDictionary;
-  [self showTwoWeekViewController];
-}
-
-- (void)eventWasSelected
-{
-  self.fromCreateEvent = YES;
-}
-
-- (void)updateEventsDictionaryWithCompletionBlock:(void(^)(void))completion
-{
-  [self populateCellsWithEventsWithCompletionHandler:^(NSMutableDictionary *dictionary) {
-    self.collectionVC.events = self.eventsDictionary;
-    self.twoWeekVC.events = self.eventsDictionary;
-    completion();
-  }];
-}
-
-#pragma mark - CalendarView Delegate
-
-- (void)setNavigationTitle:(NSString *)title
-{
-  self.navigationItem.title = title;
 }
 
 - (void)showTwoWeekViewController
@@ -269,6 +237,33 @@
 {
   self.navigationItem.title = title;
   self.collectionVC.selectedDate = self.twoWeekVC.selectedDate;
+}
+
+- (void)eventWasSelected
+{
+  self.fromCreateEvent = YES;
+}
+
+#pragma mark - CollectionViewController Delegate
+
+- (void)setNavigationTitle:(NSString *)title
+{
+  self.navigationItem.title = title;
+}
+
+- (void)cellWasSelected
+{
+  self.twoWeekVC.events = self.eventsDictionary;
+  [self showTwoWeekViewController];
+}
+
+- (void)updateEventsDictionaryWithCompletionBlock:(void(^)(void))completion
+{
+  [self populateCellsWithEventsWithCompletionHandler:^(NSMutableDictionary *dictionary) {
+    self.collectionVC.events = self.eventsDictionary;
+    self.twoWeekVC.events = self.eventsDictionary;
+    completion();
+  }];
 }
 
 #pragma mark - Events Fetch

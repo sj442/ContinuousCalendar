@@ -18,20 +18,19 @@
 
 @end
 
-@interface EPTwoWeekCollectionViewController : UIViewController <UICollectionViewDelegate, UICollectionViewDataSource, TableViewDelegate>
+@interface EPTwoWeekCollectionViewController : UIViewController <UICollectionViewDelegate, UICollectionViewDataSource, EPTableViewDelegate>
 
 - (instancetype)initWithCalendar:(NSCalendar *)calendar;
 
 @property (strong, nonatomic) NSDate *selectedDate;
-@property (strong, nonatomic) UICollectionView *collectionView;
 @property (strong, nonatomic) NSIndexPath *selectedIndexPath;
 @property (strong, nonatomic) NSDate *referenceDate;
 @property (strong, nonatomic) NSMutableDictionary *events;
-@property BOOL fromCreateEvent;
-@property (strong, nonatomic) EPCalendarTableViewController *tableViewController;
-
 @property (strong, nonatomic) UICollectionViewFlowLayout *weekFlowLayout;
+@property (strong, nonatomic) UICollectionView *collectionView;
 @property (strong, nonatomic) NSCalendar *calendar;
+@property (strong, nonatomic) EPCalendarTableViewController *tableViewController;
+@property BOOL fromCreateEvent;
 
 @property (weak, nonatomic) id <EPTwoWeekCollectionViewControllerDelegate> weekDelegate;
 

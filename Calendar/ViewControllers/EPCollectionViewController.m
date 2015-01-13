@@ -15,6 +15,7 @@
 #import "NSCalendar+dates.h"
 #import "NSDate+calendar.h"
 #import "UIColor+EH.h"
+#import "NSDate+calendar.h"
 
 static NSString * const EPCalendarCellIDentifier = @"CalendarCell";
 static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
@@ -27,6 +28,8 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 @end
 
 @implementation EPCollectionViewController
+
+#pragma mark - Initialization methods
 
 - (instancetype) initWithCalendar:(NSCalendar *)calendar
 {
@@ -46,6 +49,8 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   return self;
 }
 
+#pragma mark - LifeCycle methods
+
 - (void)viewDidLoad
 {
   [super viewDidLoad];
@@ -56,9 +61,6 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 - (void)viewDidAppear:(BOOL)animated
 {
   [super viewDidAppear:animated];
-//  [self.delegate updateEventsDictionaryWithCompletionBlock:^{
-//    [self populateCellsWithEvents];
-//  }];
 }
 
 - (void)didReceiveMemoryWarning
@@ -171,6 +173,8 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   }];
 }
 
+#pragma mark - UICollectionView Delegate & DataSource methods
+
 - (NSInteger) numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
   return [self.calendar components:NSCalendarUnitMonth fromDate:[self dateFromCalendarDate:self.fromDate] toDate:[self dateFromCalendarDate:self.toDate] options:0].month;
@@ -178,42 +182,7 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 
 - (NSInteger) collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-  return 7 * [self numberOfWeeksForMonthOfDate:[self dateForFirstDayInSection:section]];
-}
-
-- (NSDate *) dateForFirstDayInSection:(NSInteger)section
-{
-  return [self.calendar dateByAddingComponents:((^{
-    NSDateComponents *dateComponents = [NSDateComponents new];
-    dateComponents.month = section;
-    return dateComponents;
-  })()) toDate:[self dateFromCalendarDate:self.fromDate] options:0];
-}
-
-- (NSUInteger) numberOfWeeksForMonthOfDate:(NSDate *)date
-{
-  NSDate *firstDayInMonth = [self.calendar dateFromComponents:[self.calendar components:NSCalendarUnitYear|NSCalendarUnitMonth fromDate:date]];
-  
-  NSDate *lastDayInMonth = [self.calendar dateByAddingComponents:((^{
-    NSDateComponents *dateComponents = [NSDateComponents new];
-    dateComponents.month = 1;
-    dateComponents.day = -1;
-    return dateComponents;
-  })()) toDate:firstDayInMonth options:0];
-  
-  NSDate *fromSunday = [self.calendar dateFromComponents:((^{
-    NSDateComponents *dateComponents = [self.calendar components:NSCalendarUnitWeekOfYear|NSCalendarUnitYearForWeekOfYear fromDate:firstDayInMonth];
-    dateComponents.weekday = 1;
-    return dateComponents;
-  })())];
-  
-  NSDate *toSunday = [self.calendar dateFromComponents:((^{
-    NSDateComponents *dateComponents = [self.calendar components:NSCalendarUnitWeekOfYear|NSCalendarUnitYearForWeekOfYear fromDate:lastDayInMonth];
-    dateComponents.weekday = 1;
-    return dateComponents;
-  })())];
-  
-  return 1 + [self.calendar components:NSCalendarUnitWeekOfMonth fromDate:fromSunday toDate:toSunday options:0].weekOfMonth;
+  return 7 * [NSDate numberOfWeeksForMonthOfDate:[self dateForFirstDayInSection:section] calendar:self.calendar];
 }
 
 - (EPCalendarCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -302,6 +271,16 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   return nil;
 }
 
+- (NSDate *) dateForFirstDayInSection:(NSInteger)section
+{
+  return [self.calendar dateByAddingComponents:((^{
+    NSDateComponents *dateComponents = [NSDateComponents new];
+    dateComponents.month = section;
+    return dateComponents;
+  })()) toDate:[self dateFromCalendarDate:self.fromDate] options:0];
+}
+
+
 - (NSDate *)dateFromCalendarDate:(EPCalendarDate)dateStruct
 {
   return [self.calendar dateFromComponents:[self dateComponentsFromPickerDate:dateStruct]];
@@ -337,10 +316,7 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     } else {
       cell.hasEvents = NO;
     }
-    dispatch_async(dispatch_get_main_queue(), ^{
-      // Update the UI
       [cell layoutSubviews];
-    });
   }
 }
 

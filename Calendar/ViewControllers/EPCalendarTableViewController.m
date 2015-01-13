@@ -36,7 +36,7 @@
 
 @implementation EPCalendarTableViewController
 
-#pragma mark - LifeCycle methods
+#pragma mark - Initialization methods
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
@@ -46,6 +46,8 @@
   }
   return self;
 }
+
+#pragma mark - LifeCycle methods
 
 - (void)viewDidLoad
 {

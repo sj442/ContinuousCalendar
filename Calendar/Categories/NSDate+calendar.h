@@ -20,6 +20,8 @@
 
 + (NSString *)timeAtIndex:(NSInteger)index forDate:(NSDate *)date calendar:(NSCalendar *)calendar;
 
++ (NSUInteger)numberOfWeeksForMonthOfDate:(NSDate *)date calendar:(NSCalendar *)calendar;
+
 - (BOOL)isCurrentDateForCalendar:(NSCalendar *)calendar;
 
 @end

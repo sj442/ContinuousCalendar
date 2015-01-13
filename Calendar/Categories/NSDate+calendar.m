@@ -112,6 +112,32 @@
   return dateString;
 }
 
++ (NSUInteger)numberOfWeeksForMonthOfDate:(NSDate *)date calendar:(NSCalendar *)calendar
+{
+  NSDate *firstDayInMonth = [calendar dateFromComponents:[calendar components:NSCalendarUnitYear|NSCalendarUnitMonth fromDate:date]];
+  
+  NSDate *lastDayInMonth = [calendar dateByAddingComponents:((^{
+    NSDateComponents *dateComponents = [NSDateComponents new];
+    dateComponents.month = 1;
+    dateComponents.day = -1;
+    return dateComponents;
+  })()) toDate:firstDayInMonth options:0];
+  
+  NSDate *fromSunday = [calendar dateFromComponents:((^{
+    NSDateComponents *dateComponents = [calendar components:NSCalendarUnitWeekOfYear|NSCalendarUnitYearForWeekOfYear fromDate:firstDayInMonth];
+    dateComponents.weekday = 1;
+    return dateComponents;
+  })())];
+  
+  NSDate *toSunday = [calendar dateFromComponents:((^{
+    NSDateComponents *dateComponents = [calendar components:NSCalendarUnitWeekOfYear|NSCalendarUnitYearForWeekOfYear fromDate:lastDayInMonth];
+    dateComponents.weekday = 1;
+    return dateComponents;
+  })())];
+  return 1 + [calendar components:NSCalendarUnitWeekOfMonth fromDate:fromSunday toDate:toSunday options:0].weekOfMonth;
+}
+
+
 - (BOOL)isCurrentDateForCalendar:(NSCalendar *)calendar
 {
   NSDate *date = (NSDate *)self;
