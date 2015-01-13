@@ -65,12 +65,12 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   [super viewDidAppear:animated];
   
   if (self.fromCreateEvent) {
-    self.fromCreateEvent = NO;
-    [self.weekDelegate updateTwoWeekEventsWithCompletionBlock:^{
-    [self.collectionView reloadData];
-    self.tableViewController.dataItems = [self.events objectForKey:self.selectedDate];
-    [self.tableViewController refreshTableView];
-  }];
+    [self.weekDelegate updateEventsDictionaryWithCompletionBlock:^{
+      [self.collectionView reloadData];
+      self.fromCreateEvent = NO;
+      self.tableViewController.dataItems = [self.events objectForKey:self.selectedDate];
+      [self.tableViewController refreshTableView];
+    }];
   }
 }
 
@@ -97,6 +97,7 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   self.tableViewController.calendar = self.calendar;
   self.tableViewController.selectedDate = self.selectedDate;
   self.tableViewController.dataItems = [self.events objectForKey:self.selectedDate];
+  self.tableViewController.tableViewDelegate = self;
   [self.tableViewController refreshTableView];
 }
 
@@ -278,6 +279,12 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   for (EPCalendarWeekCell *cell in visibleCells) {
     [cell layoutSubviews];
   }
+}
+
+- (void)eventWasSelected
+{
+  self.fromCreateEvent = YES;
+  [self.weekDelegate eventWasSelected];
 }
 
 @end

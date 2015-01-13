@@ -158,6 +158,7 @@
     self.fromCreateEvent = NO;
     [self updateEventsDictionaryWithCompletionBlock:^{
       [self.collectionVC populateCellsWithEvents];
+      self.twoWeekVC.events = self.eventsDictionary;
     }];
   }
 }
@@ -173,7 +174,7 @@
         completion();
       });
     } else {
-      //[[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+      [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
       completion();
     }
   }];
@@ -185,6 +186,8 @@
   createEventVC = [[EPCreateEventTableViewController alloc] initWithDate:self.collectionVC.selectedDate];
   createEventVC.editMode = YES;
   self.fromCreateEvent = YES;
+  self.twoWeekVC.fromCreateEvent = YES;
+  self.twoWeekVC.tableViewController.fromCreateEvent = YES;
   UINavigationController *navC = [[UINavigationController alloc] initWithRootViewController:createEventVC];
   createEventVC.title = @"New Event";
   [self presentViewController:navC animated:YES completion:nil];
@@ -196,18 +199,14 @@
   [self showTwoWeekViewController];
 }
 
+- (void)eventWasSelected
+{
+  self.fromCreateEvent = YES;
+}
+
 - (void)updateEventsDictionaryWithCompletionBlock:(void(^)(void))completion
 {
   [self populateCellsWithEventsWithCompletionHandler:^(NSMutableDictionary *dictionary) {
-    self.collectionVC.events = self.eventsDictionary;
-    self.twoWeekVC.events = self.eventsDictionary;
-    completion();
-  }];
-}
-
-- (void)updateTwoWeekEventsWithCompletionBlock:(void(^)(void))completion
-{
-  [self populateTwowWeekViewCellWithEventsWithCompletionHandler:^(NSMutableDictionary *dictionary) {
     self.collectionVC.events = self.eventsDictionary;
     self.twoWeekVC.events = self.eventsDictionary;
     completion();
@@ -294,28 +293,6 @@
   for (int i=0; i<visibleCells.count; i++) {
     EPCalendarCell *cell= visibleCells[i];
     dispatch_sync(myQueue, ^{
-      //get calendar events
-      NSArray *events = [self calendarEventsForDate:cell.cellDate];
-      if (events.count>0) {
-        [self.eventsDictionary setObject:events forKey:cell.cellDate];
-      } else {
-        [self.eventsDictionary removeObjectForKey:cell.cellDate];
-      }
-      if (i== visibleCells.count-1) {
-        completion(self.eventsDictionary);
-      }
-    });
-  }
-}
-
-- (void)populateTwowWeekViewCellWithEventsWithCompletionHandler:(void (^) (NSMutableDictionary *))completion
-{
-  NSArray *visibleCells = [self.twoWeekVC.collectionView visibleCells];
-  dispatch_queue_t myQueue = dispatch_queue_create("My Queue", NULL);
-  
-  for (int i=0; i<visibleCells.count; i++) {
-    EPCalendarWeekCell *cell= visibleCells[i];
-    dispatch_async(myQueue, ^{
       //get calendar events
       NSArray *events = [self calendarEventsForDate:cell.cellDate];
       if (events.count>0) {

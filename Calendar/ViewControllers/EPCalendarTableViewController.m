@@ -63,15 +63,13 @@
 - (void)viewDidAppear:(BOOL)animated
 {
   [super viewDidAppear:animated];
-  [self setupTableView];
-  [self populateStartAndEndTimeCache];
-  [self.tableView reloadData];
   
-  [self refreshCurrentTimeMarker];
-  if ([self.selectedDate isCurrentDateForCalendar:self.calendar]) {
-    NSIndexPath *ip = [self indexPathForDate:[NSDate date]];
-    [self.tableView scrollToRowAtIndexPath:ip atScrollPosition:UITableViewScrollPositionTop animated:YES];
-    }
+  if (self.fromCreateEvent) {
+    self.fromCreateEvent = NO;
+  } else {
+    [self setupTableView];
+    [self refreshTableView];
+  }
 }
 
 - (void)didReceiveMemoryWarning
@@ -184,6 +182,7 @@
                                                                                               endDate:button.event.endDate];
   createVC.eventSelected = YES;
   self.fromCreateEvent = YES;
+  [self.tableViewDelegate eventWasSelected];
   [self.navigationController pushViewController:createVC animated:YES];
 }
 
@@ -430,7 +429,6 @@
       blankViewStartPointY = (cellNumber+1)*44-5;
     }
     UIView *blankView = [[UIView alloc]initWithFrame:CGRectMake(0, blankViewStartPointY, 50, 44)];
-    blankView.backgroundColor = [UIColor yellowColor];
     [self.tableView addSubview:blankView];
     self.blankView = blankView;
     UIView *lineView = [[UIView alloc]initWithFrame:CGRectMake(50, startPointY, CGRectGetWidth(self.view.frame), 1.0f)];
@@ -443,7 +441,7 @@
     timeLabel.textColor = [UIColor redColor];
     self.timeLabel = timeLabel;
     [self.tableView addSubview:timeLabel];
-    self.currentTimer = [NSTimer scheduledTimerWithTimeInterval:5.0f target:self selector:@selector(updateTimeMarkerLocation:) userInfo:nil repeats:YES];
+    self.currentTimer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(updateTimeMarkerLocation:) userInfo:nil repeats:YES];
   } else {
     [self.currentTimer invalidate];
   }
@@ -479,7 +477,6 @@
 {
   [self populateStartAndEndTimeCache];
   [self.tableView reloadData];
-  
   [self refreshCurrentTimeMarker];
   if ([self.selectedDate isCurrentDateForCalendar:self.calendar]) {
     NSIndexPath *ip = [self indexPathForDate:[NSDate date]];

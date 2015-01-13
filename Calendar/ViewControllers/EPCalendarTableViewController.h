@@ -10,12 +10,20 @@
 #import "EPWeekCalendarView.h"
 #import "EPCalendarView.h"
 
+@protocol TableViewDelegate <NSObject>
+
+- (void)eventWasSelected;
+
+@end
+
 @interface EPCalendarTableViewController : UIViewController <CalendarTableViewDelegate, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate>
 
 @property (strong, nonatomic) NSDate *selectedDate;
 @property (strong, nonatomic) NSArray *dataItems;
 @property (strong, nonatomic) NSCalendar *calendar;
 @property BOOL fromCreateEvent;
+
+@property (weak, nonatomic) id <TableViewDelegate> tableViewDelegate;
 
 - (instancetype)initWithFrame:(CGRect)frame;
 

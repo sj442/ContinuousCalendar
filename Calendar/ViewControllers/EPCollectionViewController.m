@@ -332,7 +332,6 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   for (EPCalendarCell *cell in visibleCells) {
       //get calendar events
     NSArray *events = [self.events objectForKey:cell.cellDate];
-    NSLog(@"event count %d for date %@", events.count, cell.cellDate);
     if (events.count>0) {
       cell.hasEvents = cell.isEnabled && YES;
     } else {

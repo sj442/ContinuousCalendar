@@ -13,11 +13,12 @@
 @protocol EPTwoWeekCollectionViewControllerDelegate <NSObject>
 
 - (void)checkNavigationTitle:(NSString *)title;
-- (void)updateTwoWeekEventsWithCompletionBlock:(void(^)(void))completion;
+- (void)updateEventsDictionaryWithCompletionBlock:(void(^)(void))completion;
+- (void)eventWasSelected;
 
 @end
 
-@interface EPTwoWeekCollectionViewController : UIViewController <UICollectionViewDelegate, UICollectionViewDataSource>
+@interface EPTwoWeekCollectionViewController : UIViewController <UICollectionViewDelegate, UICollectionViewDataSource, TableViewDelegate>
 
 - (instancetype)initWithCalendar:(NSCalendar *)calendar;
 
