@@ -67,7 +67,7 @@
   [super didReceiveMemoryWarning];
 }
 
-#pragma mark-Navigation bar methods
+#pragma mark - Navigation Bar
 
 - (void)addEditButton
 {
@@ -94,7 +94,7 @@
   self.navigationItem.rightBarButtonItem.enabled = YES;
 }
 
-#pragma mark-action methods
+#pragma mark - IBAction
 
 - (void)viewTapped:(id)sender
 {
@@ -260,7 +260,7 @@
   self.localEventStore = [EventStore sharedInstance].eventStore;
 }
 
-#pragma mark-UIAlertView Delegate methods
+#pragma mark - UIAlertView Delegate methods
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {

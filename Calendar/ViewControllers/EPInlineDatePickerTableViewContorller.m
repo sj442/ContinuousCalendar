@@ -29,7 +29,7 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
 
 @implementation EPInlineDatePickerTableViewController
 
-#pragma mark - LifeCycle methods
+#pragma mark - LifeCycle
 
 - (void)viewDidLoad
 {
@@ -51,7 +51,6 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
   }
   self.tableView.dataSource = self;
   self.tableView.delegate = self;
-  
   [self addBackgroundImageWithY:64];
 }
 
@@ -65,7 +64,7 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
   [super didReceiveMemoryWarning];
 }
 
-#pragma mark - Table view Data source
+#pragma mark - TableView DataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {

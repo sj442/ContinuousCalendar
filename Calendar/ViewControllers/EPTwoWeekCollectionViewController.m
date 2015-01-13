@@ -96,7 +96,7 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   EPCalendarTableViewController *tableVC = [[EPCalendarTableViewController alloc]initWithFrame:CGRectMake(0, CGRectGetMaxY(self.toolBar.frame), CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)-CGRectGetHeight(self.collectionView.frame)-CGRectGetHeight(self.toolBar.frame))];
   self.tableViewController = tableVC;
   [self addChildViewController:tableVC];
-  tableVC.view.frame = CGRectMake(0, CGRectGetMaxY(self.toolBar.frame), CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)-CGRectGetHeight(self.collectionView.frame)-CGRectGetHeight(self.toolBar.frame));
+  tableVC.view.frame = CGRectMake(0, CGRectGetMaxY(self.toolBar.frame), CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)-CGRectGetHeight(self.collectionView.frame)-CGRectGetHeight(self.toolBar.frame)-CGRectGetHeight(self.view.bounds)/25);
   [self.view addSubview:tableVC.view];
   [tableVC didMoveToParentViewController:self];
   self.tableViewController.calendar = self.calendar;

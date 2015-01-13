@@ -57,7 +57,6 @@
 - (void)viewDidAppear:(BOOL)animated
 {
   [super viewDidAppear:animated];
-  
   if (!self.collectionViewDrawn) {
     [self addCollectionViewController];
   }
@@ -87,12 +86,13 @@
   self.automaticallyAdjustsScrollViewInsets = NO;
   [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor primaryColor]}];
   self.navigationController.navigationBar.tintColor = [UIColor primaryColor];
-  
   [self.navigationController.navigationBar setShadowImage:[[UIImage alloc] init]];
   [self.navigationController.navigationBar setBackgroundImage:[[UIImage alloc]init]
                                                 forBarMetrics:UIBarMetricsDefault];
-  
-  self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"B22_taskbar__add-icon-outline"] style:UIBarButtonItemStylePlain target:self action:@selector(addEvent:)];
+  self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"B22_taskbar__add-icon-outline"]
+                                                                           style:UIBarButtonItemStylePlain
+                                                                          target:self
+                                                                          action:@selector(addEvent:)];
   CGRect bounds = [UIScreen mainScreen].bounds;
   ExtendedNavBarView *dayView = [[ExtendedNavBarView alloc]initWithFrame:CGRectMake(0, 0, CGRectGetWidth(bounds), CGRectGetHeight(bounds)/25)];
   [self.containerView addSubview:dayView];
@@ -273,7 +273,6 @@
 {
   NSArray *visibleCells = [self.collectionVC.collectionView visibleCells];
   dispatch_queue_t myQueue = dispatch_queue_create("My Queue",NULL);
-  
   for (int i=0; i<visibleCells.count; i++) {
     EPCalendarCell *cell= visibleCells[i];
     dispatch_sync(myQueue, ^{

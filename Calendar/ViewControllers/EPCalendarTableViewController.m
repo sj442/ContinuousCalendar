@@ -124,7 +124,6 @@
   CGFloat startPointX = 50;
   CGFloat height = 0;
   CGFloat startPointY = 0;
-  
   for (NSArray *arrayOfEvents in events) {
     for (int k =0; k<arrayOfEvents.count; k++) {
       EventDataClass *eventData = arrayOfEvents[k];
@@ -292,7 +291,6 @@
     NSMutableArray *listOfEvents = [NSMutableArray array];
     NSMutableArray *tempArray = [NSMutableArray array];
     int index = 0;
-    
     for (int j=0; j<itemsCount; j++) {
       EKEvent *event = sortedItems[j];
       NSInteger eventStartHour = [self.calendar component:NSCalendarUnitHour fromDate:event.startDate];
