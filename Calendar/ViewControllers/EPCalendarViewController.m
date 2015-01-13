@@ -26,6 +26,7 @@
 
 @property BOOL collectionViewDrawn;
 @property BOOL twoWeekViewDrawn;
+@property BOOL twoWeekViewInFront;
 
 @end
 
@@ -36,7 +37,6 @@
 - (void) viewDidLoad
 {
   [super viewDidLoad];
-  
   UIView *container = [[UIView alloc]initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)-49)];
   [self.view addSubview:container];
   self.containerView = container;
@@ -116,15 +116,15 @@
   self.twoWeekVC = twoWeekVC;
   self.twoWeekVC.events= self.eventsDictionary;
   self.twoWeekVC.weekDelegate = self;
+  self.twoWeekViewDrawn = YES;
 }
 
 - (void)checkCalendarPermissions
 {
-  EKEventStore *eventStore = [[EventStore sharedInstance] eventStore];
-  [eventStore requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
+  [self.eventStore requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
     // handle access here
     if (granted) {
-      [eventStore reset];
+      [self.eventStore reset];
     }
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(eventStoreChangedNotification:) name:EKEventStoreChangedNotification object:nil];
   }];
@@ -145,14 +145,13 @@
 
 - (void)restCalendarPermissionsWithCompletionHandler:(void (^)(void))completion
 {
-  EKEventStore *eventStore = [[EventStore sharedInstance] eventStore];
-  [eventStore requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
+  [self.eventStore requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
     // handle access here
     if (granted) {
       dispatch_sync(dispatch_get_main_queue(), ^{
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         [defaults setObject:[NSNumber numberWithBool:YES] forKey:@"calendarPermissionDone"];
-        [eventStore reset];
+        [self.eventStore reset];
         completion();
       });
     } else {
@@ -183,7 +182,6 @@
 {
   if (!self.twoWeekViewDrawn) {
     [self addTwoWeekViewController];
-    self.twoWeekViewDrawn = YES;
   }
   [UIView animateWithDuration:0.1 animations:^{
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(goToFullCalendarView:)];
@@ -194,6 +192,7 @@
     self.twoWeekVC.selectedDate = self.collectionVC.selectedDate;
     self.twoWeekVC.referenceDate = self.collectionVC.selectedDate;
     [self.twoWeekVC.collectionView reloadData];
+    self.twoWeekViewInFront = YES;
   } completion:^(BOOL finished) {
     NSDateFormatter *abbreviatedDateFormatter = [[NSDateFormatter alloc]init];
     abbreviatedDateFormatter.calendar = self.calendar;
@@ -215,6 +214,7 @@
     [self.view bringSubviewToFront:self.collectionVC.view];
     self.collectionVC.selectedDate = self.twoWeekVC.selectedDate;
     self.navigationItem.leftBarButtonItem = nil;
+    self.twoWeekViewInFront = NO;
   } completion:^(BOOL finished) {
     [self updateEventsDictionaryWithCompletionBlock:^{
       [self.collectionVC populateCellsWithEvents];
@@ -239,12 +239,15 @@
 
 - (void)setNavigationTitle:(NSString *)title
 {
-  self.navigationItem.title = title;
+  if (!self.twoWeekViewInFront) {
+    self.navigationItem.title = title;
+  }
 }
 
 - (void)cellWasSelected
 {
   self.twoWeekVC.events = self.eventsDictionary;
+  self.twoWeekVC.selectedDate = self.collectionVC.selectedDate;
   [self showTwoWeekViewController];
 }
 
@@ -295,14 +298,20 @@
 
 - (void)updateCollectionView
 {
-  [self.collectionVC.collectionView performBatchUpdates:^{
-    NSIndexPath *ip = [NSIndexPath indexPathForItem:0 inSection:self.collectionVC.collectionView.numberOfSections/2];
-    [self.collectionVC.collectionView scrollToItemAtIndexPath:ip atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
-  } completion:^(BOOL finished) {
+  if (!self.fromCreateEvent) {
+    [self.collectionVC.collectionView performBatchUpdates:^{
+      NSIndexPath *ip = [NSIndexPath indexPathForItem:0 inSection:self.collectionVC.collectionView.numberOfSections/2];
+      [self.collectionVC.collectionView scrollToItemAtIndexPath:ip atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
+    } completion:^(BOOL finished) {
+      [self updateEventsDictionaryWithCompletionBlock:^{
+        [self.collectionVC populateCellsWithEvents];
+      }];
+    }];
+  } else {
     [self updateEventsDictionaryWithCompletionBlock:^{
       [self.collectionVC populateCellsWithEvents];
     }];
-  }];
+  }
 }
 
 @end

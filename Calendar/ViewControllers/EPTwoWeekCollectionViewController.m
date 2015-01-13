@@ -10,7 +10,6 @@
 #import "DateHelper.h"
 #import "NSCalendar+dates.h"
 #import "NSDate+calendar.h"
-#import "NSDate+calendar.h"
 #import "UIColor+EH.h"
 #import "EPTwoWeekCollectionViewController.h"
 
@@ -22,7 +21,6 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
 @property (assign, nonatomic) EPCalendarDate toDate;
 @property CGFloat itemWidth;
 @property CGFloat itemHeight;
-
 @property (weak, nonatomic) UIToolbar *toolBar;
 @property (strong, nonatomic) UIBarButtonItem *eventsButton;
 
@@ -76,6 +74,7 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
       [self.tableViewController refreshTableView];
     }];
   }
+  [self updateToolBar];
 }
 
 #pragma mark - Layout methods
@@ -183,17 +182,13 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   ? [self.calendar dateFromComponents:[self dateComponentsFromPickerDate:cell.date]]
   : nil;
   [self didChangeValueForKey:@"selectedDate"];
-  NSDateFormatter *abbreviatedDateFormatter = [[NSDateFormatter alloc]init];
-  abbreviatedDateFormatter.calendar = self.calendar;
-  abbreviatedDateFormatter.dateFormat = [abbreviatedDateFormatter.class dateFormatFromTemplate:@"yyyyLLLL" options:0 locale:[NSLocale currentLocale]];
-  NSString *navtitle =[abbreviatedDateFormatter stringFromDate:self.selectedDate];
-  [self.weekDelegate checkNavigationTitle:navtitle];
   if (indexPath.item>6) {
     self.referenceDate = [self oneWeekBeforeFromDate:self.selectedDate];
   } else {
     self.referenceDate = self.selectedDate;
   }
   [self.collectionView reloadData];
+  [self updateToolBar];
 }
 
 - (void)setSelectedDate:(NSDate *)selectedDate
@@ -202,6 +197,11 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   self.tableViewController.selectedDate = self.selectedDate;
   self.tableViewController.dataItems = [self.events objectForKey:self.selectedDate];
   [self.tableViewController refreshTableView];
+  NSDateFormatter *abbreviatedDateFormatter = [[NSDateFormatter alloc]init];
+  abbreviatedDateFormatter.calendar = self.calendar;
+  abbreviatedDateFormatter.dateFormat = [abbreviatedDateFormatter.class dateFormatFromTemplate:@"yyyyLLLL" options:0 locale:[NSLocale currentLocale]];
+  NSString *navtitle =[abbreviatedDateFormatter stringFromDate:self.selectedDate];
+  [self.weekDelegate checkNavigationTitle:navtitle];
 }
 
 - (NSDate *)dateForFirstDayInSection:(NSInteger)section
@@ -253,6 +253,13 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
     components.month,
     components.day
   };
+}
+
+- (void)updateToolBar
+{
+  NSString *title = [NSDate getOrdinalSuffixForDate:self.selectedDate forCalendar:self.calendar];
+  [self.eventsButton setTitle:title];
+  
 }
 
 #pragma mark - EPTableViewDelegate

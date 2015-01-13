@@ -169,6 +169,9 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
     {
       if (indexPath.row==0) {
         EPTextViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:EPTextViewCellIdentifier];
+        if (self.nameTextView.text.length>0) {
+          self.name = self.nameTextView.text;
+        }
         [cell configureCellWithText:self.name andPlaceHolder:@"Name"];
         cell.textView.delegate = self;
         self.nameTextView = cell.textView;
@@ -181,6 +184,9 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
         return cell;
       } else if (indexPath.row==1){
         EPTextViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:EPTextViewCellIdentifier];
+        if (self.locationTextView.text.length>0) {
+          self.location = self.locationTextView.text;
+        }
         [cell configureCellWithText:self.location andPlaceHolder:@"Location"];
         cell.textView.delegate = self;
         self.locationTextView= cell.textView;
@@ -418,7 +424,7 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
     }
     [self.tableView endUpdates];
   } else if (indexPath.section==0 && indexPath.row==2) {
-      }
+  }
   [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
