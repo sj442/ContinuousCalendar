@@ -13,7 +13,4 @@
 
 @interface EPCalendarViewController : UIViewController <EPCollectionViewControllerDelegate, EPTwoWeekCollectionViewControllerDelegate>
 
-@property BOOL fromCreateEvent;
-@property (weak, nonatomic) UIView *containerView;
-
 @end

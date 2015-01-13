@@ -24,18 +24,19 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
 @property (nonatomic) NSInteger startTimeIndex;
 @property (nonatomic) NSInteger endTimeIndex;
 @property (nonatomic) NSInteger rows;
-@property (nonatomic) CGFloat totalViewHeight;
 
 @end
 
 @implementation EPInlineDatePickerTableViewController
+
+#pragma mark - LifeCycle methods
 
 - (void)viewDidLoad
 {
   [super viewDidLoad];
   [self.tableView registerNib:[EPDatePickerCell nib] forCellReuseIdentifier:EPDatePickerCellIdentifier];
   [self.tableView registerNib:[EPTextViewCell nib] forCellReuseIdentifier:EPTextViewCellIdentifier];
-  self.rows= 2;
+  self.rows = 2;
   self.startTimeIndex = 0;
   self.endTimeIndex = 1;
   self.startDatePickerIndex = 100;
@@ -51,9 +52,6 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
   self.tableView.dataSource = self;
   self.tableView.delegate = self;
   
-  CGRect screenRect = [[UIScreen mainScreen] bounds];
-  CGFloat screenHeight = screenRect.size.height;
-    self.totalViewHeight = screenHeight;
   [self addBackgroundImageWithY:64];
 }
 
@@ -139,11 +137,11 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
   }
   else if (indexPath.section==2) {
     if (self.eventSelected && self.editMode) {
-      return MAX(100,self.totalViewHeight-200-nameRowHeight-locationRowHeight-36*3-64);
+      return 200;
     }
     else {
       CGFloat descriptionHeight = [self.notes heightForTextHavingWidth:[EPTextViewCell textViewWidth]-20.0 font:[UIFont systemFontOfSize:16]]+40;
-      return MAX(100, descriptionHeight);
+      return  MAX(200, descriptionHeight);
     }
   }
   return 50;

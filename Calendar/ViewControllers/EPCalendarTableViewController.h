@@ -7,8 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "EPWeekCalendarView.h"
-#import "EPCalendarView.h"
 
 @protocol EPTableViewDelegate <NSObject>
 
@@ -16,7 +14,7 @@
 
 @end
 
-@interface EPCalendarTableViewController : UIViewController <CalendarTableViewDelegate, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate>
+@interface EPCalendarTableViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate>
 
 @property (strong, nonatomic) NSDate *selectedDate;
 @property (strong, nonatomic) NSArray *dataItems;

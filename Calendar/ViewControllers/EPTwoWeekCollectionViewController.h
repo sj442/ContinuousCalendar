@@ -9,7 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "EPCalendarTableViewController.h"
 
-
 @protocol EPTwoWeekCollectionViewControllerDelegate <NSObject>
 
 - (void)checkNavigationTitle:(NSString *)title;

@@ -12,8 +12,6 @@
 #import "NSDate+calendar.h"
 #import "EPCalendarEventView.h"
 #import "EventDataClass.h"
-#import <EventKit/EventKit.h>
-#import "EventStore.h"
 
 @interface EPCalendarTableViewController ()
 

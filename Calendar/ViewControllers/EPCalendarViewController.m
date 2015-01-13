@@ -17,6 +17,7 @@
 
 @interface EPCalendarViewController ()
 
+@property (weak, nonatomic) UIView *containerView;
 @property (weak, nonatomic) ExtendedNavBarView *dayView;
 @property (strong, nonatomic) EPCollectionViewController *collectionVC;
 @property (strong, nonatomic) EPTwoWeekCollectionViewController *twoWeekVC;
@@ -24,6 +25,7 @@
 @property (strong, nonatomic) NSMutableDictionary *eventsDictionary;
 @property (strong, nonatomic) EKEventStore *eventStore;
 
+@property BOOL fromCreateEvent;
 @property BOOL collectionViewDrawn;
 @property BOOL twoWeekViewDrawn;
 @property BOOL twoWeekViewInFront;
@@ -37,7 +39,7 @@
 - (void) viewDidLoad
 {
   [super viewDidLoad];
-  UIView *container = [[UIView alloc]initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)-49)];
+  UIView *container = [[UIView alloc]initWithFrame:CGRectMake(0, 64, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)-49)];
   [self.view addSubview:container];
   self.containerView = container;
   [self setUpNavigationBar];
@@ -75,9 +77,10 @@
   [super didReceiveMemoryWarning];
 }
 
+#pragma mark - Layout mathods
+
 - (void)setUpNavigationBar
 {
-  self.navigationController.navigationBar.translucent = NO;
   self.automaticallyAdjustsScrollViewInsets = NO;
   [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor primaryColor]}];
   self.navigationController.navigationBar.tintColor = [UIColor primaryColor];
@@ -146,7 +149,6 @@
 - (void)restCalendarPermissionsWithCompletionHandler:(void (^)(void))completion
 {
   [self.eventStore requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
-    // handle access here
     if (granted) {
       dispatch_sync(dispatch_get_main_queue(), ^{
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
