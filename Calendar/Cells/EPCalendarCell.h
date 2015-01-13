@@ -18,6 +18,6 @@
 @property (nonatomic, readonly, strong) UIView *overlayView;
 @property (nonatomic, readonly, strong) UIView *dotview;
 
--(void)refreshDotViews;
+- (void)refreshDotViews;
 
 @end

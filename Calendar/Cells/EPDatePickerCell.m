@@ -10,7 +10,7 @@
 
 @implementation EPDatePickerCell
 
-+(UINib*)nib
++ (UINib*)nib
 {
   return [UINib nibWithNibName:@"EPDatePickerCell" bundle:nil];
 }
@@ -29,12 +29,12 @@
 }
 
 
--(void)timeButtonPressed:(id)sender
+- (void)timeButtonPressed:(id)sender
 {
   [self.datePickerDelegate timePickerButtonWasPressed];
 }
 
--(void)dateButtonPressed:(id)sender
+- (void)dateButtonPressed:(id)sender
 {
   [self.datePickerDelegate datePickerButtonWasPressed];
 }

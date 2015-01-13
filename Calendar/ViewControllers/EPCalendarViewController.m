@@ -35,7 +35,7 @@
 
 @implementation EPCalendarViewController
 
-#pragma mark -LifeCycle methods
+#pragma mark -LifeCycle
 
 - (void) viewDidLoad
 {
@@ -80,7 +80,7 @@
   [super didReceiveMemoryWarning];
 }
 
-#pragma mark - Layout mathods
+#pragma mark - Layout
 
 - (void)setUpNavigationBar
 {

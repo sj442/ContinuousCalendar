@@ -28,7 +28,7 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
 
 @implementation EPTwoWeekCollectionViewController
 
-#pragma mark - Initialization methods
+#pragma mark - Initialization
 
 - (instancetype)initWithCalendar:(NSCalendar *)calendar
 {
@@ -50,7 +50,7 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   return self;
 }
 
-#pragma mark - Lifecycle methods
+#pragma mark - Lifecycle
 
 - (void)viewDidLoad
 {
@@ -77,7 +77,7 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   [self updateToolBar];
 }
 
-#pragma mark - Layout methods
+#pragma mark - Layout
 
 - (void)setupToolBar
 {

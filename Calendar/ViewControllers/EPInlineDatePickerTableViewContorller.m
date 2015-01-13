@@ -65,7 +65,7 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
   [super didReceiveMemoryWarning];
 }
 
-#pragma mark - Table view data source
+#pragma mark - Table view Data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -240,7 +240,6 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
   }
 }
 
-
 - (void)setCellAlpha:(UITableViewCell *)cell
 {
   cell.backgroundColor = [UIColor clearColor];
@@ -289,7 +288,7 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
   //implemented in subclass
 }
 
-#pragma mark-datepicker methods
+#pragma mark - Datepicker
 
 - (void)createStartDatePickerForCell:(UITableViewCell*)cell
 {
@@ -418,7 +417,7 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
   [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
-#pragma mark-UITextView Delegate
+#pragma mark - UITextView Delegate
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
   if (textView==self.nameTextView || textView==self.locationTextView) {

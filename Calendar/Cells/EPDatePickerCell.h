@@ -12,14 +12,14 @@ static NSString *EPDatePickerCellIdentifier = @"datePickerCell";
 
 @protocol EPDatePickerDelegate <NSObject>
 
--(void)datePickerButtonWasPressed;
--(void)timePickerButtonWasPressed;
+- (void)datePickerButtonWasPressed;
+- (void)timePickerButtonWasPressed;
 
 @end
 
 @interface EPDatePickerCell : UITableViewCell
 
-+(UINib*)nib;
++ (UINib*)nib;
 
 @property (weak) id <EPDatePickerDelegate> datePickerDelegate;
 @property (weak, nonatomic) IBOutlet UILabel *startLabel;

@@ -29,7 +29,7 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 
 @implementation EPCollectionViewController
 
-#pragma mark - Initialization methods
+#pragma mark - Initialization
 
 - (instancetype) initWithCalendar:(NSCalendar *)calendar
 {
@@ -49,7 +49,7 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   return self;
 }
 
-#pragma mark - LifeCycle methods
+#pragma mark - LifeCycle
 
 - (void)viewDidLoad
 {
@@ -173,7 +173,7 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   }];
 }
 
-#pragma mark - UICollectionView Delegate & DataSource methods
+#pragma mark - UICollectionView Delegate & DataSource
 
 - (NSInteger) numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {

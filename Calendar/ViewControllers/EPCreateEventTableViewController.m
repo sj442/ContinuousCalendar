@@ -27,7 +27,7 @@
   return self;
 }
 
-- (id)initWithDate:(NSDate*)date
+- (instancetype)initWithDate:(NSDate*)date
 {
   self = [super init];
   if (self) {
@@ -37,7 +37,7 @@
   return self;
 }
 
-- (id)initWithEvent:(EKEvent*)event eventName:(NSString*)name location:(NSString*)location notes:(NSString*)notes startDate:(NSDate*)startDate endDate:(NSDate*)endDate
+- (instancetype)initWithEvent:(EKEvent*)event eventName:(NSString*)name location:(NSString*)location notes:(NSString*)notes startDate:(NSDate*)startDate endDate:(NSDate*)endDate
 {
   self = [super init];
   if (self) {

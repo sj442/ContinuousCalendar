@@ -38,7 +38,7 @@
   return self;
 }
 
--(void)drawRect:(CGRect)rect
+- (void)drawRect:(CGRect)rect
 {
   if (!_dotview) {
     _dotview =  [[UIView alloc]initWithFrame:CGRectMake(self.width/2-5, self.height-10, 10, 10)];

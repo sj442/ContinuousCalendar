@@ -45,7 +45,7 @@
   return self;
 }
 
-#pragma mark - LifeCycle methods
+#pragma mark - LifeCycle
 
 - (void)viewDidLoad
 {
@@ -77,7 +77,7 @@
   [super didReceiveMemoryWarning];
 }
 
-#pragma mark - Layout methods
+#pragma mark - Layout
 
 - (void)setupTableView
 {
@@ -90,7 +90,7 @@
   [self.tableView registerNib:[EPCalendarTableViewCell nib] forCellReuseIdentifier:EPCalendarTableViewCellIdentifier];
 }
 
-#pragma mark - Table view data source & delegate methods
+#pragma mark - Table view data source & delegate
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -299,9 +299,9 @@
       EventDataClass *eventData = [self compareEvent:event withCellStartDate:cellStartDate cellEndDate:cellEndDate];
       NSIndexPath *startIP = eventData.startIP;
       if (startIP.row == indexPath.row) {
-        eventData.isStartIP = [NSNumber numberWithInt:1];
+        eventData.isStartIP = @1;
       } else {
-        eventData.isStartIP = [NSNumber numberWithInt:0];
+        eventData.isStartIP = @0;
       }
       scrollToIP = startIP;
       if (index == 0) {

@@ -24,7 +24,7 @@
     return sharedInstance;
 }
 
--(EKEventStore*)eventStore
+- (EKEventStore*)eventStore
 {
     if (!_eventStore) {
         _eventStore = [[EKEventStore alloc] init];
