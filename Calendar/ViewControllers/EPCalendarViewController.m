@@ -8,12 +8,13 @@
 //
 
 #import "EPCalendarViewController.h"
+#import "ExtendedNavBarView.h"
+#import "EPCreateEventTableViewController.h"
 #import "EPCalendarCell.h"
 #import "EPCalendarWeekCell.h"
 #import "UIColor+EH.h"
 #import "NSDate+Calendar.h"
 #import "EventStore.h"
-#import "ExtendedNavBarView.h"
 
 @interface EPCalendarViewController ()
 
@@ -62,10 +63,12 @@
   }
   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
   NSNumber *access = [defaults objectForKey:@"calendarPermissionDone"];
+  [self addEventStoreNotifications];
   if (access == nil) {
-    [self checkCalendarPermissions];
-    [self restCalendarPermissionsWithCompletionHandler:^{
-        [self updateCollectionView];
+    [self checkCalendarPermissionsWithCompletionHandler:^{
+      NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+      [defaults setObject:[NSNumber numberWithBool:YES] forKey:@"calendarPermissionDone"];
+      [self updateCollectionView];
     }];
   } else {
     [self updateCollectionView];
@@ -122,15 +125,9 @@
   self.twoWeekViewDrawn = YES;
 }
 
-- (void)checkCalendarPermissions
+- (void)addEventStoreNotifications
 {
-  [self.eventStore requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
-    // handle access here
-    if (granted) {
-      [self.eventStore reset];
-    }
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(eventStoreChangedNotification:) name:EKEventStoreChangedNotification object:nil];
-  }];
 }
 
 - (void)eventStoreChangedNotification:(NSNotification *)sneder
@@ -146,20 +143,16 @@
   }
 }
 
-- (void)restCalendarPermissionsWithCompletionHandler:(void (^)(void))completion
+- (void)checkCalendarPermissionsWithCompletionHandler:(void (^)(void))completion
 {
   [self.eventStore requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
     if (granted) {
       dispatch_sync(dispatch_get_main_queue(), ^{
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        [defaults setObject:[NSNumber numberWithBool:YES] forKey:@"calendarPermissionDone"];
         [self.eventStore reset];
         completion();
       });
     } else {
       dispatch_sync(dispatch_get_main_queue(), ^{
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        [defaults setObject:[NSNumber numberWithBool:YES] forKey:@"calendarPermissionDone"];
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
         completion();
       });

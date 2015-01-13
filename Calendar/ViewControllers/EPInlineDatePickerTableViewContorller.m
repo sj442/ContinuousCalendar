@@ -152,47 +152,9 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
   switch (indexPath.section) {
     case 0:
     {
-      if (indexPath.row==0) {
-        EPTextViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:EPTextViewCellIdentifier];
-        if (self.nameTextView.text.length>0) {
-          self.name = self.nameTextView.text;
-        }
-        [cell configureCellWithText:self.name andPlaceHolder:@"Name"];
-        cell.textView.delegate = self;
-        self.nameTextView = cell.textView;
-        if (self.eventSelected && !self.editMode) {
-          self.nameTextView.editable = NO;
-        } else {
-          self.nameTextView.editable = YES;
-        }
-        [self setCellAlpha:cell];
-        return cell;
-      } else if (indexPath.row==1){
-        EPTextViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:EPTextViewCellIdentifier];
-        if (self.locationTextView.text.length>0) {
-          self.location = self.locationTextView.text;
-        }
-        [cell configureCellWithText:self.location andPlaceHolder:@"Location"];
-        cell.textView.delegate = self;
-        self.locationTextView= cell.textView;
-        if (self.eventSelected==1 && !self.editMode) {
-          self.locationTextView.editable = NO;
-        } else {
-          self.locationTextView.editable = YES;
-        }
-        [self setCellAlpha:cell];
-        return cell;
-      } else {
-        UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:@"contactCell"];
-        if (!cell) {
-          cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"contactCell"];
-        }
-        [self configureContactCell:cell];
-        [self setCellAlpha:cell];
-        return cell;
-      }
-    }
+      return [self tableView:tableView cellInFirstSectionForRowAtIndexPath:indexPath];
       break;
+    }
     case 1:
     {
       EPDatePickerCell *cell = [self.tableView dequeueReusableCellWithIdentifier:EPDatePickerCellIdentifier];
@@ -234,6 +196,50 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
     }
   }
 }
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellInFirstSectionForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+  if (indexPath.row==0) {
+    EPTextViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:EPTextViewCellIdentifier];
+    if (self.nameTextView.text.length>0) {
+      self.name = self.nameTextView.text;
+    }
+    [cell configureCellWithText:self.name andPlaceHolder:@"Name"];
+    cell.textView.delegate = self;
+    self.nameTextView = cell.textView;
+    if (self.eventSelected && !self.editMode) {
+      self.nameTextView.editable = NO;
+    } else {
+      self.nameTextView.editable = YES;
+    }
+    [self setCellAlpha:cell];
+    return cell;
+  } else if (indexPath.row==1){
+    EPTextViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:EPTextViewCellIdentifier];
+    if (self.locationTextView.text.length>0) {
+      self.location = self.locationTextView.text;
+    }
+    [cell configureCellWithText:self.location andPlaceHolder:@"Location"];
+    cell.textView.delegate = self;
+    self.locationTextView= cell.textView;
+    if (self.eventSelected==1 && !self.editMode) {
+      self.locationTextView.editable = NO;
+    } else {
+      self.locationTextView.editable = YES;
+    }
+    [self setCellAlpha:cell];
+    return cell;
+  } else {
+    UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:@"contactCell"];
+    if (!cell) {
+      cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"contactCell"];
+    }
+    [self configureContactCell:cell];
+    [self setCellAlpha:cell];
+    return cell;
+  }
+}
+
 
 - (void)setCellAlpha:(UITableViewCell *)cell
 {
@@ -381,7 +387,6 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
   if (self.eventSelected && self.editMode==NO) {
-    
     //disable selection of rows when event has been selected but editing not enabled
     
   } else if (indexPath.section == 1) {
@@ -448,7 +453,7 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
   }
 }
 
-- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView //when desc textView editing begins, the tableview acrolls up first, then collapse the datepicker
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView //when desc textView editing begins, the tableview scrolls up first, then collapses the datepicker
 {
   if (self.startDatePickerIndex!=100) {
     [self.tableView beginUpdates];

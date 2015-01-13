@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "EPCreateEventTableViewController.h"
 #import "EPTwoWeekCollectionViewController.h"
 #import "EPCollectionViewController.h"
 

@@ -12,5 +12,4 @@ typedef struct {
     NSUInteger day;
 } EPCalendarDate;
 
-#import "EPCalendarView.h"
 #import "EPCalendarViewController.h"
