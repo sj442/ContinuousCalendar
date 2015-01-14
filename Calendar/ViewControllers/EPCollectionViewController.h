@@ -26,6 +26,7 @@
 @property (strong, nonatomic) NSCalendar *calendar;
 @property (strong, nonatomic) NSDictionary *events;
 @property (weak, nonatomic) id <EPCollectionViewControllerDelegate> delegate;
+@property BOOL twoWeekViewInFront;
 
 - (instancetype) initWithCalendar:(NSCalendar *)calendar;
 - (void)populateCellsWithEvents;

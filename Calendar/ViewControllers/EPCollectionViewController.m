@@ -13,7 +13,6 @@
 #import "EPCalendarCell.h"
 #import "DateHelper.h"
 #import "NSCalendar+dates.h"
-#import "NSDate+calendar.h"
 #import "UIColor+EH.h"
 #import "NSDate+calendar.h"
 
@@ -108,8 +107,8 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   if (!self.flowLayout) {
     UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
     layout.headerReferenceSize = CGSizeMake(self.view.bounds.size.width, 44);
-    layout.itemSize = CGSizeMake(CGRectGetWidth(self.view.bounds)/7, MIN(CGRectGetHeight(self.view.bounds)/8, 568/8));
-    layout.minimumLineSpacing = 2.0f;
+    layout.itemSize = CGSizeMake(CGRectGetWidth(self.view.bounds)/7, MIN(CGRectGetHeight(self.view.bounds)/9, 568/9));
+    layout.minimumLineSpacing = 0.0f;
     layout.minimumInteritemSpacing = 0.0f;
     self.flowLayout = layout;
   }
@@ -201,6 +200,7 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   cell.hasEvents = NO;
   EPCalendarDate cellPickerDate = [self calendarDateFromDate:cellDate];
   cell.date = cellPickerDate;
+  cell.twoWeekViewInFront = self.twoWeekViewInFront;
   cell.enabled = ((firstDayPickerDate.year == cellPickerDate.year) && (firstDayPickerDate.month == cellPickerDate.month));
   cell.selected = (([self.selectedDate isEqualToDate:cellDate]) || ([cellDate isCurrentDateForCalendar:self.calendar] && ![self.selectedDate isEqualToDate:cellDate]));
   return cell;
@@ -230,7 +230,11 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   [self didChangeValueForKey:@"selectedDate"];
   [self.delegate cellWasSelected];
   [self.collectionView reloadData];
-  [self.collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
+  [self.collectionView performBatchUpdates:^{
+    [self.collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
+  } completion:^(BOOL finished) {
+    [self populateCellsWithEvents];
+  }];
 }
 
 - (void)setSelectedDate:(NSDate *)selectedDate
@@ -269,6 +273,15 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     return monthHeader;
   }
   return nil;
+}
+
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section
+{
+  if (self.twoWeekViewInFront) {
+    return CGSizeMake(0.1f, 0.1f);
+  }else {
+    return CGSizeMake(self.collectionView.bounds.size.width, 20);
+  }
 }
 
 - (NSDate *) dateForFirstDayInSection:(NSInteger)section

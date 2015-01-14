@@ -1,11 +1,9 @@
 
-//
 //  EPCalendarCollectionViewController.m
 //  Calendar
 //
 //  Created by Sunayna Jain on 12/4/14.
 //  Copyright (c) 2014 Enhatch. All rights reserved.
-//
 
 #import "EPCalendarViewController.h"
 #import "ExtendedNavBarView.h"
@@ -181,13 +179,14 @@
   [UIView animateWithDuration:0.1 animations:^{
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(goToFullCalendarView:)];
     CGRect frame = self.twoWeekVC.view.frame;
-    frame.origin.y = CGRectGetHeight(self.dayView.frame);
+    frame.origin.y = CGRectGetHeight(self.dayView.frame)+125;
     self.twoWeekVC.view.frame = frame;
     [self.containerView bringSubviewToFront:self.twoWeekVC.view];
     self.twoWeekVC.selectedDate = self.collectionVC.selectedDate;
     self.twoWeekVC.referenceDate = self.collectionVC.selectedDate;
     [self.twoWeekVC.collectionView reloadData];
     self.twoWeekViewInFront = YES;
+    self.collectionVC.twoWeekViewInFront = YES;
   } completion:^(BOOL finished) {
     NSDateFormatter *abbreviatedDateFormatter = [[NSDateFormatter alloc]init];
     abbreviatedDateFormatter.calendar = self.calendar;
@@ -203,13 +202,11 @@
     CGRect frame = self.twoWeekVC.view.frame;
     frame.origin.y = CGRectGetHeight(self.containerView.frame);
     self.twoWeekVC.view.frame = frame;
-    frame = self.collectionVC.view.frame;
-    frame.origin.y = CGRectGetHeight(self.dayView.frame);
-    self.collectionVC.view.frame = frame;
     [self.view bringSubviewToFront:self.collectionVC.view];
     self.collectionVC.selectedDate = self.twoWeekVC.selectedDate;
     self.navigationItem.leftBarButtonItem = nil;
     self.twoWeekViewInFront = NO;
+    self.collectionVC.twoWeekViewInFront = NO;
   } completion:^(BOOL finished) {
     [self updateEventsDictionaryWithCompletionBlock:^{
       [self.collectionVC populateCellsWithEvents];
@@ -234,9 +231,7 @@
 
 - (void)setNavigationTitle:(NSString *)title
 {
-  if (!self.twoWeekViewInFront) {
     self.navigationItem.title = title;
-  }
 }
 
 - (void)cellWasSelected

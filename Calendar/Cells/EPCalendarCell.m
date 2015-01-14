@@ -14,7 +14,6 @@
 + (id) cacheKeyForCalendarDate:(EPCalendarDate)date;
 + (id) fetchObjectForKey:(id)key withCreator:(id(^)(void))block;
 
-@property (nonatomic, readonly, strong) UIImageView *imageView;
 @property CGFloat width;
 @property CGFloat height;
 
@@ -41,7 +40,7 @@
 - (void)drawRect:(CGRect)rect
 {
   if (!_dotview) {
-    _dotview =  [[UIView alloc]initWithFrame:CGRectMake(self.width/2-5, self.height-10, 10, 10)];
+    _dotview =  [[UIView alloc]initWithFrame:CGRectMake(self.width/2-5, self.height-15, 10, 10)];
     _dotview.layer.cornerRadius = 5;
     _dotview.clipsToBounds = YES;
     _dotview.backgroundColor = [UIColor primaryColor];
@@ -59,7 +58,7 @@
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
     CGContextFillRect(context, self.bounds);
-    UIFont *font = [UIFont boldSystemFontOfSize:18.0f];
+    UIFont *font = [UIFont systemFontOfSize:18.0f];
     CGRect textBounds = (CGRect){ 0.0f, self.height/2-12, self.width, 24.0f };
     NSMutableParagraphStyle *textStyle = [[NSMutableParagraphStyle defaultParagraphStyle] mutableCopy];
     textStyle.lineBreakMode = NSLineBreakByCharWrapping;
@@ -69,7 +68,11 @@
     UIGraphicsEndImageContext();
     return image;
   }];
-  self.imageView.alpha = self.enabled ? 1.0f : 0.0f;
+  if (self.twoWeekViewInFront) {
+    self.imageView.alpha = self.enabled ? 1.0f : 0.5f;
+  } else {
+    self.imageView.alpha = self.enabled ? 1.0f : 0.0f;
+  }
   self.overlayView.hidden = !(self.selected && self.enabled) ;
   self.dotview.hidden = !self.hasEvents;
 }
