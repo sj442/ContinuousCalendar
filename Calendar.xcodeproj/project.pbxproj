@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		3F63A1C31A5D90BA0070F3A7 /* EPTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F63A1C11A5D90BA0070F3A7 /* EPTabBarController.m */; };
 		3F63A1C41A5D90BA0070F3A7 /* EPTabBarController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3F63A1C21A5D90BA0070F3A7 /* EPTabBarController.xib */; };
+		3F7FB27F1A66EC5700C0F8A9 /* B_taskbar_close-icon-outline.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F7FB27D1A66EC5700C0F8A9 /* B_taskbar_close-icon-outline.png */; };
+		3F7FB2801A66EC5700C0F8A9 /* B_taskbar_close-icon-outline@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F7FB27E1A66EC5700C0F8A9 /* B_taskbar_close-icon-outline@2x.png */; };
+		3F7FB2831A66ECFD00C0F8A9 /* B22_taskbar__close-icon-outline.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F7FB2811A66ECFD00C0F8A9 /* B22_taskbar__close-icon-outline.png */; };
+		3F7FB2841A66ECFD00C0F8A9 /* B22_taskbar__close-icon-outline@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F7FB2821A66ECFD00C0F8A9 /* B22_taskbar__close-icon-outline@2x.png */; };
 		3F9AEAAD1A6040A4007E966F /* EPCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9AEAAC1A6040A4007E966F /* EPCollectionViewController.m */; };
 		3F9AEAB01A6040BE007E966F /* EPTwoWeekCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F9AEAAF1A6040BE007E966F /* EPTwoWeekCollectionViewController.m */; };
 		3FBCBA821A3F2EF4006ECB7E /* B22_taskbar__add-icon-outline.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FBCBA801A3F2EF4006ECB7E /* B22_taskbar__add-icon-outline.png */; };
@@ -64,6 +68,10 @@
 		3F63A1C01A5D90BA0070F3A7 /* EPTabBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EPTabBarController.h; sourceTree = "<group>"; };
 		3F63A1C11A5D90BA0070F3A7 /* EPTabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EPTabBarController.m; sourceTree = "<group>"; };
 		3F63A1C21A5D90BA0070F3A7 /* EPTabBarController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EPTabBarController.xib; sourceTree = "<group>"; };
+		3F7FB27D1A66EC5700C0F8A9 /* B_taskbar_close-icon-outline.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "B_taskbar_close-icon-outline.png"; sourceTree = "<group>"; };
+		3F7FB27E1A66EC5700C0F8A9 /* B_taskbar_close-icon-outline@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "B_taskbar_close-icon-outline@2x.png"; sourceTree = "<group>"; };
+		3F7FB2811A66ECFD00C0F8A9 /* B22_taskbar__close-icon-outline.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "B22_taskbar__close-icon-outline.png"; sourceTree = "<group>"; };
+		3F7FB2821A66ECFD00C0F8A9 /* B22_taskbar__close-icon-outline@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "B22_taskbar__close-icon-outline@2x.png"; sourceTree = "<group>"; };
 		3F9AEAAB1A6040A4007E966F /* EPCollectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EPCollectionViewController.h; sourceTree = "<group>"; };
 		3F9AEAAC1A6040A4007E966F /* EPCollectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EPCollectionViewController.m; sourceTree = "<group>"; };
 		3F9AEAAE1A6040BE007E966F /* EPTwoWeekCollectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EPTwoWeekCollectionViewController.h; sourceTree = "<group>"; };
@@ -328,6 +336,10 @@
 				3FD383CE1A37683B003470B9 /* BlueDot@2x.png */,
 				3FBCBA801A3F2EF4006ECB7E /* B22_taskbar__add-icon-outline.png */,
 				3FBCBA811A3F2EF4006ECB7E /* B22_taskbar__add-icon-outline@2x.png */,
+				3F7FB27D1A66EC5700C0F8A9 /* B_taskbar_close-icon-outline.png */,
+				3F7FB27E1A66EC5700C0F8A9 /* B_taskbar_close-icon-outline@2x.png */,
+				3F7FB2811A66ECFD00C0F8A9 /* B22_taskbar__close-icon-outline.png */,
+				3F7FB2821A66ECFD00C0F8A9 /* B22_taskbar__close-icon-outline@2x.png */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -414,13 +426,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				3FBCBA831A3F2EF4006ECB7E /* B22_taskbar__add-icon-outline@2x.png in Resources */,
+				3F7FB2841A66ECFD00C0F8A9 /* B22_taskbar__close-icon-outline@2x.png in Resources */,
 				3F63A1C41A5D90BA0070F3A7 /* EPTabBarController.xib in Resources */,
+				3F7FB27F1A66EC5700C0F8A9 /* B_taskbar_close-icon-outline.png in Resources */,
+				3F7FB2801A66EC5700C0F8A9 /* B_taskbar_close-icon-outline@2x.png in Resources */,
 				3FBCBAEE1A3F5345006ECB7E /* EPTextViewCell.xib in Resources */,
 				3FBD971B1A30BFD300BDE8B7 /* LaunchScreen.xib in Resources */,
 				3FBCBB021A3F6B76006ECB7E /* EPCalendarTableViewCell.xib in Resources */,
 				3FBCBA821A3F2EF4006ECB7E /* B22_taskbar__add-icon-outline.png in Resources */,
 				3FBD97181A30BFD300BDE8B7 /* Images.xcassets in Resources */,
 				3FBCBAEC1A3F5345006ECB7E /* EPDatePickerCell.xib in Resources */,
+				3F7FB2831A66ECFD00C0F8A9 /* B22_taskbar__close-icon-outline.png in Resources */,
 				3FD383CF1A37683B003470B9 /* BlueDot@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

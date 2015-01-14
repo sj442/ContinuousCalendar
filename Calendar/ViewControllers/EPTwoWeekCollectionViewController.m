@@ -21,7 +21,6 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
 @property (assign, nonatomic) EPCalendarDate toDate;
 @property CGFloat itemWidth;
 @property CGFloat itemHeight;
-@property (weak, nonatomic) UIToolbar *toolBar;
 @property (strong, nonatomic) UIBarButtonItem *eventsButton;
 
 @end
@@ -73,7 +72,9 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   UIToolbar *toolBar = [[UIToolbar alloc]initWithFrame:CGRectMake(0, CGRectGetMaxY(self.collectionView.frame), CGRectGetWidth(self.view.bounds), 44)];
   UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
   UIBarButtonItem *events = [[UIBarButtonItem alloc]initWithTitle:@"Events" style:UIBarButtonItemStyleDone target:self action:nil];
-  toolBar.items = @[flexibleSpace, events, flexibleSpace];
+  UIBarButtonItem *closeButton = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"B22_taskbar__close-icon-outline"] style:UIBarButtonItemStylePlain target:self action:@selector(closeButtonPressed:)];
+  self.closeButton = closeButton;
+  toolBar.items = @[flexibleSpace, events, flexibleSpace, closeButton];
   toolBar.tintColor = [UIColor primaryColor];
   [self.view addSubview:toolBar];
   self.toolBar = toolBar;
@@ -93,6 +94,11 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   self.tableViewController.dataItems = [self.events objectForKey:self.selectedDate];
   self.tableViewController.tableViewDelegate = self;
   [self.tableViewController refreshTableView];
+}
+
+- (void)closeButtonPressed:(id)sender
+{
+  [self.weekDelegate closeTableView];
 }
 
 - (void)updateToolBar

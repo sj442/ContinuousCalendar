@@ -133,10 +133,10 @@
   if (!self.fromCreateEvent) {
     [self updateCollectionView];
   } else {
-    self.fromCreateEvent = NO;
     [self updateEventsDictionaryWithCompletionBlock:^{
       [self.collectionVC populateCellsWithEvents];
-      self.twoWeekVC.events = self.eventsDictionary;
+      self.twoWeekVC.tableViewController.dataItems = [self.eventsDictionary objectForKey:self.collectionVC.selectedDate];
+      [self.twoWeekVC.tableViewController refreshTableView];
     }];
   }
 }
@@ -177,16 +177,14 @@
     [self addTwoWeekViewController];
   }
   [UIView animateWithDuration:0.1 animations:^{
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(goToFullCalendarView:)];
+    self.twoWeekViewInFront = YES;
+    self.collectionVC.twoWeekViewInFront = YES;
     CGRect frame = self.twoWeekVC.view.frame;
     frame.origin.y = CGRectGetHeight(self.dayView.frame)+125;
     self.twoWeekVC.view.frame = frame;
     [self.containerView bringSubviewToFront:self.twoWeekVC.view];
     self.twoWeekVC.selectedDate = self.collectionVC.selectedDate;
     self.twoWeekVC.referenceDate = self.collectionVC.selectedDate;
-    [self.twoWeekVC.collectionView reloadData];
-    self.twoWeekViewInFront = YES;
-    self.collectionVC.twoWeekViewInFront = YES;
   } completion:^(BOOL finished) {
     NSDateFormatter *abbreviatedDateFormatter = [[NSDateFormatter alloc]init];
     abbreviatedDateFormatter.calendar = self.calendar;
@@ -196,7 +194,7 @@
   }];
 }
 
-- (void)goToFullCalendarView:(id)sender
+- (void)goToFullCalendarView
 {
   [UIView animateWithDuration:0.1 animations:^{
     CGRect frame = self.twoWeekVC.view.frame;
@@ -204,7 +202,6 @@
     self.twoWeekVC.view.frame = frame;
     [self.view bringSubviewToFront:self.collectionVC.view];
     self.collectionVC.selectedDate = self.twoWeekVC.selectedDate;
-    self.navigationItem.leftBarButtonItem = nil;
     self.twoWeekViewInFront = NO;
     self.collectionVC.twoWeekViewInFront = NO;
   } completion:^(BOOL finished) {
@@ -227,6 +224,11 @@
   self.fromCreateEvent = YES;
 }
 
+- (void)closeTableView
+{
+  [self goToFullCalendarView];
+}
+
 #pragma mark - CollectionViewController Delegate
 
 - (void)setNavigationTitle:(NSString *)title
@@ -239,6 +241,10 @@
   self.twoWeekVC.events = self.eventsDictionary;
   self.twoWeekVC.selectedDate = self.collectionVC.selectedDate;
   [self showTwoWeekViewController];
+  self.twoWeekVC.tableViewController.dataItems = [self.eventsDictionary objectForKey:self.collectionVC.selectedDate];
+  self.twoWeekVC.tableViewController.selectedDate = self.collectionVC.selectedDate;
+  [self.twoWeekVC.tableViewController refreshTableView];
+  [self.twoWeekVC updateToolBar];
 }
 
 - (void)updateEventsDictionaryWithCompletionBlock:(void(^)(void))completion
@@ -299,7 +305,10 @@
   } else {
     [self updateEventsDictionaryWithCompletionBlock:^{
       [self.collectionVC populateCellsWithEvents];
+      self.twoWeekVC.tableViewController.dataItems = [self.eventsDictionary objectForKey:self.collectionVC.selectedDate];
+      [self.twoWeekVC.tableViewController refreshTableView];
     }];
+    self.fromCreateEvent = NO;
   }
 }
 

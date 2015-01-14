@@ -14,10 +14,11 @@
 - (void)checkNavigationTitle:(NSString *)title;
 - (void)updateEventsDictionaryWithCompletionBlock:(void(^)(void))completion;
 - (void)eventWasSelected;
+- (void)closeTableView;
 
 @end
 
-@interface EPTwoWeekCollectionViewController : UIViewController <UICollectionViewDelegate, UICollectionViewDataSource, EPTableViewDelegate>
+@interface EPTwoWeekCollectionViewController : UIViewController <EPTableViewDelegate>
 
 - (instancetype)initWithCalendar:(NSCalendar *)calendar;
 
@@ -28,9 +29,14 @@
 @property (strong, nonatomic) UICollectionViewFlowLayout *weekFlowLayout;
 @property (strong, nonatomic) UICollectionView *collectionView;
 @property (strong, nonatomic) NSCalendar *calendar;
+@property (weak, nonatomic) UIToolbar *toolBar;
 @property (strong, nonatomic) EPCalendarTableViewController *tableViewController;
+@property (strong, nonatomic) UIBarButtonItem *closeButton;
 @property BOOL fromCreateEvent;
 
 @property (weak, nonatomic) id <EPTwoWeekCollectionViewControllerDelegate> weekDelegate;
+
+- (void)updateToolBar;
+
 
 @end

@@ -120,7 +120,6 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   if (collectionView.contentOffset.y < 0.0f) { //swiping down
     [self appendPastDates];
   }
-  
   if (collectionView.contentOffset.y > (collectionView.contentSize.height - CGRectGetHeight(collectionView.bounds))) {
     [self appendFutureDates];
   }
@@ -284,7 +283,7 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   }
 }
 
-- (NSDate *) dateForFirstDayInSection:(NSInteger)section
+- (NSDate *)dateForFirstDayInSection:(NSInteger)section
 {
   return [self.calendar dateByAddingComponents:((^{
     NSDateComponents *dateComponents = [NSDateComponents new];

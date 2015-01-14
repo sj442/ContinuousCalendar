@@ -40,8 +40,8 @@
 - (void)drawRect:(CGRect)rect
 {
   if (!_dotview) {
-    _dotview =  [[UIView alloc]initWithFrame:CGRectMake(self.width/2-5, self.height-15, 10, 10)];
-    _dotview.layer.cornerRadius = 5;
+    _dotview =  [[UIView alloc]initWithFrame:CGRectMake(self.width/2-4, self.height-16, 8, 8)];
+    _dotview.layer.cornerRadius = 4;
     _dotview.clipsToBounds = YES;
     _dotview.backgroundColor = [UIColor primaryColor];
     [self.contentView addSubview:_dotview];
