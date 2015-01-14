@@ -11,7 +11,6 @@
 
 @protocol EPTwoWeekCollectionViewControllerDelegate <NSObject>
 
-- (void)checkNavigationTitle:(NSString *)title;
 - (void)updateEventsDictionaryWithCompletionBlock:(void(^)(void))completion;
 - (void)eventWasSelected;
 - (void)closeTableView;
@@ -24,7 +23,6 @@
 
 @property (strong, nonatomic) NSDate *selectedDate;
 @property (strong, nonatomic) NSIndexPath *selectedIndexPath;
-@property (strong, nonatomic) NSDate *referenceDate;
 @property (strong, nonatomic) NSMutableDictionary *events;
 @property (strong, nonatomic) UICollectionViewFlowLayout *weekFlowLayout;
 @property (strong, nonatomic) UICollectionView *collectionView;
@@ -37,6 +35,5 @@
 @property (weak, nonatomic) id <EPTwoWeekCollectionViewControllerDelegate> weekDelegate;
 
 - (void)updateToolBar;
-
 
 @end

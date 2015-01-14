@@ -107,7 +107,13 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   if (!self.flowLayout) {
     UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
     layout.headerReferenceSize = CGSizeMake(self.view.bounds.size.width, 44);
-    layout.itemSize = CGSizeMake(CGRectGetWidth(self.view.bounds)/7, MIN(CGRectGetHeight(self.view.bounds)/9, 568/9));
+    CGFloat rowHeight = 0;
+    if ([[UIScreen mainScreen] bounds].size.height == 480) {
+      rowHeight = CGRectGetHeight(self.view.bounds)/10;
+    } else {
+      rowHeight = MIN(CGRectGetHeight(self.view.bounds)/9, 568/9);
+    }
+    layout.itemSize = CGSizeMake(CGRectGetWidth(self.view.bounds)/7, rowHeight);
     layout.minimumLineSpacing = 0.0f;
     layout.minimumInteritemSpacing = 0.0f;
     self.flowLayout = layout;

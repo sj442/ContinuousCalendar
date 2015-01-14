@@ -180,11 +180,11 @@
     self.twoWeekViewInFront = YES;
     self.collectionVC.twoWeekViewInFront = YES;
     CGRect frame = self.twoWeekVC.view.frame;
-    frame.origin.y = CGRectGetHeight(self.dayView.frame)+125;
+    CGFloat rowHeight = MIN(CGRectGetHeight(self.view.bounds)/9, 568/9);
+    frame.origin.y = CGRectGetHeight(self.dayView.frame)+2*rowHeight;
     self.twoWeekVC.view.frame = frame;
     [self.containerView bringSubviewToFront:self.twoWeekVC.view];
     self.twoWeekVC.selectedDate = self.collectionVC.selectedDate;
-    self.twoWeekVC.referenceDate = self.collectionVC.selectedDate;
   } completion:^(BOOL finished) {
     NSDateFormatter *abbreviatedDateFormatter = [[NSDateFormatter alloc]init];
     abbreviatedDateFormatter.calendar = self.calendar;
@@ -212,12 +212,6 @@
 }
 
 #pragma mark- WeekCalendarView Delegate
-
-- (void)checkNavigationTitle:(NSString *)title
-{
-  self.navigationItem.title = title;
-  self.collectionVC.selectedDate = self.twoWeekVC.selectedDate;
-}
 
 - (void)eventWasSelected
 {

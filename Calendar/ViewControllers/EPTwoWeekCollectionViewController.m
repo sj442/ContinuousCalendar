@@ -6,7 +6,6 @@
 //  Copyright (c) 2015 Enhatch. All rights reserved.
 
 #import  <QuartzCore/QuartzCore.h>
-#import "EPCalendarWeekCell.h"
 #import "DateHelper.h"
 #import "NSCalendar+dates.h"
 #import "NSDate+calendar.h"
@@ -35,7 +34,6 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   if (self) {
     self.calendar = calendar;
     self.selectedDate = [NSDate date];
-    self.referenceDate = [NSDate date];
     self.events = [NSMutableDictionary dictionary];
   }
   return self;
@@ -83,10 +81,16 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
 
 - (void)addCalendarTableViewController
 {
-  EPCalendarTableViewController *tableVC = [[EPCalendarTableViewController alloc]initWithFrame:CGRectMake(0, CGRectGetMaxY(self.toolBar.frame), CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)-CGRectGetHeight(self.collectionView.frame)-CGRectGetHeight(self.toolBar.frame))];
+  EPCalendarTableViewController *tableVC = [[EPCalendarTableViewController alloc]initWithFrame:CGRectZero];
   self.tableViewController = tableVC;
   [self addChildViewController:tableVC];
-  tableVC.view.frame = CGRectMake(0, CGRectGetMaxY(self.toolBar.frame), CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)-CGRectGetHeight(self.collectionView.frame)-CGRectGetHeight(self.toolBar.frame)-CGRectGetHeight(self.view.bounds)/25);
+  CGFloat rowHeight =0;
+  if ([[UIScreen mainScreen] bounds].size.height == 480) {
+    rowHeight = CGRectGetHeight(self.view.bounds)/10;
+  } else {
+    rowHeight = MIN(CGRectGetHeight(self.view.bounds)/9, 568/9);
+  }
+  tableVC.view.frame = CGRectMake(0, CGRectGetMaxY(self.toolBar.frame), CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)-2*rowHeight-CGRectGetHeight(self.toolBar.frame)-CGRectGetHeight(self.view.bounds)/25);
   [self.view addSubview:tableVC.view];
   [tableVC didMoveToParentViewController:self];
   self.tableViewController.calendar = self.calendar;

@@ -40,8 +40,13 @@
 - (void)drawRect:(CGRect)rect
 {
   if (!_dotview) {
-    _dotview =  [[UIView alloc]initWithFrame:CGRectMake(self.width/2-4, self.height-16, 8, 8)];
-    _dotview.layer.cornerRadius = 4;
+    if ([[UIScreen mainScreen] bounds].size.height == 480) {
+      _dotview =  [[UIView alloc]initWithFrame:CGRectMake(self.width/2-3, self.height-12, 6, 6)];
+      _dotview.layer.cornerRadius = 3;
+    } else {
+      _dotview =  [[UIView alloc]initWithFrame:CGRectMake(self.width/2-4, self.height-14, 8,8)];
+      _dotview.layer.cornerRadius = 4;
+    }
     _dotview.clipsToBounds = YES;
     _dotview.backgroundColor = [UIColor primaryColor];
     [self.contentView addSubview:_dotview];
@@ -58,7 +63,12 @@
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
     CGContextFillRect(context, self.bounds);
-    UIFont *font = [UIFont systemFontOfSize:18.0f];
+    UIFont *font;
+    if ([[UIScreen mainScreen] bounds].size.height == 480) {
+      font = [UIFont systemFontOfSize:16.0f];
+    } else {
+      font = [UIFont systemFontOfSize:18.0f];
+    }
     CGRect textBounds = (CGRect){ 0.0f, self.height/2-12, self.width, 24.0f };
     NSMutableParagraphStyle *textStyle = [[NSMutableParagraphStyle defaultParagraphStyle] mutableCopy];
     textStyle.lineBreakMode = NSLineBreakByCharWrapping;
@@ -85,7 +95,11 @@
 - (UIView *)overlayView
 {
   if (!_overlayView) {
-    _overlayView = [[UIView alloc] initWithFrame:CGRectMake(self.width/2-13, self.height/2-13, 26, 26)];
+    if ([[UIScreen mainScreen] bounds].size.height == 480) {
+       _overlayView = [[UIView alloc] initWithFrame:CGRectMake(self.width/2-12, self.height/2-12, 24, 24)];
+    } else {
+       _overlayView = [[UIView alloc] initWithFrame:CGRectMake(self.width/2-13, self.height/2-13, 26, 26)];
+    }
     _overlayView.layer.cornerRadius = _overlayView.bounds.size.width/2;
     _overlayView.clipsToBounds = YES;
     _overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
