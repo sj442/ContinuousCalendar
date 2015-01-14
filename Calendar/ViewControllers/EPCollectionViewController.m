@@ -37,11 +37,9 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     self.calendar = calendar;
     self.selectedDate = [NSDate date];
     NSDate *now = [self.calendar dateFromComponents:[self.calendar components:NSCalendarUnitYear|NSCalendarUnitMonth fromDate:[NSDate date]]];
-    
     NSDateComponents *components = [NSDateComponents new];
     components.month = -6;
     self.fromDate = [self calendarDateFromDate:[self.calendar dateByAddingComponents:components toDate:now options:0]];
-    
     components.month = 6;
     self.toDate = [self calendarDateFromDate:[self.calendar dateByAddingComponents:components toDate:now options:0]];
   }
@@ -82,7 +80,6 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     [_collectionView registerClass:[EPCalendarCell class] forCellWithReuseIdentifier:EPCalendarCellIDentifier];
     [_collectionView registerClass:[EPCalendarMonthHeader class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:EPCalendarMonthHeaderIDentifier];
     [_collectionView reloadData];
-    
     UIPanGestureRecognizer *pan = _collectionView.panGestureRecognizer;
     [pan addTarget:self action:@selector(collectionViewPanned:)];
   }
@@ -94,7 +91,6 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   if (fabsf([pan velocityInView:self.view].y)>500.0f) {
     return;
   }
-  
   if (pan.state == UIGestureRecognizerStateEnded && fabsf([pan velocityInView:self.view].y)<500.0f) {
     [self.delegate updateEventsDictionaryWithCompletionBlock:^{
       [self populateCellsWithEvents];
@@ -149,7 +145,6 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 {
   UICollectionView *cv = self.collectionView;
   UICollectionViewFlowLayout *cvLayout = (UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout;
-  
   NSArray *visibleCells = [self.collectionView visibleCells];
   if (![visibleCells count]) {
     return;
@@ -162,15 +157,12 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   
   self.fromDate= [self calendarDateFromDate:[self.calendar dateByAddingComponents:components toDate:[self dateFromCalendarDate:self.fromDate] options:0]];
   self.toDate= [self calendarDateFromDate:[self.calendar dateByAddingComponents:components toDate:[self dateFromCalendarDate:self.toDate] options:0]];
-  
   [cv reloadData];
   [cvLayout invalidateLayout];
   [cvLayout prepareLayout];
-  
   NSInteger toSection = [self.calendar components:NSCalendarUnitMonth fromDate:[self dateForFirstDayInSection:0] toDate:fromSectionOfDate options:0].month;
   UICollectionViewLayoutAttributes *toAttrs = [cvLayout layoutAttributesForItemAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:toSection]];
   CGPoint toSectionOrigin = [self.view convertPoint:toAttrs.frame.origin fromView:cv];
-  
   [cv setContentOffset:(CGPoint) {
     cv.contentOffset.x,
     cv.contentOffset.y + (toSectionOrigin.y - fromSectionOrigin.y)
@@ -284,7 +276,7 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 {
   if (self.twoWeekViewInFront) {
     return CGSizeMake(0.1f, 0.1f);
-  }else {
+  } else {
     return CGSizeMake(self.collectionView.bounds.size.width, 20);
   }
 }
