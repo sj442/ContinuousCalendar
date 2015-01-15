@@ -21,6 +21,8 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
 @property CGFloat itemWidth;
 @property CGFloat itemHeight;
 @property (strong, nonatomic) UIBarButtonItem *eventsButton;
+@property CGFloat rowHeight;
+@property CGFloat screenHeight;
 
 @end
 
@@ -47,6 +49,12 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   self.automaticallyAdjustsScrollViewInsets = NO;
   [self setupToolBar];
   [self addCalendarTableViewController];
+  if ([[UIScreen mainScreen] bounds].size.height == 480) {
+    self.rowHeight = CGRectGetHeight(self.view.bounds)/10;
+  } else {
+    self.rowHeight = MIN(CGRectGetHeight(self.view.bounds)/9, 568/9);
+  }
+  self.screenHeight = CGRectGetHeight([UIScreen mainScreen].bounds);
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -70,15 +78,13 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   UIToolbar *toolBar = [[UIToolbar alloc]initWithFrame:CGRectMake(0, CGRectGetMaxY(self.collectionView.frame), CGRectGetWidth(self.view.bounds), 44)];
   UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
   UIBarButtonItem *events = [[UIBarButtonItem alloc]initWithTitle:@"Events" style:UIBarButtonItemStyleDone target:self action:nil];
-  UIBarButtonItem *closeButton = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"B22_taskbar__close-icon-outline"] style:UIBarButtonItemStylePlain target:self action:@selector(closeButtonPressed:)];
-  self.closeButton = closeButton;
-  toolBar.items = @[flexibleSpace, events, flexibleSpace, closeButton];
+  toolBar.items = @[flexibleSpace, events, flexibleSpace];
   toolBar.tintColor = [UIColor primaryColor];
   [self.view addSubview:toolBar];
   self.toolBar = toolBar;
   self.eventsButton = events;
-  UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(closeButtonPressed:)];
-  [self.toolBar addGestureRecognizer:pan];
+  UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(move:)];
+  [self.view addGestureRecognizer:pan];
 }
 
 - (void)addCalendarTableViewController
@@ -86,13 +92,8 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   EPCalendarTableViewController *tableVC = [[EPCalendarTableViewController alloc]initWithFrame:CGRectZero];
   self.tableViewController = tableVC;
   [self addChildViewController:tableVC];
-  CGFloat rowHeight =0;
-  if ([[UIScreen mainScreen] bounds].size.height == 480) {
-    rowHeight = CGRectGetHeight(self.view.bounds)/10;
-  } else {
-    rowHeight = MIN(CGRectGetHeight(self.view.bounds)/9, 568/9);
-  }
-  tableVC.view.frame = CGRectMake(0, CGRectGetMaxY(self.toolBar.frame), CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)-2*rowHeight-CGRectGetHeight(self.toolBar.frame)-CGRectGetHeight(self.view.bounds)/25);
+  NSLog(@"view height %f", self.view.frame.size.height);
+  tableVC.view.frame = CGRectMake(0, CGRectGetMaxY(self.toolBar.frame), CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)-2*self.rowHeight-CGRectGetHeight(self.toolBar.frame) - CGRectGetHeight(self.view.bounds)/25-64);
   [self.view addSubview:tableVC.view];
   [tableVC didMoveToParentViewController:self];
   self.tableViewController.calendar = self.calendar;
@@ -102,9 +103,36 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   [self.tableViewController refreshTableView];
 }
 
-- (void)closeButtonPressed:(id)sender
+- (void)move:(UIPanGestureRecognizer *)pan
 {
-  [self.weekDelegate closeTableView];
+  CGFloat startPointX = 0;
+  CGFloat startPointY = 0;
+  if (pan.state == UIGestureRecognizerStateBegan) {
+    CGPoint translatedPoint = [pan locationInView:self.view];
+    startPointX = translatedPoint.x;
+    startPointY = translatedPoint.y;
+  }
+  if (pan.state == UIGestureRecognizerStateChanged) {
+    CGPoint translatedPoint = [pan locationInView:self.view];
+    [UIView animateWithDuration:0.1f animations:^{
+      CGFloat centerY = self.view.center.y;
+      [self.view setCenter:CGPointMake(self.view.center.x, centerY +translatedPoint.y-startPointY)];
+    }];
+  }
+  if (pan.state == UIGestureRecognizerStateEnded) {
+    CGFloat velocityY = [pan velocityInView:self.view].y;
+    if (velocityY>0) {//moving down
+      [UIView animateWithDuration:0.1f animations:^{
+        [self.view setCenter:CGPointMake(self.view.center.x, self.screenHeight + CGRectGetHeight(self.view.frame)/2)];
+      } completion:^(BOOL finished) {
+        [self.weekDelegate tableViewClosed];
+      }];
+    } else { //moving up
+      [UIView animateWithDuration:0.1f animations:^{
+        [self.view setCenter:CGPointMake(self.view.center.x, self.rowHeight*2 + self.screenHeight/25 + CGRectGetHeight(self.view.frame)/2)];
+      }];
+    }
+  }
 }
 
 - (void)updateToolBar

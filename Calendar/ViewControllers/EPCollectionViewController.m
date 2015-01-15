@@ -201,7 +201,6 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   };
 }
 
-
 #pragma mark - UICollectionView Delegate & DataSource
 
 - (NSInteger) numberOfSectionsInCollectionView:(UICollectionView *)collectionView
@@ -328,6 +327,16 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 {
   NSIndexPath *ip = [self.collectionView indexPathForItemAtPoint:point];
   [self collectionView:self.collectionView didSelectItemAtIndexPath:ip];
+}
+
+- (void)resetSelectedDateMonthToTop
+{
+  [self.collectionView performBatchUpdates:^{
+    NSIndexPath *ip = [NSIndexPath indexPathForItem:0 inSection:self.selectedIndexPath.section];
+    [self.collectionView scrollToItemAtIndexPath:ip atScrollPosition:UICollectionViewScrollPositionTop animated:YES];
+  } completion:^(BOOL finished) {
+      [self populateCellsWithEvents];
+  }];
 }
 
 @end

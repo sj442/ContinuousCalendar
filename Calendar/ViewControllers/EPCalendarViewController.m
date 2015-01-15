@@ -38,7 +38,7 @@
 - (void) viewDidLoad
 {
   [super viewDidLoad];
-  UIView *container = [[UIView alloc]initWithFrame:CGRectMake(0, 64, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)-49)];
+  UIView *container = [[UIView alloc]initWithFrame:CGRectMake(0, 64, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)-49-64)];
   [self.view addSubview:container];
   self.containerView = container;
   [self setUpNavigationBar];
@@ -191,23 +191,6 @@
   }];
 }
 
-- (void)goToFullCalendarView
-{
-  [UIView animateWithDuration:0.1 animations:^{
-    CGRect frame = self.twoWeekVC.view.frame;
-    frame.origin.y = CGRectGetHeight(self.containerView.frame);
-    self.twoWeekVC.view.frame = frame;
-    [self.view bringSubviewToFront:self.collectionVC.view];
-    self.collectionVC.selectedDate = self.twoWeekVC.selectedDate;
-    self.twoWeekViewInFront = NO;
-    self.collectionVC.twoWeekViewInFront = NO;
-  } completion:^(BOOL finished) {
-    [self updateEventsDictionaryWithCompletionBlock:^{
-      [self.collectionVC populateCellsWithEvents];
-    }];
-  }];
-}
-
 #pragma mark- WeekCalendarView Delegate
 
 - (void)eventWasSelected
@@ -215,9 +198,12 @@
   self.fromCreateEvent = YES;
 }
 
-- (void)closeTableView
+- (void)tableViewClosed
 {
-  [self goToFullCalendarView];
+  self.twoWeekViewInFront = NO;
+  self.collectionVC.twoWeekViewInFront = NO;
+  [self.collectionVC.collectionView reloadData];
+  [self.collectionVC resetSelectedDateMonthToTop];
 }
 
 #pragma mark - CollectionViewController Delegate

@@ -13,7 +13,7 @@
 
 - (void)updateEventsDictionaryWithCompletionBlock:(void(^)(void))completion;
 - (void)eventWasSelected;
-- (void)closeTableView;
+- (void)tableViewClosed;
 
 @end
 
@@ -29,9 +29,7 @@
 @property (strong, nonatomic) NSCalendar *calendar;
 @property (weak, nonatomic) UIToolbar *toolBar;
 @property (strong, nonatomic) EPCalendarTableViewController *tableViewController;
-@property (strong, nonatomic) UIBarButtonItem *closeButton;
 @property BOOL fromCreateEvent;
-
 @property (weak, nonatomic) id <EPTwoWeekCollectionViewControllerDelegate> weekDelegate;
 
 - (void)updateToolBar;

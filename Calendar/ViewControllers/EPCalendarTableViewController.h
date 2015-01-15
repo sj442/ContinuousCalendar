@@ -19,6 +19,7 @@
 @property (strong, nonatomic) NSDate *selectedDate;
 @property (strong, nonatomic) NSArray *dataItems;
 @property (strong, nonatomic) NSCalendar *calendar;
+@property (weak, nonatomic) UITableView *tableView;
 @property BOOL fromCreateEvent;
 
 @property (weak, nonatomic) id <EPTableViewDelegate> tableViewDelegate;

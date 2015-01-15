@@ -30,6 +30,6 @@
 
 - (instancetype) initWithCalendar:(NSCalendar *)calendar;
 - (void)populateCellsWithEvents;
-
+- (void)resetSelectedDateMonthToTop;
 
 @end
