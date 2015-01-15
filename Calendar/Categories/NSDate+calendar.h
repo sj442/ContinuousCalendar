@@ -22,6 +22,8 @@
 
 + (NSUInteger)numberOfWeeksForMonthOfDate:(NSDate *)date calendar:(NSCalendar *)calendar;
 
++ (NSString *)getMonthYearFromCalendar:(NSCalendar *)calendar date:(NSDate *)date;
+
 - (BOOL)isCurrentDateForCalendar:(NSCalendar *)calendar;
 
 @end

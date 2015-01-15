@@ -55,15 +55,12 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   [self initializeCollectionView];
 }
 
-- (void)viewDidAppear:(BOOL)animated
-{
-  [super viewDidAppear:animated];
-}
-
 - (void)didReceiveMemoryWarning
 {
   [super didReceiveMemoryWarning];
 }
+
+#pragma mark - Initiazers
 
 - (EPCalendarCollectionView *)initializeCollectionView
 {
@@ -86,18 +83,6 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   return _collectionView;
 }
 
-- (void)collectionViewPanned:(UIPanGestureRecognizer *)pan
-{
-  if (fabsf([pan velocityInView:self.view].y)>500.0f) {
-    return;
-  }
-  if (pan.state == UIGestureRecognizerStateEnded && fabsf([pan velocityInView:self.view].y)<500.0f) {
-    [self.delegate updateEventsDictionaryWithCompletionBlock:^{
-      [self populateCellsWithEvents];
-    }];
-  }
-}
-
 - (UICollectionViewFlowLayout *)initializeFlowLayout
 {
   if (!self.flowLayout) {
@@ -116,6 +101,20 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   }
   return self.flowLayout;
 }
+
+- (void)collectionViewPanned:(UIPanGestureRecognizer *)pan
+{
+  if (fabsf([pan velocityInView:self.view].y)>500.0f) {
+    return;
+  }
+  if (pan.state == UIGestureRecognizerStateEnded && fabsf([pan velocityInView:self.view].y)<500.0f) {
+    [self.delegate updateEventsDictionaryWithCompletionBlock:^{
+      [self populateCellsWithEvents];
+    }];
+  }
+}
+
+#pragma mark - Data manipulation
 
 - (void)calendarCollectionViewWillLayoutSubviews:(EPCalendarCollectionView *)collectionView
 {
@@ -169,6 +168,40 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   }];
 }
 
+- (NSDate *)dateForFirstDayInSection:(NSInteger)section
+{
+  return [self.calendar dateByAddingComponents:((^{
+    NSDateComponents *dateComponents = [NSDateComponents new];
+    dateComponents.month = section;
+    return dateComponents;
+  })()) toDate:[self dateFromCalendarDate:self.fromDate] options:0];
+}
+
+- (NSDate *)dateFromCalendarDate:(EPCalendarDate)dateStruct
+{
+  return [self.calendar dateFromComponents:[self dateComponentsFromPickerDate:dateStruct]];
+}
+
+- (NSDateComponents *)dateComponentsFromPickerDate:(EPCalendarDate)dateStruct
+{
+  NSDateComponents *components = [NSDateComponents new];
+  components.year = dateStruct.year;
+  components.month = dateStruct.month;
+  components.day = dateStruct.day;
+  return components;
+}
+
+- (EPCalendarDate)calendarDateFromDate:(NSDate *)date
+{
+  NSDateComponents *components = [self.calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:date];
+  return (EPCalendarDate) {
+    components.year,
+    components.month,
+    components.day
+  };
+}
+
+
 #pragma mark - UICollectionView Delegate & DataSource
 
 - (NSInteger) numberOfSectionsInCollectionView:(UICollectionView *)collectionView
@@ -201,16 +234,6 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   cell.enabled = ((firstDayPickerDate.year == cellPickerDate.year) && (firstDayPickerDate.month == cellPickerDate.month));
   cell.selected = (([self.selectedDate isEqualToDate:cellDate]) || ([cellDate isCurrentDateForCalendar:self.calendar] && ![self.selectedDate isEqualToDate:cellDate]));
   return cell;
-}
-
-- (BOOL)collectionView:(UICollectionView *)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath *)indexPath
-{
-  return ((EPCalendarCell *)[collectionView cellForItemAtIndexPath:indexPath]).enabled;
-}
-
-- (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath
-{
-  return ((EPCalendarCell *)[collectionView cellForItemAtIndexPath:indexPath]).enabled;
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
@@ -254,11 +277,8 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     NSDate *formattedDate = [self dateForFirstDayInSection:indexPath.section];
     NSDateComponents *formattedDateComponents = [self.calendar components:NSCalendarUnitWeekday fromDate:formattedDate];
     NSUInteger weekday = [formattedDateComponents weekday];
-    NSDateFormatter *abbreviatedDateFormatter = [[NSDateFormatter alloc]init];
-    abbreviatedDateFormatter.calendar = self.calendar;
-    abbreviatedDateFormatter.dateFormat = [dateFormatter.class dateFormatFromTemplate:@"yyyyLLLL" options:0 locale:[NSLocale currentLocale]];
-    NSString *navtitle =[abbreviatedDateFormatter stringFromDate:formattedDate];
-    [self.delegate setNavigationTitle:navtitle];
+    NSString *navTitle = [NSDate getMonthYearFromCalendar:self.calendar date:formattedDate];
+    [self.delegate setNavigationTitle:navTitle];
     NSString *monthHeaderString = [dateFormatter stringFromDate:formattedDate];
     monthHeader.textLabel.text = [monthHeaderString uppercaseString];
     CGRect frame = monthHeader.textLabel.frame;
@@ -266,7 +286,6 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     frame.size.width = 50;
     monthHeader.textLabel.frame = frame;
     monthHeader.textLabel.textColor = [UIColor primaryColor];
-    monthHeader.textLabel.textAlignment = NSTextAlignmentLeft;
     return monthHeader;
   }
   return nil;
@@ -279,40 +298,6 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   } else {
     return CGSizeMake(self.collectionView.bounds.size.width, 20);
   }
-}
-
-- (NSDate *)dateForFirstDayInSection:(NSInteger)section
-{
-  return [self.calendar dateByAddingComponents:((^{
-    NSDateComponents *dateComponents = [NSDateComponents new];
-    dateComponents.month = section;
-    return dateComponents;
-  })()) toDate:[self dateFromCalendarDate:self.fromDate] options:0];
-}
-
-
-- (NSDate *)dateFromCalendarDate:(EPCalendarDate)dateStruct
-{
-  return [self.calendar dateFromComponents:[self dateComponentsFromPickerDate:dateStruct]];
-}
-
-- (NSDateComponents *)dateComponentsFromPickerDate:(EPCalendarDate)dateStruct
-{
-  NSDateComponents *components = [NSDateComponents new];
-  components.year = dateStruct.year;
-  components.month = dateStruct.month;
-  components.day = dateStruct.day;
-  return components;
-}
-
-- (EPCalendarDate)calendarDateFromDate:(NSDate *)date
-{
-  NSDateComponents *components = [self.calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:date];
-  return (EPCalendarDate) {
-    components.year,
-    components.month,
-    components.day
-  };
 }
 
 - (void)populateCellsWithEvents

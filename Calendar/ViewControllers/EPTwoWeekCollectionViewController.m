@@ -77,6 +77,8 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   [self.view addSubview:toolBar];
   self.toolBar = toolBar;
   self.eventsButton = events;
+  UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(closeButtonPressed:)];
+  [self.toolBar addGestureRecognizer:pan];
 }
 
 - (void)addCalendarTableViewController

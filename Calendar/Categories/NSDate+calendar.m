@@ -138,6 +138,16 @@
 }
 
 
++ (NSString *)getMonthYearFromCalendar:(NSCalendar *)calendar date:(NSDate *)date //ex: January 2015
+{
+  NSDateFormatter *abbreviatedDateFormatter = [[NSDateFormatter alloc]init];
+  abbreviatedDateFormatter.calendar = calendar;
+  abbreviatedDateFormatter.dateFormat = [[NSDateFormatter class] dateFormatFromTemplate:@"yyyyLLLL" options:0 locale:[NSLocale currentLocale]];
+  NSString *string =[abbreviatedDateFormatter stringFromDate:date];
+  return string;
+}
+
+
 - (BOOL)isCurrentDateForCalendar:(NSCalendar *)calendar
 {
   NSDate *date = (NSDate *)self;

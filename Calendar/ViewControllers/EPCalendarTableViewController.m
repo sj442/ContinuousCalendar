@@ -55,11 +55,6 @@
   self.automaticallyAdjustsScrollViewInsets = NO;
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
-  [super viewWillAppear:animated];
-}
-
 - (void)viewDidAppear:(BOOL)animated
 {
   [super viewDidAppear:animated];
@@ -283,7 +278,6 @@
     NSDate *cellStartDate = [self.calendar dateFromComponents:startDateComponents];
     [startDateComponents setHour:i+1];
     NSDate *cellEndDate = [self.calendar dateFromComponents:startDateComponents];
-    
     NSSortDescriptor *descriptor = [[NSSortDescriptor alloc]initWithKey:@"startDate" ascending:YES];
     NSArray *sortedItems = [self.dataItems sortedArrayUsingDescriptors:@[descriptor]];
     NSInteger itemsCount = sortedItems.count;
@@ -331,14 +325,9 @@
   }
   if ([self.selectedDate isCurrentDateForCalendar:self.calendar]) {
     NSIndexPath *ip = [self indexPathForDate:[NSDate date]];
-    [self.tableView scrollToRowAtIndexPath:ip
-                          atScrollPosition:UITableViewScrollPositionTop
-                                  animated:YES];
-    
+    [self.tableView scrollToRowAtIndexPath:ip atScrollPosition:UITableViewScrollPositionTop animated:YES];
   } else {
-    [self.tableView scrollToRowAtIndexPath:scrollToIP
-                          atScrollPosition:UITableViewScrollPositionTop
-                                  animated:YES];
+    [self.tableView scrollToRowAtIndexPath:scrollToIP atScrollPosition:UITableViewScrollPositionTop animated:YES];
   }
   [self.tableView reloadData];
 }

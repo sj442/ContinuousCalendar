@@ -47,11 +47,6 @@
   self.eventStore = [EventStore sharedInstance].eventStore;
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
-  [super viewWillAppear:animated];
-}
-
 - (void)viewDidAppear:(BOOL)animated
 {
   [super viewDidAppear:animated];
@@ -125,7 +120,7 @@
 
 - (void)addEventStoreNotifications
 {
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(eventStoreChangedNotification:) name:EKEventStoreChangedNotification object:nil];
+  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(eventStoreChangedNotification:) name:EKEventStoreChangedNotification object:nil];
 }
 
 - (void)eventStoreChangedNotification:(NSNotification *)sneder
@@ -180,16 +175,18 @@
     self.twoWeekViewInFront = YES;
     self.collectionVC.twoWeekViewInFront = YES;
     CGRect frame = self.twoWeekVC.view.frame;
-    CGFloat rowHeight = MIN(CGRectGetHeight(self.view.bounds)/9, 568/9);
+    CGFloat rowHeight = 0;
+    if ([[UIScreen mainScreen] bounds].size.height == 480) {
+      rowHeight = CGRectGetHeight(self.view.bounds)/10;
+    } else {
+      rowHeight = MIN(CGRectGetHeight(self.view.bounds)/9, 568/9);
+    }
     frame.origin.y = CGRectGetHeight(self.dayView.frame)+2*rowHeight;
     self.twoWeekVC.view.frame = frame;
     [self.containerView bringSubviewToFront:self.twoWeekVC.view];
     self.twoWeekVC.selectedDate = self.collectionVC.selectedDate;
   } completion:^(BOOL finished) {
-    NSDateFormatter *abbreviatedDateFormatter = [[NSDateFormatter alloc]init];
-    abbreviatedDateFormatter.calendar = self.calendar;
-    abbreviatedDateFormatter.dateFormat = [abbreviatedDateFormatter.class dateFormatFromTemplate:@"yyyyLLLL" options:0 locale:[NSLocale currentLocale]];
-    NSString *navtitle =[abbreviatedDateFormatter stringFromDate:self.collectionVC.selectedDate];
+    NSString *navtitle= [NSDate getMonthYearFromCalendar:self.calendar date:self.collectionVC.selectedDate];
     self.navigationItem.title = navtitle;
   }];
 }
@@ -227,7 +224,7 @@
 
 - (void)setNavigationTitle:(NSString *)title
 {
-    self.navigationItem.title = title;
+  self.navigationItem.title = title;
 }
 
 - (void)cellWasSelected
