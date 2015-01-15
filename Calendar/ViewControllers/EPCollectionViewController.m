@@ -231,7 +231,8 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
   cell.date = cellPickerDate;
   cell.twoWeekViewInFront = self.twoWeekViewInFront;
   cell.enabled = ((firstDayPickerDate.year == cellPickerDate.year) && (firstDayPickerDate.month == cellPickerDate.month));
-  cell.selected = (([self.selectedDate isEqualToDate:cellDate]) || ([cellDate isCurrentDateForCalendar:self.calendar] && ![self.selectedDate isEqualToDate:cellDate]));
+  cell.selected = ([self.selectedDate isEqualToDate:cellDate]);
+  cell.currentDateCell = [cell.cellDate isCurrentDateForCalendar:self.calendar];
   return cell;
 }
 

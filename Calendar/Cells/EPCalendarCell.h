@@ -19,6 +19,7 @@
 @property (nonatomic, readonly, strong) UIImageView *imageView;
 @property (nonatomic, readonly, strong) UIView *overlayView;
 @property (nonatomic, readonly, strong) UIView *dotview;
+@property BOOL currentDateCell;
 
 - (void)refreshDotViews;
 

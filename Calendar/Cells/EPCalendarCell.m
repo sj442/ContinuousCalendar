@@ -79,9 +79,12 @@
     return image;
   }];
   if (self.twoWeekViewInFront) {
-    self.imageView.alpha = self.enabled ? 1.0f : 0.5f;
+    self.imageView.alpha = self.enabled ? 1.0f : 0.2f;
   } else {
     self.imageView.alpha = self.enabled ? 1.0f : 0.0f;
+  }
+  if (self.currentDateCell == YES) {
+    self.imageView.alpha = 0.5f;
   }
   self.overlayView.hidden = !(self.selected && self.enabled) ;
   self.dotview.hidden = !self.hasEvents;
