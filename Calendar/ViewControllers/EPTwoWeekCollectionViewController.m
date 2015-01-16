@@ -24,6 +24,7 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
 @property CGFloat rowHeight;
 @property CGFloat screenHeight;
 
+@property CGFloat startPointY;
 @end
 
 @implementation EPTwoWeekCollectionViewController
@@ -105,31 +106,34 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
 
 - (void)move:(UIPanGestureRecognizer *)pan
 {
-  CGFloat startPointX = 0;
-  CGFloat startPointY = 0;
   if (pan.state == UIGestureRecognizerStateBegan) {
     CGPoint translatedPoint = [pan locationInView:self.view];
-    startPointX = translatedPoint.x;
-    startPointY = translatedPoint.y;
+    self.startPointY = translatedPoint.y;
   }
   if (pan.state == UIGestureRecognizerStateChanged) {
     CGPoint translatedPoint = [pan locationInView:self.view];
-    [UIView animateWithDuration:0.1f animations:^{
+    [UIView setAnimationCurve:UIViewAnimationCurveEaseOut];
+    [UIView animateWithDuration:0.1f delay:0.0 options:UIViewAnimationOptionCurveEaseOut animations:^{
       CGFloat centerY = self.view.center.y;
-      [self.view setCenter:CGPointMake(self.view.center.x, centerY +translatedPoint.y-startPointY)];
+      [self.view setCenter:CGPointMake(self.view.center.x, centerY +translatedPoint.y-self.startPointY)];
+    } completion:^(BOOL finished) {
+      CGFloat distanceMoved = translatedPoint.y-self.startPointY;
+      [self.weekDelegate scrollCollectionViewBy:distanceMoved];
     }];
   }
   if (pan.state == UIGestureRecognizerStateEnded) {
     CGFloat velocityY = [pan velocityInView:self.view].y;
     if (velocityY>0) {//moving down
-      [UIView animateWithDuration:0.1f animations:^{
+      [UIView animateWithDuration:0.1f delay:0.0 options:UIViewAnimationOptionCurveEaseOut animations:^{
         [self.view setCenter:CGPointMake(self.view.center.x, self.screenHeight + CGRectGetHeight(self.view.frame)/2)];
       } completion:^(BOOL finished) {
         [self.weekDelegate tableViewClosed];
       }];
     } else { //moving up
-      [UIView animateWithDuration:0.1f animations:^{
+      [UIView animateWithDuration:0.1f delay:0.0 options:UIViewAnimationOptionCurveEaseOut animations:^{
         [self.view setCenter:CGPointMake(self.view.center.x, self.rowHeight*2 + self.screenHeight/25 + CGRectGetHeight(self.view.frame)/2)];
+      } completion:^(BOOL finished) {
+        [self.weekDelegate resetToOriginalPosition];
       }];
     }
   }

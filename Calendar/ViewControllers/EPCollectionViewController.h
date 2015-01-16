@@ -31,5 +31,7 @@
 - (instancetype) initWithCalendar:(NSCalendar *)calendar;
 - (void)populateCellsWithEvents;
 - (void)resetSelectedDateMonthToTop;
+- (void)scrollCollectionViewBy:(CGFloat)distance;
+- (void)resetToOriginalPosition;
 
 @end

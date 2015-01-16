@@ -198,6 +198,16 @@
   self.fromCreateEvent = YES;
 }
 
+- (void)scrollCollectionViewBy:(CGFloat)distance
+{
+  [self.collectionVC scrollCollectionViewBy:distance];
+}
+
+- (void)resetToOriginalPosition
+{
+  [self.collectionVC resetToOriginalPosition];
+}
+
 - (void)tableViewClosed
 {
   self.twoWeekViewInFront = NO;

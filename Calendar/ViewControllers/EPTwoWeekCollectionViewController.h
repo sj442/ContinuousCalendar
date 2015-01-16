@@ -14,6 +14,8 @@
 - (void)updateEventsDictionaryWithCompletionBlock:(void(^)(void))completion;
 - (void)eventWasSelected;
 - (void)tableViewClosed;
+- (void)scrollCollectionViewBy:(CGFloat)distance;
+- (void)resetToOriginalPosition;
 
 @end
 

@@ -21,6 +21,4 @@
 @property (nonatomic, readonly, strong) UIView *dotview;
 @property BOOL currentDateCell;
 
-- (void)refreshDotViews;
-
 @end

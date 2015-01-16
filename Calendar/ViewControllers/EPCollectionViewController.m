@@ -23,6 +23,7 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 
 @property (assign, nonatomic) EPCalendarDate fromDate;
 @property (assign, nonatomic) EPCalendarDate toDate;
+@property CGPoint tappedPoint;
 
 @end
 
@@ -326,6 +327,7 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 
 - (void)collectionViewTappedAtPoint:(CGPoint)point
 {
+  self.tappedPoint = point;
   NSIndexPath *ip = [self.collectionView indexPathForItemAtPoint:point];
   [self collectionView:self.collectionView didSelectItemAtIndexPath:ip];
 }
@@ -333,10 +335,28 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
 - (void)resetSelectedDateMonthToTop
 {
   [self.collectionView performBatchUpdates:^{
-    NSIndexPath *ip = [NSIndexPath indexPathForItem:0 inSection:self.selectedIndexPath.section];
-    [self.collectionView scrollToItemAtIndexPath:ip atScrollPosition:UICollectionViewScrollPositionTop animated:YES];
+    NSInteger itemIndex =  7 * [NSDate numberOfWeeksForMonthOfDate:[self dateForFirstDayInSection:self.selectedIndexPath.section-1] calendar:self.calendar];
+    NSIndexPath *ip = [NSIndexPath indexPathForItem:itemIndex-1 inSection:self.selectedIndexPath.section-1];
+    [self.collectionView scrollToItemAtIndexPath:ip atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
   } completion:^(BOOL finished) {
       [self populateCellsWithEvents];
+  }];
+}
+
+- (void)scrollCollectionViewBy:(CGFloat)distance
+{
+  CGPoint toPoint = CGPointMake(self.tappedPoint.x, self.tappedPoint.y - distance);
+  self.tappedPoint = toPoint;
+  NSIndexPath *ip = [self.collectionView indexPathForItemAtPoint:toPoint];
+  [self.collectionView scrollToItemAtIndexPath:ip atScrollPosition:UICollectionViewScrollPositionCenteredVertically animated:YES];
+}
+
+- (void)resetToOriginalPosition;
+{
+  [self.collectionView performBatchUpdates:^{
+    [self.collectionView scrollToItemAtIndexPath:self.selectedIndexPath atScrollPosition:UICollectionViewScrollPositionTop animated:YES];
+  } completion:^(BOOL finished) {
+    [self populateCellsWithEvents];
   }];
 }
 

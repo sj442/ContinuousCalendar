@@ -90,11 +90,6 @@
   self.dotview.hidden = !self.hasEvents;
 }
 
-- (void)refreshDotViews
-{
-  self.dotview.hidden = !self.hasEvents;
-}
-
 - (UIView *)overlayView
 {
   if (!_overlayView) {
