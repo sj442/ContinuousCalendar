@@ -6,9 +6,9 @@
 //  Copyright (c) 2014 Enhatch. All rights reserved.
 //
 
-#import "EventDataClass.h"
+#import "EPEventDataClass.h"
 
-@implementation EventDataClass
+@implementation EPEventDataClass
 
 
 @end

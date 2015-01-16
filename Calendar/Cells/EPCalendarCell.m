@@ -6,7 +6,6 @@
 //  Copyright (c) 2014 Enhatch. All rights reserved.
 
 #import "EPCalendarCell.h"
-#import "UIColor+EH.h"
 
 @interface EPCalendarCell ()
 
@@ -31,8 +30,8 @@
   self = [super initWithFrame:frame];
   if (self) {
     self.backgroundColor = [UIColor whiteColor];
-    self.width = self.frame.size.width;
-    self.height = self.frame.size.height;
+    self.width = CGRectGetWidth(self.frame);
+    self.height = CGRectGetHeight(self.frame);
   }
   return self;
 }
@@ -48,7 +47,7 @@
       _dotview.layer.cornerRadius = 4;
     }
     _dotview.clipsToBounds = YES;
-    _dotview.backgroundColor = [UIColor primaryColor];
+    _dotview.backgroundColor = [UIColor grayColor];
     [self.contentView addSubview:_dotview];
     _dotview.hidden = YES;
   }

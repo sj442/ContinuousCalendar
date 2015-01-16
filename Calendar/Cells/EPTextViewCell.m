@@ -10,19 +10,17 @@
 
 @implementation EPTextViewCell
 
-+ (UINib *)nib
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
-  return [UINib nibWithNibName:@"EPTextViewCell" bundle:nil];
-}
-
-+ (CGFloat)textViewWidth
-{
-  return 300;
-}
-
-- (void)awakeFromNib
-{
-  // Initialization code
+  self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+  if (self) {
+    EPTextViewWithPlaceholder *textView = [[EPTextViewWithPlaceholder alloc] initWithFrame:CGRectMake(10, 0, CGRectGetWidth(self.contentView.frame)-20, CGRectGetHeight(self.contentView.frame))];
+    [self.contentView addSubview:textView];
+    self.textView = textView;
+    self.textView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self addTextViewConstraints];
+  }
+  return self;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
@@ -41,6 +39,17 @@
   } else {
     [self.textView setPlaceHolderLabelHidden:NO];
   }
+}
+
+- (void)addTextViewConstraints
+{
+  [self.contentView removeConstraints:self.contentView.constraints];
+  UITextView *tv = self.textView;
+  NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings(tv);
+  NSArray *one = [NSLayoutConstraint constraintsWithVisualFormat:@"|-10.0-[tv]-10.0-|" options:0 metrics:nil views:viewsDictionary];
+  NSArray *two = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[tv]-|" options:0 metrics:nil views:viewsDictionary];
+  [self.contentView addConstraints:one];
+  [self.contentView addConstraints:two];
 }
 
 @end

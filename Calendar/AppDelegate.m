@@ -9,7 +9,7 @@
 #import "AppDelegate.h"
 #import "EPCalendarViewController.h"
 #import "EPTabBarController.h"
-#import "EventStore.h"
+#import "EPEventStore.h"
 
 @interface AppDelegate ()
 

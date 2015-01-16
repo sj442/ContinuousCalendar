@@ -6,15 +6,15 @@
 //  Copyright (c) 2014 Enhatch. All rights reserved.
 //
 
-#import "ExtendedNavBarView.h"
+#import "EPExtendedNavBarView.h"
 
-@implementation ExtendedNavBarView
+@implementation EPExtendedNavBarView
 
 - (void)layoutSubviews
 {
   NSArray *days = @[@"S", @"M", @"T", @"W", @"T", @"F", @"S"];
   for (int i=0; i<7; i++) {
-    CGFloat width = self.frame.size.width/7;
+    CGFloat width = CGRectGetWidth(self.frame)/7;
     CGFloat xOrigin = 0+ width*i;
     UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(xOrigin, 0, width, CGRectGetHeight(self.frame))];
     label.text = days[i];

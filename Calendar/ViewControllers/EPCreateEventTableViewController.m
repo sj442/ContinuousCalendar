@@ -8,9 +8,7 @@
 #import "EPCreateEventTableViewController.h"
 #import "EPDatePickerCell.h"
 #import "NSDate+Description.h"
-#import "EventStore.h"
-#import "UIColor+EH.h"
-#import "UIViewController+EPBackgroundImage.h"
+#import "EPEventStore.h"
 
 @implementation EPCreateEventTableViewController
 
@@ -57,8 +55,8 @@
 - (void)viewDidLoad
 {
   [super viewDidLoad];
-  self.navigationController.navigationBar.tintColor = [UIColor primaryColor];
-  [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor primaryColor]}];
+  self.navigationController.navigationBar.tintColor = [UIColor grayColor];
+  [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor grayColor]}];
   self.sectionTitlesArray = @[@"Details", @"Time", @"Description"];
 }
 

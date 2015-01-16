@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ExtendedNavBarView : UIView
+@interface EPExtendedNavBarView : UIView
 
 @end

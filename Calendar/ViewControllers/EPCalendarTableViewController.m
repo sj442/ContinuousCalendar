@@ -8,10 +8,9 @@
 #import "EPCalendarTableViewController.h"
 #import "EPCreateEventTableViewController.h"
 #import "EPCalendarTableViewCell.h"
-#import "UIColor+EH.h"
 #import "NSDate+calendar.h"
 #import "EPCalendarEventView.h"
-#import "EventDataClass.h"
+#import "EPEventDataClass.h"
 
 @interface EPCalendarTableViewController ()
 
@@ -81,7 +80,7 @@
   [self.view addSubview:tableView];
   self.tableView = tableView;
   self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
-  [self.tableView registerNib:[EPCalendarTableViewCell nib] forCellReuseIdentifier:EPCalendarTableViewCellIdentifier];
+  [self.tableView registerClass:[EPCalendarTableViewCell class] forCellReuseIdentifier:EPCalendarTableViewCellIdentifier];
 }
 
 #pragma mark - Table view data source & delegate
@@ -99,6 +98,9 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
   EPCalendarTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:EPCalendarTableViewCellIdentifier];
+  if (!cell) {
+    cell = [[EPCalendarTableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:EPCalendarTableViewCellIdentifier];
+  }
   for (UIView *view in cell.contentView.subviews) {
     if (!(view.tag ==100)) {
       [view removeFromSuperview];
@@ -120,13 +122,13 @@
   CGFloat startPointY = 0;
   for (NSArray *arrayOfEvents in events) {
     for (int k =0; k<arrayOfEvents.count; k++) {
-      EventDataClass *eventData = arrayOfEvents[k];
-      CGFloat width = (self.tableView.frame.size.width-50)/arrayOfEvents.count;
+      EPEventDataClass *eventData = arrayOfEvents[k];
+      CGFloat width = (CGRectGetWidth(self.tableView.frame)-50)/arrayOfEvents.count;
       startPointX = 50 + width*k;
       height = eventData.height.floatValue;
       startPointY = eventData.startPointY.floatValue;
       EPCalendarEventView *view = [[EPCalendarEventView alloc]initWithFrame:CGRectMake(startPointX, startPointY, width, height)];
-      view.backgroundColor = [UIColor secondaryColor];
+      view.backgroundColor = [UIColor grayColor];
       view.event = eventData.event;
       [view addTarget:self action:@selector(viewTapped:) forControlEvents:UIControlEventTouchUpInside];
       if ([eventData.isStartIP isEqualToNumber:@1]) {
@@ -287,7 +289,7 @@
     for (int j=0; j<itemsCount; j++) {
       EKEvent *event = sortedItems[j];
       NSInteger eventStartHour = [self.calendar component:NSCalendarUnitHour fromDate:event.startDate];
-      EventDataClass *eventData = [self compareEvent:event withCellStartDate:cellStartDate cellEndDate:cellEndDate];
+      EPEventDataClass *eventData = [self compareEvent:event withCellStartDate:cellStartDate cellEndDate:cellEndDate];
       NSIndexPath *startIP = eventData.startIP;
       if (startIP.row == indexPath.row) {
         eventData.isStartIP = @1;
@@ -331,14 +333,13 @@
   [self.tableView reloadData];
 }
 
-- (EventDataClass *)compareEvent:(EKEvent *)event withCellStartDate:(NSDate *)cellStartDate cellEndDate:(NSDate *)cellEndDate
+- (EPEventDataClass *)compareEvent:(EKEvent *)event withCellStartDate:(NSDate *)cellStartDate cellEndDate:(NSDate *)cellEndDate
 {
   NSInteger selectedDateDay = [self.calendar component:NSCalendarUnitDay fromDate:self.selectedDate];
   NSIndexPath *startIP = [self indexPathForDate:event.startDate];
-  EventDataClass *eventData = [[EventDataClass alloc]init];
+  EPEventDataClass *eventData = [[EPEventDataClass alloc]init];
   NSDate *startDate = event.startDate;
   NSInteger startDay = [self.calendar component:NSCalendarUnitDay fromDate:startDate];
-  NSInteger eventStartHour = [self.calendar component:NSCalendarUnitHour fromDate:startDate];
   NSDate *endDate = event.endDate;
   NSInteger endDay = [self.calendar component:NSCalendarUnitDay fromDate:endDate];
   NSInteger startMinutes = 0;
@@ -346,7 +347,6 @@
   if (startDay != selectedDateDay) {
     startMinutes = 0;
     endMinutes  = [self minutesInDate:endDate];
-    eventStartHour = 0;
     startIP = [NSIndexPath indexPathForRow:0 inSection:0];
   } else if (endDay !=selectedDateDay) {
     endMinutes = 0;
@@ -449,7 +449,7 @@
   rect.origin.y = startPointY-5;
   self.timeLabel.frame = rect;
   int cellNumber = startPointY/44;
-  int blankViewStartPointY = cellNumber*44;
+  int blankViewStartPointY;
   if (minutes<30) {
     blankViewStartPointY = cellNumber*44-5;
   } else {

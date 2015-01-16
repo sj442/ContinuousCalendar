@@ -6,10 +6,9 @@
 //  Copyright (c) 2015 Enhatch. All rights reserved.
 
 #import  <QuartzCore/QuartzCore.h>
-#import "DateHelper.h"
+#import "EPDateHelper.h"
 #import "NSCalendar+dates.h"
 #import "NSDate+calendar.h"
-#import "UIColor+EH.h"
 #import "EPTwoWeekCollectionViewController.h"
 
 static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
@@ -80,7 +79,7 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
   UIBarButtonItem *events = [[UIBarButtonItem alloc]initWithTitle:@"Events" style:UIBarButtonItemStyleDone target:self action:nil];
   toolBar.items = @[flexibleSpace, events, flexibleSpace];
-  toolBar.tintColor = [UIColor primaryColor];
+  toolBar.tintColor = [UIColor grayColor];
   [self.view addSubview:toolBar];
   self.toolBar = toolBar;
   self.eventsButton = events;
@@ -93,7 +92,6 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   EPCalendarTableViewController *tableVC = [[EPCalendarTableViewController alloc]initWithFrame:CGRectZero];
   self.tableViewController = tableVC;
   [self addChildViewController:tableVC];
-  NSLog(@"view height %f", self.view.frame.size.height);
   tableVC.view.frame = CGRectMake(0, CGRectGetMaxY(self.toolBar.frame), CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)-2*self.rowHeight-CGRectGetHeight(self.toolBar.frame) - CGRectGetHeight(self.view.bounds)/25-64);
   [self.view addSubview:tableVC.view];
   [tableVC didMoveToParentViewController:self];

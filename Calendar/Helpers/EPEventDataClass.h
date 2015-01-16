@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <EventKit/EventKit.h>
 
-@interface EventDataClass : NSObject
+@interface EPEventDataClass : NSObject
 
 @property (strong, nonatomic) NSNumber *isStartIP;
 @property (strong, nonatomic) EKEvent *event;

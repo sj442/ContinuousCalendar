@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface NSDate (calendar)
+@interface NSDate (Calendar)
 
 + (NSString *)getCurrentTimeForCalendar:(NSCalendar *)calendar;
 

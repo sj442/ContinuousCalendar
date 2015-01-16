@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface NSCalendar (dates)
+@interface NSCalendar (Dates)
 
 - (NSDateFormatter *) df_dateFormatterNamed:(NSString *)name withConstructor:(NSDateFormatter *(^)(void))block;
 

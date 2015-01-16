@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Enhatch. All rights reserved.
 //
 
-#import "EventStore.h"
+#import "EPEventStore.h"
 
 @implementation EventStore
 

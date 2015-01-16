@@ -12,8 +12,6 @@ static NSString *EPCalendarTableViewCellIdentifier = @"CalendarTableViewCellIden
 
 @interface EPCalendarTableViewCell : UITableViewCell
 
-+ (UINib *)nib;
-
 @property (weak, nonatomic) UILabel *separatorLabel;
 @property (strong, nonatomic) NSNumber *startHour;
 @property (strong, nonatomic) NSNumber *endHour;

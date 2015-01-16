@@ -9,10 +9,8 @@
 #import "EPDatePickerCell.h"
 #import "EPTextViewCell.h"
 #import "NSDate+Description.h"
-#import "UIColor+EH.h"
 #import "NSString+EH.h"
 #import "EPTextViewWithPlaceholder.h"
-#import "UIViewController+EPBackgroundImage.h"
 
 static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString = @"Contact";
 
@@ -24,6 +22,7 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
 @property (nonatomic) NSInteger startTimeIndex;
 @property (nonatomic) NSInteger endTimeIndex;
 @property (nonatomic) NSInteger rows;
+@property CGFloat textViewWidth;
 
 @end
 
@@ -34,8 +33,8 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
 - (void)viewDidLoad
 {
   [super viewDidLoad];
-  [self.tableView registerNib:[EPDatePickerCell nib] forCellReuseIdentifier:EPDatePickerCellIdentifier];
-  [self.tableView registerNib:[EPTextViewCell nib] forCellReuseIdentifier:EPTextViewCellIdentifier];
+  [self.tableView registerClass:[EPDatePickerCell class] forCellReuseIdentifier:EPDatePickerCellIdentifier];
+  [self.tableView registerClass:[EPTextViewCell class] forCellReuseIdentifier:EPTextViewCellIdentifier];
   self.rows = 2;
   self.startTimeIndex = 0;
   self.endTimeIndex = 1;
@@ -51,7 +50,12 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
   }
   self.tableView.dataSource = self;
   self.tableView.delegate = self;
-  [self addBackgroundImageWithY:64];
+  
+  if ([UIScreen mainScreen].bounds.size.width <=320) {
+    self.textViewWidth = 300;
+  } else {
+    self.textViewWidth = 355;
+  }
 }
 
 -(void)viewDidAppear:(BOOL)animated
@@ -98,8 +102,8 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
   UIView *headerView;
   if (section<3) {
     headerView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.tableView.frame), 36)];
-    UILabel *headerLabel = [[UILabel alloc]initWithFrame:CGRectMake(10,0, 160, headerView.frame.size.height)];
-    headerView.backgroundColor = [UIColor primaryColor];
+    UILabel *headerLabel = [[UILabel alloc]initWithFrame:CGRectMake(10,0, 160, CGRectGetHeight(headerView.frame))];
+    headerView.backgroundColor = [UIColor grayColor];
     headerLabel.text = self.sectionTitlesArray[section];
     headerLabel.textColor = [UIColor whiteColor];
     headerLabel.font = [UIFont systemFontOfSize:17];
@@ -116,10 +120,10 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
   if (indexPath.section==0) {
     
     if (indexPath.row==0 && self.eventSelected && self.name) {
-      nameRowHeight= [self.name heightForTextHavingWidth:[EPTextViewCell textViewWidth] font:[UIFont systemFontOfSize:16]] +15+15;
+      nameRowHeight= [self.name heightForTextHavingWidth:self.textViewWidth font:[UIFont systemFontOfSize:16]] +15+15;
       return nameRowHeight;
     } else if (indexPath.row==1 && self.eventSelected && self.location) {
-      locationRowHeight = [self.location heightForTextHavingWidth:[EPTextViewCell textViewWidth] font:[UIFont systemFontOfSize:16]]+15+15;
+      locationRowHeight = [self.location heightForTextHavingWidth:self.textViewWidth font:[UIFont systemFontOfSize:16]]+15+15;
       return locationRowHeight;
     } else {
       return 50;
@@ -139,7 +143,7 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
       return 200;
     }
     else {
-      CGFloat descriptionHeight = [self.notes heightForTextHavingWidth:[EPTextViewCell textViewWidth]-20.0 font:[UIFont systemFontOfSize:16]]+40;
+      CGFloat descriptionHeight = [self.notes heightForTextHavingWidth:self.textViewWidth-20.0 font:[UIFont systemFontOfSize:16]]+40;
       return  MAX(200, descriptionHeight);
     }
   }
@@ -159,13 +163,15 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
       EPDatePickerCell *cell = [self.tableView dequeueReusableCellWithIdentifier:EPDatePickerCellIdentifier];
       cell.tag = indexPath.row;
       [self configureDatePickerCell:cell];
-      [self setCellAlpha:cell];
       return cell;
       break;
     }
     case 2:
     {
       EPTextViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:EPTextViewCellIdentifier];
+      if (!cell) {
+        cell = [[EPTextViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:EPTextViewCellIdentifier];
+      }
       [cell configureCellWithText:self.notes andPlaceHolder:@"Notes"];
       cell.textView.delegate = self;
       self.descTextView = cell.textView;
@@ -177,7 +183,6 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
         self.descTextView.editable = YES;
         self.descTextView.scrollEnabled = YES;
       }
-      [self setCellAlpha:cell];
       return cell;
       break;
     }
@@ -189,7 +194,6 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
       }
       [self configureDeleteCell:cell];
-      [self setCellAlpha:cell];
       return cell;
       break;
     }
@@ -211,7 +215,6 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
     } else {
       self.nameTextView.editable = YES;
     }
-    [self setCellAlpha:cell];
     return cell;
   } else if (indexPath.row==1){
     EPTextViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:EPTextViewCellIdentifier];
@@ -226,7 +229,6 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
     } else {
       self.locationTextView.editable = YES;
     }
-    [self setCellAlpha:cell];
     return cell;
   } else {
     UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:@"contactCell"];
@@ -234,16 +236,8 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
       cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"contactCell"];
     }
     [self configureContactCell:cell];
-    [self setCellAlpha:cell];
     return cell;
   }
-}
-
-- (void)setCellAlpha:(UITableViewCell *)cell
-{
-  cell.backgroundColor = [UIColor clearColor];
-  cell.contentView.backgroundColor = [UIColor whiteColor];
-  cell.contentView.alpha = 0.9;
 }
 
 - (void)configureContactCell:(UITableViewCell*)cell
@@ -252,7 +246,7 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
 
 - (void)configureDeleteCell:(UITableViewCell*)cell
 {
-  UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(cell.frame.origin.x, cell.frame.origin.y, cell.frame.size.width, cell.frame.size.height)];
+  UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(cell.frame.origin.x, cell.frame.origin.y, CGRectGetWidth(cell.frame), CGRectGetHeight(cell.frame))];
   [button setTitle:@"Delete Event" forState:UIControlStateNormal];
   [button addTarget:self
              action:@selector(deleteButtonPressed:)
@@ -296,7 +290,7 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
     [subview removeFromSuperview];
   }
   if (cell.tag == self.startDatePickerIndex) {
-    UIDatePicker *datePicker = [[UIDatePicker alloc] initWithFrame:CGRectMake(0, 0, cell.frame.size.width, cell.frame.size.height)];
+    UIDatePicker *datePicker = [[UIDatePicker alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(cell.frame), CGRectGetHeight(cell.frame))];
     [datePicker addTarget:self action:@selector(startDatePicked:) forControlEvents:UIControlEventValueChanged];
     [datePicker setDate:self.startDate];
     [cell.contentView addSubview:datePicker];
@@ -311,7 +305,7 @@ static NSString *EPInlineDatePickerTableViewControllerContactPlaceHolderString =
     [subview removeFromSuperview];
   }
   if (cell.tag == self.endDatePickerIndex) {
-    UIDatePicker *datePicker  = [[UIDatePicker alloc] initWithFrame:CGRectMake(0, 0, cell.frame.size.width, cell.frame.size.height)];
+    UIDatePicker *datePicker  = [[UIDatePicker alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(cell.frame), CGRectGetHeight(cell.frame))];
     [datePicker addTarget:self action:@selector(endDatePicked:) forControlEvents:UIControlEventValueChanged];
     [datePicker setDate:self.endDate];
     [cell.contentView addSubview:datePicker];

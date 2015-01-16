@@ -6,18 +6,16 @@
 //  Copyright (c) 2014 Enhatch. All rights reserved.
 
 #import "EPCalendarViewController.h"
-#import "ExtendedNavBarView.h"
+#import "EPExtendedNavBarView.h"
 #import "EPCreateEventTableViewController.h"
 #import "EPCalendarCell.h"
-#import "EPCalendarWeekCell.h"
-#import "UIColor+EH.h"
 #import "NSDate+Calendar.h"
-#import "EventStore.h"
+#import "EPEventStore.h"
 
 @interface EPCalendarViewController ()
 
 @property (weak, nonatomic) UIView *containerView;
-@property (weak, nonatomic) ExtendedNavBarView *dayView;
+@property (weak, nonatomic) EPExtendedNavBarView *dayView;
 @property (strong, nonatomic) EPCollectionViewController *collectionVC;
 @property (strong, nonatomic) EPTwoWeekCollectionViewController *twoWeekVC;
 @property (strong, nonatomic) NSCalendar *calendar;
@@ -77,8 +75,8 @@
 - (void)setUpNavigationBar
 {
   self.automaticallyAdjustsScrollViewInsets = NO;
-  [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor primaryColor]}];
-  self.navigationController.navigationBar.tintColor = [UIColor primaryColor];
+  [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor grayColor]}];
+  self.navigationController.navigationBar.tintColor = [UIColor grayColor];
   [self.navigationController.navigationBar setShadowImage:[[UIImage alloc] init]];
   [self.navigationController.navigationBar setBackgroundImage:[[UIImage alloc]init]
                                                 forBarMetrics:UIBarMetricsDefault];
@@ -87,7 +85,7 @@
                                                                           target:self
                                                                           action:@selector(addEvent:)];
   CGRect bounds = [UIScreen mainScreen].bounds;
-  ExtendedNavBarView *dayView = [[ExtendedNavBarView alloc]initWithFrame:CGRectMake(0, 0, CGRectGetWidth(bounds), CGRectGetHeight(bounds)/25)];
+  EPExtendedNavBarView *dayView = [[EPExtendedNavBarView alloc]initWithFrame:CGRectMake(0, 0, CGRectGetWidth(bounds), CGRectGetHeight(bounds)/25)];
   [self.containerView addSubview:dayView];
   self.dayView = dayView;
 }

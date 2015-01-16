@@ -19,6 +19,13 @@
 {
   self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
   if (self) {
+    UILabel *startLabel = [[UILabel alloc]initWithFrame:CGRectMake(10, 0, 120, CGRectGetHeight(self.contentView.frame))];
+    [self.contentView addSubview:startLabel];
+    self.startLabel = startLabel;
+    
+    UILabel *timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(140, 0, 160, CGRectGetHeight(self.contentView.frame))];
+    [self.contentView addSubview:timeLabel];
+    self.timeLabel = timeLabel;
   }
   return self;
 }
@@ -38,5 +45,6 @@
 {
   [self.datePickerDelegate datePickerButtonWasPressed];
 }
+
 
 @end

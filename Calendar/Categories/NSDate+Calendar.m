@@ -6,9 +6,9 @@
 //  Copyright (c) 2014 Enhatch. All rights reserved.
 //
 
-#import "NSDate+calendar.h"
+#import "NSDate+Calendar.h"
 
-@implementation NSDate (calendar)
+@implementation NSDate (Calendar)
 
 + (NSDate*)calendarStartDateFromDate:(NSDate*)date ForCalendar:(NSCalendar*)calendar
 {

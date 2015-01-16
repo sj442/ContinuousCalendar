@@ -11,9 +11,8 @@
 #import "EPCalendarCollectionView.h"
 #import "EPCalendarMonthHeader.h"
 #import "EPCalendarCell.h"
-#import "DateHelper.h"
+#import "EPDateHelper.h"
 #import "NSCalendar+dates.h"
-#import "UIColor+EH.h"
 #import "NSDate+calendar.h"
 
 static NSString * const EPCalendarCellIDentifier = @"CalendarCell";
@@ -286,7 +285,7 @@ static NSString * const EPCalendarMonthHeaderIDentifier = @"MonthHeader";
     frame.origin.x = 5+CGRectGetWidth(self.view.bounds)/7*(weekday-1);
     frame.size.width = 50;
     monthHeader.textLabel.frame = frame;
-    monthHeader.textLabel.textColor = [UIColor primaryColor];
+    monthHeader.textLabel.textColor = [UIColor grayColor];
     return monthHeader;
   }
   return nil;

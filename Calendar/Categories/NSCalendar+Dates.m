@@ -6,9 +6,9 @@
 //  Copyright (c) 2014 Enhatch. All rights reserved.
 //
 
-#import "NSCalendar+dates.h"
+#import "NSCalendar+Dates.h"
 
-@implementation NSCalendar (dates)
+@implementation NSCalendar (Dates)
 
 - (NSDateFormatter *) df_dateFormatterNamed:(NSString *)name withConstructor:(NSDateFormatter *(^)(void))block {
   
