@@ -69,6 +69,7 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   }
 }
 
+
 - (void)viewDidAppear:(BOOL)animated
 {
   [super viewDidAppear:animated];
@@ -111,6 +112,7 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   [self.view addGestureRecognizer:pan];
 }
 
+
 - (void)addCalendarTableViewController
 {
   EPCalendarTableViewController *tableVC = [[EPCalendarTableViewController alloc]init];
@@ -139,6 +141,7 @@ static NSString * const EPCalendarWeekCellIdentifier = @"CalendarWeekCell";
   
   [self.tableViewController refreshTableView];
 }
+
 
 - (void)updateToolBar
 {

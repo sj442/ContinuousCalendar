@@ -206,7 +206,7 @@
         
         CGRect frame = CGRectZero;
         frame.origin.x = 5;
-        frame.size.width = CGRectGetWidth(view.frame)-10;
+        frame.size.width = CGRectGetWidth(view.frame) - 10;
         frame.size.height = CGRectGetHeight(view.frame);
         titleLabel.frame = frame;
         
@@ -276,7 +276,7 @@
   self.selectedDate = selectedDate;
 }
 
-#pragma mark - Initializers
+#pragma mark - Getters
 
 - (NSMutableDictionary *)separatorTimesCache
 {
@@ -312,6 +312,8 @@
   }
   return answer;
 }
+
+
 
 - (void)populateStartAndEndTimeCache
 {
@@ -412,6 +414,8 @@
   [self.tableView reloadData];
 }
 
+
+
 - (EPEventDataClass *)compareEvent:(EKEvent *)event withCellStartDate:(NSDate *)cellStartDate cellEndDate:(NSDate *)cellEndDate
 {
   NSInteger selectedDateDay = [self.calendar component:NSCalendarUnitDay fromDate:self.selectedDate];
@@ -442,7 +446,7 @@
     startMinutes = [self minutesInDate:startDate];
     endMinutes  = [self minutesInDate:endDate];
   }
-
+  
   NSComparisonResult startResult = [startDate compare:cellStartDate];
   NSComparisonResult startBoundaryResult = [startDate compare:cellEndDate];
   NSComparisonResult endBoundaryResult = [endDate compare:cellStartDate];
@@ -500,6 +504,8 @@
   return eventData;
 }
 
+
+
 - (void)setSeparatorTextForCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
   ((EPCalendarTableViewCell *)cell).separatorLabel.text = [self fetchObjectForKey:indexPath withCreator:^id {
@@ -520,6 +526,8 @@
     return time;
   }];
 }
+
+
 
 - (void)refreshCurrentTimeMarker
 {
@@ -550,7 +558,7 @@
     frame.size.width = 50;
     frame.size.height = 44;
     blankView.frame = frame;
-  
+    
     [self.tableView addSubview:blankView];
     
     blankView.backgroundColor = [UIColor whiteColor];
@@ -585,6 +593,8 @@
   }
 }
 
+
+
 - (void)updateTimeMarkerLocation:(id)sender
 {
   NSInteger minutes = [self.calendar component:NSCalendarUnitMinute fromDate:[NSDate date]];
@@ -618,6 +628,7 @@
   rect.origin.y = blankViewStartPointY;
   self.blankView.frame = rect;
 }
+
 
 - (void)refreshTableView
 {

@@ -16,11 +16,20 @@
   for (int i=0; i < 7; i++) {
     CGFloat width = CGRectGetWidth(self.frame)/7;
     CGFloat xOrigin = 0+ width * i;
-    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(xOrigin, 0, width, CGRectGetHeight(self.frame))];
+    
+    UILabel *label = [UILabel new];
+    
+    CGRect frame = CGRectZero;
+    frame.origin.x = xOrigin;
+    frame.size.width  = width;
+    frame.size.height = CGRectGetHeight(self.frame);
+    label.frame = frame;
+    
     label.text = days[i];
     label.font = [UIFont systemFontOfSize:12];
     label.textAlignment = NSTextAlignmentCenter;
     [self addSubview:label];
+    
     self.backgroundColor = [UIColor whiteColor];
   }
 }

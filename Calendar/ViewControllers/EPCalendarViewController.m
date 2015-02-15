@@ -62,6 +62,7 @@
   self.eventStore = [EventStore sharedInstance].eventStore;
 }
 
+
 - (void)viewDidAppear:(BOOL)animated
 {
   [super viewDidAppear:animated];
@@ -90,6 +91,7 @@
   }
 }
 
+
 - (void)didReceiveMemoryWarning
 {
   [super didReceiveMemoryWarning];
@@ -104,13 +106,14 @@
   CGRect frame = CGRectZero;
   frame.origin.y = 64;
   frame.size.width = CGRectGetWidth(self.view.frame);
-  frame.size.height = CGRectGetHeight(self.view.frame) - 49-64;
+  frame.size.height = CGRectGetHeight(self.view.frame) - 49 - 64;
   container.frame = frame;
   
   [self.view addSubview:container];
   
   self.containerView = container;
 }
+
 
 - (void)setUpNavigationBar
 {
@@ -142,6 +145,7 @@
   self.dayView = dayView;
 }
 
+
 - (void)addCollectionViewController
 {
   EPCollectionViewController *collectionVC = [[EPCollectionViewController alloc]initWithCalendar:self.calendar];
@@ -164,6 +168,7 @@
   self.collectionVC = collectionVC;
   self.collectionViewDrawn = YES;
 }
+
 
 - (void)addTwoWeekViewController
 {
@@ -213,6 +218,7 @@
   }
 }
 
+
 - (void)checkCalendarPermissionsWithCompletionHandler:(void (^)(void))completion
 {
   [self.eventStore requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
@@ -234,6 +240,7 @@
   }];
 }
 
+
 #pragma mark - IBActions
 
 - (void)addEvent:(id)sender
@@ -251,6 +258,7 @@
   createEventVC.title = @"New Event";
   [self presentViewController:navC animated:YES completion:nil];
 }
+
 
 - (void)showTwoWeekViewController
 {
@@ -285,6 +293,7 @@
   }];
 }
 
+
 #pragma mark - WeekCalendarView Delegate
 
 - (void)eventWasSelected
@@ -292,15 +301,18 @@
   self.fromCreateEvent = YES;
 }
 
+
 - (void)scrollCollectionViewBy:(CGFloat)distance
 {
   [self.collectionVC scrollCollectionViewBy:distance];
 }
 
+
 - (void)resetToOriginalPosition
 {
   [self.collectionVC resetToOriginalPosition];
 }
+
 
 - (void)tableViewClosed
 {
@@ -320,6 +332,7 @@
   self.navigationItem.title = title;
 }
 
+
 - (void)cellWasSelected
 {
   self.twoWeekVC.events = self.eventsDictionary;
@@ -336,6 +349,7 @@
   
   [self.twoWeekVC updateToolBar];
 }
+
 
 - (void)updateEventsDictionaryWithCompletionBlock:(void(^)(void))completion
 {
@@ -355,11 +369,13 @@
   NSDate *endDate = [NSDate calendarEndDateFromDate:date ForCalendar:self.calendar]; // ending at 11:59 pm
   NSPredicate *predicate = [self.eventStore predicateForEventsWithStartDate:startDate endDate:endDate calendars:nil];
   NSArray *events = [self.eventStore eventsMatchingPredicate:predicate];
-  if (events.count>0) {
+  
+  if (events.count > 0) {
     [self.eventsDictionary setObject:events forKey:date];
   }
   return events;
 }
+
 
 - (void)populateCellsWithEventsWithCompletionHandler:(void (^) (NSMutableDictionary *))completion
 {
@@ -367,7 +383,7 @@
   
   dispatch_queue_t myQueue = dispatch_queue_create("My Queue", NULL);
   
-  for (int i=0; i<visibleCells.count; i++) {
+  for (int i=0; i < visibleCells.count; i++) {
     EPCalendarCell *cell= visibleCells[i];
     dispatch_sync(myQueue, ^{
       //get calendar events
@@ -377,12 +393,13 @@
       } else {
         [self.eventsDictionary removeObjectForKey:cell.cellDate];
       }
-      if (i== visibleCells.count-1) {
+      if (i== visibleCells.count - 1) {
         completion(self.eventsDictionary);
       }
     });
   }
 }
+
 
 - (void)updateCollectionView
 {
