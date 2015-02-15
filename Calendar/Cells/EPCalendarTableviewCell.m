@@ -13,25 +13,41 @@
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
   self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+  
   if (self) {
-    // Initialization code
+    
     self.layoutAttributes = [NSMutableDictionary dictionary];
+    
     self.events = [NSMutableArray array];
-    UILabel *separatorView = [[UILabel alloc]initWithFrame:CGRectMake(5, 1, 50, 10)];
-    separatorView.tag = 100;
-    separatorView.font = [UIFont systemFontOfSize:10];
-    separatorView.textColor = [UIColor grayColor];
-    [self.contentView addSubview:separatorView];
+    
+    [self setupSeparatorView];
+    
     self.separatorInset = UIEdgeInsetsMake(0, 50, 0, 0);
-    self.separatorLabel = separatorView;
   }
   return self;
 }
 
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated
+- (void)setupSeparatorView
 {
-  [super setSelected:selected animated:animated];
-}
+  UILabel *separatorView = [UILabel new];
+  
+  CGRect frame = CGRectZero;
+  frame.origin.x = 5;
+  frame.origin.y = 1;
+  frame.size.width = 50;
+  frame.size.height = 10;
+  separatorView.frame = frame;
+  
+  separatorView.tag = 100;
+  
+  separatorView.font = [UIFont systemFontOfSize:10];
+  
+  separatorView.textColor = [UIColor grayColor];
+  
+  [self.contentView addSubview:separatorView];
+  
+  self.separatorLabel = separatorView;
 
+}
 
 @end

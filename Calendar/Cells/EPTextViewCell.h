@@ -15,6 +15,6 @@ static NSString *EPTextViewCellIdentifier = @"textViewCellIdentifier";
 
 @property (weak, nonatomic) IBOutlet EPTextViewWithPlaceholder *textView;
 
-- (void)configureCellWithText:(NSString*)text andPlaceHolder:(NSString*)placeHolder;
+- (void)configureCellWithText:(NSString *)text andPlaceHolder:(NSString *)placeHolder;
 
 @end

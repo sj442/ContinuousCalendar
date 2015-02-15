@@ -12,9 +12,13 @@
 @protocol EPTwoWeekCollectionViewControllerDelegate <NSObject>
 
 - (void)updateEventsDictionaryWithCompletionBlock:(void(^)(void))completion;
+
 - (void)eventWasSelected;
+
 - (void)tableViewClosed;
+
 - (void)scrollCollectionViewBy:(CGFloat)distance;
+
 - (void)resetToOriginalPosition;
 
 @end
@@ -24,14 +28,18 @@
 - (instancetype)initWithCalendar:(NSCalendar *)calendar;
 
 @property (strong, nonatomic) NSDate *selectedDate;
-@property (strong, nonatomic) NSIndexPath *selectedIndexPath;
+
 @property (strong, nonatomic) NSMutableDictionary *events;
-@property (strong, nonatomic) UICollectionViewFlowLayout *weekFlowLayout;
+
+
 @property (strong, nonatomic) UICollectionView *collectionView;
+
 @property (strong, nonatomic) NSCalendar *calendar;
-@property (weak, nonatomic) UIToolbar *toolBar;
+
 @property (strong, nonatomic) EPCalendarTableViewController *tableViewController;
+
 @property BOOL fromCreateEvent;
+
 @property (weak, nonatomic) id <EPTwoWeekCollectionViewControllerDelegate> weekDelegate;
 
 - (void)updateToolBar;

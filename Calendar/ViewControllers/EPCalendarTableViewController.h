@@ -17,14 +17,16 @@
 @interface EPCalendarTableViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate>
 
 @property (strong, nonatomic) NSDate *selectedDate;
+
 @property (strong, nonatomic) NSArray *dataItems;
+
 @property (strong, nonatomic) NSCalendar *calendar;
+
 @property (weak, nonatomic) UITableView *tableView;
+
 @property BOOL fromCreateEvent;
 
 @property (weak, nonatomic) id <EPTableViewDelegate> tableViewDelegate;
-
-- (instancetype)initWithFrame:(CGRect)frame;
 
 - (void)refreshTableView;
 

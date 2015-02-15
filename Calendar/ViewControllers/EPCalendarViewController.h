@@ -7,9 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "EPTwoWeekCollectionViewController.h"
 #import "EPCollectionViewController.h"
 
-@interface EPCalendarViewController : UIViewController <EPCollectionViewControllerDelegate, EPTwoWeekCollectionViewControllerDelegate>
-
+@interface EPCalendarViewController : UIViewController
 @end

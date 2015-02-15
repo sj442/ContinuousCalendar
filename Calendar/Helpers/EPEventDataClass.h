@@ -12,10 +12,15 @@
 @interface EPEventDataClass : NSObject
 
 @property (strong, nonatomic) NSNumber *isStartIP;
+
 @property (strong, nonatomic) EKEvent *event;
+
 @property (strong, nonatomic) NSNumber *height;
+
 @property (strong, nonatomic) NSNumber *startPointY;
+
 @property (strong, nonatomic) NSNumber *width;
+
 @property (strong, nonatomic) NSIndexPath *startIP;
 
 @end

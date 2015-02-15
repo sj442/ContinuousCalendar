@@ -22,4 +22,17 @@
   return dateFormatter;
 }
 
+- (NSDateComponents *)dateComponentsFromDate:(NSDate *)date
+{
+  NSDateComponents *selectedDateComponents = [self components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:date];
+  
+  NSDateComponents *dateComponents = [[NSDateComponents alloc]init];
+  
+  [dateComponents setYear:selectedDateComponents.year];
+  [dateComponents setMonth:selectedDateComponents.month];
+  [dateComponents setDay:selectedDateComponents.day];
+  return dateComponents;
+}
+
+
 @end

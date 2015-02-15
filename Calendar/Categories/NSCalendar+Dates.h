@@ -12,4 +12,7 @@
 
 - (NSDateFormatter *) df_dateFormatterNamed:(NSString *)name withConstructor:(NSDateFormatter *(^)(void))block;
 
+- (NSDateComponents *)dateComponentsFromDate:(NSDate *)date;
+
+
 @end

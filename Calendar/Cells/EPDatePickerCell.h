@@ -20,8 +20,11 @@ static NSString *EPDatePickerCellIdentifier = @"datePickerCell";
 @interface EPDatePickerCell : UITableViewCell
 
 @property (weak) id <EPDatePickerDelegate> datePickerDelegate;
+
 @property (weak, nonatomic) IBOutlet UILabel *startLabel;
+
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
+
 @property BOOL fromTaskList;
 
 @end

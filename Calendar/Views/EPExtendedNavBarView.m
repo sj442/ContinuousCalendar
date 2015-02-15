@@ -13,9 +13,9 @@
 - (void)layoutSubviews
 {
   NSArray *days = @[@"S", @"M", @"T", @"W", @"T", @"F", @"S"];
-  for (int i=0; i<7; i++) {
+  for (int i=0; i < 7; i++) {
     CGFloat width = CGRectGetWidth(self.frame)/7;
-    CGFloat xOrigin = 0+ width*i;
+    CGFloat xOrigin = 0+ width * i;
     UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(xOrigin, 0, width, CGRectGetHeight(self.frame))];
     label.text = days[i];
     label.font = [UIFont systemFontOfSize:12];
@@ -28,7 +28,7 @@
 - (void)willMoveToWindow:(UIWindow *)newWindow
 {
   // Use the layer shadow to draw a one pixel hairline under this view.
-  [self.layer setShadowOffset:CGSizeMake(0, 1.0f/UIScreen.mainScreen.scale)];
+  [self.layer setShadowOffset:CGSizeMake(0, 1.0f/[UIScreen mainScreen].scale)];
   [self.layer setShadowRadius:0];
   
   // UINavigationBar's hairline is adaptive, its properties change with

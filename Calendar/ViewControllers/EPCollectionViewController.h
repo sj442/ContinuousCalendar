@@ -12,26 +12,35 @@
 @protocol EPCollectionViewControllerDelegate <NSObject>
 
 - (void)updateEventsDictionaryWithCompletionBlock:(void(^)(void))completion;
+
 - (void)cellWasSelected;
+
 - (void)setNavigationTitle:(NSString *)title;
 
 @end
 
-@interface EPCollectionViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate, EPCalendarCollectionViewDelegate, UIScrollViewDelegate>
+@interface EPCollectionViewController : UIViewController
 
 @property (strong, nonatomic) NSDate *selectedDate;
+
 @property (strong, nonatomic) EPCalendarCollectionView *collectionView;
-@property (strong, nonatomic) NSIndexPath *selectedIndexPath;
-@property (strong, nonatomic) UICollectionViewFlowLayout *flowLayout;
-@property (strong, nonatomic) NSCalendar *calendar;
+
 @property (strong, nonatomic) NSDictionary *events;
+
+@property (strong, nonatomic) NSCalendar *calendar;
+
 @property (weak, nonatomic) id <EPCollectionViewControllerDelegate> delegate;
+
 @property BOOL twoWeekViewInFront;
 
 - (instancetype) initWithCalendar:(NSCalendar *)calendar;
+
 - (void)populateCellsWithEvents;
+
 - (void)resetSelectedDateMonthToTop;
+
 - (void)scrollCollectionViewBy:(CGFloat)distance;
+
 - (void)resetToOriginalPosition;
 
 @end

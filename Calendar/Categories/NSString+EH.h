@@ -12,6 +12,7 @@
 @interface NSString (EH)
 
 - (CGFloat)heightForTextHavingWidth:(CGFloat)width font:(UIFont *)font;
+
 - (CGFloat)heightForTextHavingWidth:(CGFloat)width font:(UIFont *)font maxLines:(CGFloat)maxLines;
 
 @end

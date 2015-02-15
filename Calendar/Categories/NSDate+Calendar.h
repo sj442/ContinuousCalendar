@@ -26,4 +26,6 @@
 
 - (BOOL)isCurrentDateForCalendar:(NSCalendar *)calendar;
 
+- (NSDateComponents *)dateComponentsFromDate:(NSDate *)date;
+
 @end

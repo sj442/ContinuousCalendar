@@ -19,7 +19,9 @@
   self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
   if (self) {
     [self setupEventStore];
+    
     [self addSaveButton];
+    
     [self addCancelButton];
   }
   return self;
@@ -29,8 +31,9 @@
 {
   self = [super init];
   if (self) {
-    self.startDate = [NSDate dateWithTimeInterval:3600*10 sinceDate:date]; //10 am
-    self.endDate = [NSDate dateWithTimeInterval:3600*11 sinceDate:date]; //11 am
+    self.startDate = [NSDate dateWithTimeInterval:3600 * 10 sinceDate:date]; //10 am
+    
+    self.endDate = [NSDate dateWithTimeInterval:3600 * 11 sinceDate:date]; //11 am
   }
   return self;
 }
@@ -55,8 +58,11 @@
 - (void)viewDidLoad
 {
   [super viewDidLoad];
+  
   self.navigationController.navigationBar.tintColor = [UIColor grayColor];
+  
   [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor grayColor]}];
+  
   self.sectionTitlesArray = @[@"Details", @"Time", @"Description"];
 }
 
@@ -104,9 +110,11 @@
 - (void)cancelPressed:(id)sender
 {
   if (self.eventSelected==1) {
+    
     [self.navigationController popViewControllerAnimated:YES];
   } else {
     [self.delegate viewWillBeDismissed];
+    
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
   }
 }
@@ -209,7 +217,6 @@
     [self.navigationController popViewControllerAnimated:YES];
   }
   else {
-    NSLog(@"error %@", error);
     [self.navigationController popViewControllerAnimated:YES];
   }
 }
@@ -228,7 +235,6 @@
     [self.navigationController popViewControllerAnimated:YES];
   }
   else {
-    NSLog(@"error %@", error);
     [self.navigationController popViewControllerAnimated:YES];
   }
 }
@@ -250,6 +256,7 @@
   newEvent.location = location;
   newEvent.notes = self.notes;
   newEvent.calendar = [self.localEventStore defaultCalendarForNewEvents];
+  
   [self saveEvent:newEvent];
 }
 
@@ -263,11 +270,9 @@
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
   if (buttonIndex==1) {
+    
     [self popViewControllerAndDissmissAlertView:alertView AndClickedButtonIndex:buttonIndex WithCompletionHandler:^(NSError *error)
      {
-       if (error) {
-         NSLog(@"error deleting event:%@", [error description]);
-       }
        [self.navigationController popViewControllerAnimated:YES];
      }];
     

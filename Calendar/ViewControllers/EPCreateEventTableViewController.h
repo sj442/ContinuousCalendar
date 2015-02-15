@@ -12,6 +12,7 @@
 @protocol CreateEventDelegate <NSObject>
 
 - (void)viewWillBeDismissed;
+
 - (void)viewWillBePopped;
 
 @end
@@ -21,6 +22,7 @@
 @property (weak, nonatomic) id <CreateEventDelegate> delegate;
 
 - (instancetype)initWithEvent:(EKEvent*)event eventName:(NSString*)name location:(NSString*)location notes:(NSString*)notes startDate:(NSDate*)startDate endDate:(NSDate*)endDate;
+
 - (instancetype)initWithDate:(NSDate*)date;
 
 @end

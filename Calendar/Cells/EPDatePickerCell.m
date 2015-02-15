@@ -18,23 +18,48 @@
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
   self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+  
   if (self) {
-    UILabel *startLabel = [[UILabel alloc]initWithFrame:CGRectMake(10, 0, 120, CGRectGetHeight(self.contentView.frame))];
-    [self.contentView addSubview:startLabel];
-    self.startLabel = startLabel;
     
-    UILabel *timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(140, 0, 160, CGRectGetHeight(self.contentView.frame))];
-    [self.contentView addSubview:timeLabel];
-    self.timeLabel = timeLabel;
+    [self setupStartLabel];
+    
+    [self setupTimeLabel];
   }
   return self;
 }
 
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated
+- (void)setupStartLabel
 {
-  [super setSelected:selected animated:animated];
+  UILabel *startLabel = [UILabel new];
+  
+  CGRect frame = CGRectZero;
+  frame.origin.x = 10;
+  frame.size.width = 120;
+  frame.size.height = CGRectGetHeight(self.contentView.frame);
+  startLabel.frame = frame;
+  
+  [self.contentView addSubview:startLabel];
+  
+  self.startLabel = startLabel;
 }
 
+- (void)setupTimeLabel
+{
+  UILabel *timeLabel = [UILabel new];
+  
+  CGRect frame = CGRectZero;
+  frame.origin.x = 140;
+  frame.size.width = 160;
+  frame.size.height = CGRectGetHeight(self.contentView.frame);
+  timeLabel.frame = frame;
+  
+  [self.contentView addSubview:timeLabel];
+  
+  self.timeLabel = timeLabel;
+}
+
+
+#pragma mark - IBActions
 
 - (void)timeButtonPressed:(id)sender
 {
