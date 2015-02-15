@@ -10,18 +10,6 @@
 
 @implementation NSCalendar (Dates)
 
-- (NSDateFormatter *) df_dateFormatterNamed:(NSString *)name withConstructor:(NSDateFormatter *(^)(void))block {
-  
-  NSMutableDictionary *threadDictionary = [[NSThread currentThread] threadDictionary];
-  NSDateFormatter *dateFormatter = threadDictionary[name];
-  
-  if (!dateFormatter) {
-    dateFormatter = block();
-    threadDictionary[name] = dateFormatter;
-  }
-  return dateFormatter;
-}
-
 - (NSDateComponents *)dateComponentsFromDate:(NSDate *)date
 {
   NSDateComponents *selectedDateComponents = [self components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:date];

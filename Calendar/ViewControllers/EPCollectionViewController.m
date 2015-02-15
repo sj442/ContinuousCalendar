@@ -346,13 +346,9 @@ static NSString * const EPCalendarMonthHeaderIdentifier = @"MonthHeader";
     
     EPCalendarMonthHeader *monthHeader = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:EPCalendarMonthHeaderIdentifier forIndexPath:indexPath];
     
-    NSDateFormatter *dateFormatter = [self.calendar df_dateFormatterNamed:@"calendarMonthHeader" withConstructor:^{
-      
-      NSDateFormatter *dateFormatter = [NSDateFormatter new];
-      dateFormatter.calendar = self.calendar;
-      dateFormatter.dateFormat = [dateFormatter.class dateFormatFromTemplate:@"LLL" options:0 locale:[NSLocale currentLocale]];
-      return dateFormatter;
-    }];
+    NSDateFormatter *dateFormatter = [NSDateFormatter new];
+    dateFormatter.calendar = self.calendar;
+    dateFormatter.dateFormat = [dateFormatter.class dateFormatFromTemplate:@"LLL" options:0 locale:[NSLocale currentLocale]];
     
     NSDate *formattedDate = [self dateForFirstDayInSection:indexPath.section];
     
