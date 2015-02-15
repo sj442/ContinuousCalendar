@@ -143,6 +143,15 @@ static NSString * const EPCalendarMonthHeaderIdentifier = @"MonthHeader";
   return self.flowLayout;
 }
 
+#pragma mark - Setters
+
+- (void)setSelectedDate:(NSDate *)selectedDate
+{
+  _selectedDate = selectedDate;
+  
+  [self.collectionView reloadData];
+}
+
 #pragma mark - IBActions
 
 - (void)collectionViewPanned:(UIPanGestureRecognizer *)pan
@@ -333,12 +342,6 @@ static NSString * const EPCalendarMonthHeaderIdentifier = @"MonthHeader";
   }];
 }
 
-- (void)setSelectedDate:(NSDate *)selectedDate
-{
-  _selectedDate = selectedDate;
-  
-  [self.collectionView reloadData];
-}
 
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
 {

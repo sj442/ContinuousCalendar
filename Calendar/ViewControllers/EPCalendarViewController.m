@@ -67,6 +67,7 @@
   [super viewDidAppear:animated];
   
   if (!self.collectionViewDrawn) {
+    
     [self addCollectionViewController];
   }
   
@@ -78,11 +79,13 @@
   
   if (access == nil) {
     [self checkCalendarPermissionsWithCompletionHandler:^{
+      
       NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
       [defaults setObject:[NSNumber numberWithBool:YES] forKey:@"calendarPermissionDone"];
       [self updateCollectionView];
     }];
   } else {
+    
     [self updateCollectionView];
   }
 }
@@ -282,7 +285,7 @@
   }];
 }
 
-#pragma mark- WeekCalendarView Delegate
+#pragma mark - WeekCalendarView Delegate
 
 - (void)eventWasSelected
 {
